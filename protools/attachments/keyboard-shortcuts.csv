@@ -1,0 +1,55 @@
+Tags, Mac, Windows, Command
+Edit menu - Editing - Track/Playlist, Option + Shift + N, Alt + Shift + N, Clear and Send to New Playlist
+Edit menu - Editing, Command + Control + B, Ctrl + Start + B, Clear with All Automation Playlists
+Edit menu - Editing - Track/Playlist, , , Copy Selection to Duplicate Playlist
+Automation - Edit menu - Editing, Command + Control + C, Ctrl + Start + C, Copy with All Automation Playlists
+Automation - Edit menu - Editing, Control + C, Start + C, Copy with All Automation Playlists
+Automation - Edit menu - Editing, Control + X, Start + X, Cut with All Automation Playlists
+Automation - Edit menu - Editing, Command + Control + X, Ctrl + Start + X, Cut with All Automation Playlists
+Editing - Track/Playlist, Command + Option + Shift + Down Arrow, Ctrl + Alt + Shift + Down Arrow, Cycle Audio within Selection from Next Playlist
+Editing - Track/Playlist, Command + Option + Shift + Up Arrow, Ctrl + Alt + Shift + Up Arrow, Cycle Audio within Selection from Previous Playlist
+Editing, Control + Delete, Start + Delete, Delete Selection and Remove All Automation Playlists
+Editing, Control + Backspace, Start + Backspace, Delete Selection and Remove All Automation Playlists
+Editing - Track menu - Track/Playlist, Command + Shift + Right Arrow, Ctrl + Shift + Right Arrow, Designate as Target Playlist
+Editing - Selection - Track/Playlist, Shift + Down Arrow, Shift + Down Arrow, Down Arrow Context Command
+Track/Playlist, Shift + Down Arrow, Shift + Down Arrow, Next Playlist
+Editing - MIDI, Shift + Down Arrow, Shift + Down Arrow, Transpose Down (Octave)
+Editing - Track/Playlist, Option + Shift + Down Arrow, Alt + Shift + Down Arrow, Down Arrow Context Command
+Edit menu - Editing - Track/Playlist, Option + Shift + Down Arrow, Alt + Shift + Down Arrow, Copy and Send to New Playlist
+Editing - MIDI, Option + Shift + Down Arrow, Alt + Shift + Down Arrow, Copy and Transpose Down (Octave)
+Track/Playlist, Command + Control + \, Ctrl + Start + \, Duplicate Playlist
+Track/Playlist, Command + Control + Shift + \, Ctrl + Start + Shift + \, Duplicate Playlist
+Track/Playlist, Command + Option + Control + Shift + \, Ctrl + Alt + Start + Shift + \, Duplicate Playlist (All Selected Tracks)
+Track/Playlist, Command + Option + Control + \, Ctrl + Alt + Start + \, Duplicate Playlist (All Tracks)
+Automation - Edit menu - Editing, Command + Option + Control + Shift + D, Ctrl + Alt + Start + Shift + D, Duplicate and Extend Edit with All Automation Playlists
+Edit menu - Editing, Command + Control + D, Ctrl + Start + D, Duplicate with All Automation Playlists
+Edit menu - Editing - Track/Playlist, Command + Control + Shift + E, Ctrl + Start + Shift + E, Insert Silence with All Automation Playlists
+Editing - Track/Playlist, Shift + Page Up, Shift + Page Up, Jump Playlists Backward
+Editing - Track/Playlist, Shift + Page Down, Shift + Page Down, Jump Playlists Forward
+Editing - Navigation - Zoom, Shift + Left Arrow, Shift + Left Arrow, Left Arrow Context Command (Extend Selection)
+Editing - Track menu - Track/Playlist, Shift + Left Arrow, Shift + Left Arrow, Toggle Recent Playlist
+Navigation - Zoom, Shift + Left Arrow, Shift + Left Arrow, Select Prev MIDI Event (Extend Selection)
+Edit menu - Editing - Track/Playlist, Option + Shift + T, Alt + Shift + T, Move Selection to Target Playlist
+Track/Playlist, Control + Shift + \, Start + Shift + \, New Playlist
+Track/Playlist, Control + \, Start + \, New Playlist
+Track/Playlist, Option + Control + Shift + \, Alt + Start + Shift + \, New Playlist (All Selected Tracks)
+Track/Playlist, Option + Control + \, Alt + Start + \, New Playlist (All Tracks)
+Editing - Track/Playlist, , , Playlists View: Copy Selection to Main Playlist
+Editing - Track/Playlist, , , Playlists View: Copy Selection to New Playlist
+Edit menu - Editing - Track/Playlist, Option + Control + V, Alt + Start + V, Playlists View: Copy Selection to Target Playlist
+Edit menu - Editing - Track/Playlist, , , Playlists View: Move Selection to Duplicate Playlist
+Editing - Track/Playlist, , , Playlists View: Move Selection to Main Playlist
+Editing - Track/Playlist, , , Playlists View: Move Selection to New Playlist
+Editing - Navigation - Zoom, Shift + Right Arrow, Shift + Right Arrow, Right Arrow Context Command (Extend Selection)
+Editing - Track menu - Track/Playlist, Shift + Right Arrow, Shift + Right Arrow, Show Target Playlist
+Navigation - Zoom, Shift + Right Arrow, Shift + Right Arrow, Select Next MIDI Event (Extend Selection)
+Automation - Show/Hide - View menu, , , Show Composite Playlist
+Editing - Track/Playlist, Shift + Home, Shift + Home, Show First Playlist
+Editing - Track/Playlist, Shift + End, Shift + End, Show Last Playlist
+Automation - Show/Hide - View menu, , , Show Trim Playlists
+Editing - Selection - Track/Playlist, Shift + Up Arrow, Shift + Up Arrow, Up Arrow Context Command
+Track/Playlist, Shift + Up Arrow, Shift + Up Arrow, Previous Playlist
+Editing - MIDI, Shift + Up Arrow, Shift + Up Arrow, Transpose Up (Octave)
+Editing - Track/Playlist, Option + Shift + Up Arrow, Alt + Shift + Up Arrow, Up Arrow Context Command
+Edit menu - Editing - Track/Playlist, Option + Shift + Up Arrow, Alt + Shift + Up Arrow, Playlists View: Copy Selection to Target Playlist
+Editing - MIDI, Option + Shift + Up Arrow, Alt + Shift + Up Arrow, Copy and Transpose Up (Octave)
