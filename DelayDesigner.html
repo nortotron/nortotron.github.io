@@ -341,6 +341,22 @@ body.compact #grid{min-height:120px}
 body.compact .transport,body.compact .flowwrap,body.compact .mixer,body.compact .workspace{margin-bottom:8px}
 body.compact .bottom{grid-template-columns:minmax(0,1fr)}
 footer .credit{display:block;margin-top:6px;color:var(--muted)}
+.delayp{margin-bottom:10px}
+.dcols{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:6px 24px;align-items:start}
+.dcols .calcbox{margin-top:0;border-top:0;padding-top:0;border-left:1px solid var(--line);padding-left:20px}
+@media (max-width:900px){.dcols{grid-template-columns:minmax(0,1fr)}.dcols .calcbox{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:4px}}
+.gridpanel{margin-bottom:10px!important}
+#grid{height:200px}
+.flowpanel{position:relative}
+.flowpanel #compactBtn{position:absolute;top:8px;right:10px;z-index:2;min-width:84px}
+.flowsum{padding-right:100px}
+.warnbtn{background:#3a2a10;border-color:var(--warn);color:var(--warn)}
+.warnbtn:hover{background:#4a3612}
+:root[data-theme="light"] .warnbtn{background:#fff4d6;color:#8a5a00;border-color:#d99a00}
+/* full screen: use the whole width */
+:root:fullscreen .app,:root:-webkit-full-screen .app{max-width:none;padding:12px 28px 24px}
+:root:fullscreen body,:root:-webkit-full-screen body{overflow-y:auto}
+:root:fullscreen #grid{height:240px}
 footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 
 /* tooltips */
@@ -361,7 +377,6 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
     <div class="topright">
       <button type="button" class="pill chpill" id="chPill" title="Go to the challenges">Challenges <b id="chCount">0 / 5</b></button>
       <button class="btn small" id="themeBtn" aria-pressed="false" title="Switch between light and dark mode">☀ Light</button>
-      <button class="btn small" id="compactBtn" aria-pressed="false" title="Shorter layout with the visualisation only (hides numeric readouts)">Compact</button>
       <span class="pill" id="audioPill" role="status" aria-live="polite"><span class="dot"></span><span id="audioState">Audio off: press Start</span></span>
       <button class="btn small" id="fsBtn" aria-pressed="false" title="Fill the screen with Delay Designer (Esc to leave)">⛶ Full screen</button>
     </div>
@@ -396,13 +411,54 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
   </section>
 
   <div class="flowwrap">
-    <section class="panel" aria-labelledby="flowH">
+    <section class="panel flowpanel" aria-labelledby="flowH">
+      <button class="btn small" id="compactBtn" aria-pressed="false" title="Shorter layout with the visualisation only (hides numeric readouts)">Compact</button>
       <details class="fold" open id="flowFold">
         <summary class="flowsum"><h2 id="flowH">Signal flow: channel → aux send → delay loop → mix</h2><span class="fsub">click a block to jump to its control</span></summary>
       <svg id="flow" viewBox="0 0 1200 312" role="img" aria-labelledby="flowTitle flowDesc"></svg>
       </details>
     </section>
   </div>
+
+  <section class="panel delayp" aria-labelledby="dH">
+      <div class="dcols"><div class="dmain">
+      <h2 id="dH">Delay time &amp; BPM calculator</h2>
+      <div class="frow">
+        <label class="main" for="delayNum">Delay time</label>
+        <input type="number" id="delayNum" min="1" max="6000" step="0.01" value="500" aria-describedby="tip-delay delayMusical">
+        <span class="unit">ms</span>
+        <span class="tipw"><button type="button" class="info" aria-label="About delay time">i</button><span class="tip" role="tooltip" id="tip-delay">How long after the original each repeat arrives (1–6 000 ms). Type a value and press Enter, use the slider, or calculate it from the tempo below. Changing it by hand switches tempo sync off.</span></span>
+      </div>
+      <input type="range" class="h" id="delayRange" min="0" max="100000" step="1" style="--hc:var(--c-delay);margin-top:2px" aria-label="Delay time slider (logarithmic)">
+      <p class="hint" id="delayMusical"></p>
+      <div class="fieldmsg" id="delayMsg" aria-live="polite"></div>
+      </div>
+      <div class="calcbox" role="group" aria-labelledby="calcH">
+        <h3 id="calcH">Calculate from tempo</h3>
+        <div class="calcrow">
+          <fieldset>
+            <legend>Note value</legend>
+            <div class="seg" id="noteSeg"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Feel</legend>
+            <div class="seg" id="feelSeg"></div>
+          </fieldset>
+        </div>
+        <div class="result">
+          <output id="calcOut" aria-live="polite">500.00 ms</output>
+          <button class="btn accent" id="applyBtn">Apply to Delay</button>
+          <label class="check"><input type="checkbox" id="syncChk" aria-describedby="tip-sync"> Tempo sync</label>
+          <span class="tipw"><button type="button" class="info" aria-label="About tempo sync">i</button><span class="tip" role="tooltip" id="tip-sync">When on, the delay follows the calculator whenever BPM, note value or feel changes. When off, changing BPM leaves your delay time exactly as it is.</span></span>
+        </div>
+        <div class="formula" id="calcFormula"></div>
+        <details>
+          <summary>All note values at this tempo</summary>
+          <table class="nv" id="nvTable"></table>
+        </details>
+      </div>
+      </div>
+    </section>
 
   <section class="panel mixer" aria-labelledby="mixH">
     <div class="mixrow">
@@ -429,45 +485,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
     </div>
   </section>
 
-  <div class="workspace">
-    <section class="panel delayp" aria-labelledby="dH">
-      <h2 id="dH">Delay time &amp; BPM calculator</h2>
-      <div class="frow">
-        <label class="main" for="delayNum">Delay time</label>
-        <input type="number" id="delayNum" min="1" max="6000" step="0.01" value="500" aria-describedby="tip-delay delayMusical">
-        <span class="unit">ms</span>
-        <span class="tipw"><button type="button" class="info" aria-label="About delay time">i</button><span class="tip" role="tooltip" id="tip-delay">How long after the original each repeat arrives (1–6 000 ms). Type a value and press Enter, use the slider, or calculate it from the tempo below. Changing it by hand switches tempo sync off.</span></span>
-      </div>
-      <input type="range" class="h" id="delayRange" min="0" max="100000" step="1" style="--hc:var(--c-delay);margin-top:2px" aria-label="Delay time slider (logarithmic)">
-      <p class="hint" id="delayMusical"></p>
-      <div class="fieldmsg" id="delayMsg" aria-live="polite"></div>
-      <div class="calcbox" role="group" aria-labelledby="calcH">
-        <h3 id="calcH">Calculate from tempo</h3>
-        <div class="calcrow">
-          <fieldset>
-            <legend>Note value</legend>
-            <div class="seg" id="noteSeg"></div>
-          </fieldset>
-          <fieldset>
-            <legend>Feel</legend>
-            <div class="seg" id="feelSeg"></div>
-          </fieldset>
-        </div>
-        <div class="result">
-          <output id="calcOut" aria-live="polite">500.00 ms</output>
-          <button class="btn accent" id="applyBtn">Apply to Delay</button>
-          <label class="check"><input type="checkbox" id="syncChk" aria-describedby="tip-sync"> Tempo sync</label>
-          <span class="tipw"><button type="button" class="info" aria-label="About tempo sync">i</button><span class="tip" role="tooltip" id="tip-sync">When on, the delay follows the calculator whenever BPM, note value or feel changes. When off, changing BPM leaves your delay time exactly as it is.</span></span>
-        </div>
-        <div class="formula" id="calcFormula"></div>
-        <details>
-          <summary>All note values at this tempo</summary>
-          <table class="nv" id="nvTable"></table>
-        </details>
-      </div>
-    </section>
-
-    <section class="panel gridpanel" aria-labelledby="gridH">
+  <section class="panel gridpanel" aria-labelledby="gridH">
       <div class="gridhead">
         <h2 id="gridH">Beat grid: where the repeats land</h2>
         <span class="small" id="gridSub">Grid: 16ths</span>
@@ -480,12 +498,11 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
       <canvas id="grid" role="img" aria-label="Scrolling beat grid showing source pulses and delay repeats against beats and subdivisions"></canvas>
       <div class="lands" id="lands" aria-live="off"></div>
     </section>
-  </div>
 
-<div class="bottom">
+  <div class="bottom">
     <section class="panel" aria-labelledby="chH">
       <h2 id="chH">Challenges</h2>
-      <div class="progress"><span id="chProgress">0 / 5 complete</span><span>Hold each setting while playing</span><button class="btn small" id="chReset">Reset challenges</button></div>
+      <div class="progress"><span id="chProgress">0 / 5 complete</span><span>Hold each setting while playing</span><button class="btn small warnbtn" id="chReset" title="Clear all ticks and start the challenges again">↺ Reset challenges</button></div>
       <ol class="tasks" id="tasks"></ol>
     </section>
     <section class="panel learn" aria-labelledby="learnH">
@@ -577,7 +594,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 /* ================================================================
    Constants, maths and helpers
    ================================================================ */
-const VERSION = '1.5.0';
+const VERSION = '1.6.0';
 const FADER_MIN = -60;               // bottom of the dB faders = off (−∞)
 const MAX_DELAY_MS = 6000, MIN_DELAY_MS = 1;
 const LOOKAHEAD = 0.12;              // seconds of audio scheduled ahead
@@ -1133,6 +1150,9 @@ function drawFilterPlot() {
   const X = f => Math.log(f / 20) / Math.log(1000) * W, TOP = 6, BOT = -42;
   const Y = db => 3 + (TOP - clamp(db, BOT, TOP)) / (TOP - BOT) * (H - 14);
   c.font = '9px system-ui,sans-serif'; c.textBaseline = 'bottom';
+  [20, 50, 200, 500, 2000, 5000, 20000].forEach(f => {   // log-spaced minor lines
+    c.strokeStyle = CSSV('--grid-sub'); c.lineWidth = 1; c.beginPath(); c.moveTo(X(f), 0); c.lineTo(X(f), H - 10); c.stroke();
+  });
   [100, 1000, 10000].forEach((f, i) => {
     c.strokeStyle = CSSV('--grid-8th'); c.lineWidth = 1; c.beginPath(); c.moveTo(X(f), 0); c.lineTo(X(f), H - 10); c.stroke();
     c.fillStyle = CSSV('--faint'); c.fillText(['100', '1k', '10k'][i], X(f) - 6, H);
