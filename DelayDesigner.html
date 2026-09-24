@@ -49,7 +49,7 @@ p{margin:.3em 0}
 .small{font-size:.83rem;color:var(--muted)}
 header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin-bottom:8px}
 .topright{display:flex;align-items:center;gap:8px}
-#fsBtn{width:136px}
+#fsBtn{min-width:136px;white-space:nowrap}
 #audioPill{width:196px}
 header.top .sub{color:var(--muted);font-size:.9rem;margin-top:2px}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line);font-size:.82rem;color:var(--muted)}
@@ -341,8 +341,17 @@ body.compact #grid{min-height:120px}
 body.compact .transport,body.compact .flowwrap,body.compact .mixer,body.compact .workspace{margin-bottom:8px}
 body.compact .bottom{grid-template-columns:minmax(0,1fr)}
 footer .credit{display:block;margin-top:6px;color:var(--muted)}
+footer a{color:var(--c-ret)}
 .delayp{margin-bottom:10px}
-.dcols{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:6px 24px;align-items:start}
+.dcols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:6px 24px;align-items:start}
+.dcols .calcbox h3{margin:0 0 4px}
+.dcols .calcbox fieldset{margin:0}
+.dcols .calcrow{align-items:flex-end;gap:4px 14px}
+.dcols .result{margin:6px 0 2px}
+.dcols .formula{height:1.3em;white-space:nowrap;text-overflow:ellipsis}
+.dcols details{margin-top:2px}
+.delayp #delayMusical{height:2.6em}
+.delayp .fieldmsg{height:1.2em}
 .dcols .calcbox{margin-top:0;border-top:0;padding-top:0;border-left:1px solid var(--line);padding-left:20px}
 @media (max-width:900px){.dcols{grid-template-columns:minmax(0,1fr)}.dcols .calcbox{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:4px}}
 .gridpanel{margin-bottom:10px!important}
@@ -357,6 +366,8 @@ footer .credit{display:block;margin-top:6px;color:var(--muted)}
 :root:fullscreen .app,:root:-webkit-full-screen .app{max-width:none;padding:12px 28px 24px}
 :root:fullscreen body,:root:-webkit-full-screen body{overflow-y:auto}
 :root:fullscreen #grid{height:240px}
+#flow{max-width:1200px;margin:0 auto}
+:root:fullscreen #flow,:root:-webkit-full-screen #flow{max-width:min(1100px,100%);max-height:34vh}
 footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 
 /* tooltips */
@@ -584,7 +595,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
   <footer>
     Keyboard: Tab moves between controls; arrow keys adjust sliders and faders (Page Up/Down for bigger steps, Home/End for the extremes); Space starts and stops when no control has focus. Double-click a fader to return it to its default.
     <span id="selftest"></span>
-    <span class="credit">Delay Designer <span id="verFoot"></span> · Created by Charles.Norton · Bug reports and feature requests: please contact Charles.Norton.</span>
+    <span class="credit">Delay Designer <span id="verFoot"></span> · Created by Charles.Norton · Bug reports and feature requests: <a href="mailto:Charles.Norton@uwl.ac.uk">Charles.Norton@uwl.ac.uk</a> · <a href="https://www.fromatod.co.uk" target="_blank" rel="noopener" style="font-size:.9em">www.fromatod.co.uk</a></span>
   </footer>
 </main>
 
@@ -594,7 +605,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 /* ================================================================
    Constants, maths and helpers
    ================================================================ */
-const VERSION = '1.6.0';
+const VERSION = '1.6.1';
 const FADER_MIN = -60;               // bottom of the dB faders = off (−∞)
 const MAX_DELAY_MS = 6000, MIN_DELAY_MS = 1;
 const LOOKAHEAD = 0.12;              // seconds of audio scheduled ahead
@@ -1280,7 +1291,8 @@ function refreshDelay() {
   $('#delayRange').value = Math.round(logPos(S.delayMs, MIN_DELAY_MS, MAX_DELAY_MS) * 100);
   $('#delayRange').setAttribute('aria-valuetext', fmtMs(S.delayMs));
   const beats = S.delayMs / (60000 / S.bpm), b = musicalName(S.delayMs);
-  let txt = `= <b>${beats.toFixed(3).replace(/\.?0+$/, '')} beats</b> at ${S.bpm} BPM. `;
+  const bt = beats.toFixed(3).replace(/\.?0+$/, '');
+  let txt = `= <b>${bt} beat${bt === '1' ? '' : 's'}</b> at ${S.bpm} BPM. `;
   txt += b.err <= 0.005 ? `That is a <b>${b.f.word}${b.n.name}</b> (${b.n.label}${b.f.id !== 'straight' ? ' ' + b.f.label.toLowerCase() : ''}).`
     : `Nearest note value: ${b.f.word}${b.n.name} = ${b.v.toFixed(2)} ms.`;
   $('#delayMusical').innerHTML = txt;
