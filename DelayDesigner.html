@@ -120,7 +120,8 @@ input[type=number]:invalid{border-color:var(--danger)}
 @media (prefers-reduced-motion:reduce){#flow .flow{animation:none;stroke-dasharray:none}.overload{animation:none}}
 
 /* workspace */
-.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:10px;margin-bottom:10px;align-items:start}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:10px;margin-bottom:10px;align-items:stretch}
+.gridpanel{display:flex;flex-direction:column}
 .calcbox{margin-top:8px;border-top:1px solid var(--line);padding-top:4px}
 .calcbox h3{margin:6px 0 6px}
 .gridpanel .legend{margin:0 0 6px}
@@ -136,7 +137,8 @@ h2 .h2note{text-transform:none;letter-spacing:0;font-weight:500;color:var(--fain
 .strip output{font-variant-numeric:tabular-nums;font-weight:700;font-size:.92rem;height:1.3em;white-space:nowrap}
 .strip .ctl{height:30px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.15;overflow:hidden}
 .strip .ctl.decay{color:var(--c-fb)}
-.fader{position:relative;width:100%;height:170px}
+:root{--fh:170px}
+.fader{position:relative;width:100%;height:var(--fh)}
 .fader .tick{position:absolute;left:0;right:0;height:0;pointer-events:none}
 .fader .tick::before{content:"";position:absolute;left:calc(50% - 21px);width:38px;border-top:1px solid #36404c}
 .fader .tick span{position:absolute;right:calc(50% + 24px);transform:translateY(-52%);font-size:.62rem;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -150,7 +152,7 @@ h2 .h2note{text-transform:none;letter-spacing:0;font-weight:500;color:var(--fain
 .vm .mf{position:absolute;inset:0;background:linear-gradient(to top,#28b36b 0%,#3fd07f 62%,#e6c940 80%,#ff8a3d 90%,#ff4d4d 100%);
   -webkit-mask:repeating-linear-gradient(to top,#000 0 3px,transparent 3px 4px);mask:repeating-linear-gradient(to top,#000 0 3px,transparent 3px 4px);clip-path:inset(100% 0 0 0)}
 .vm .mp{position:absolute;left:0;right:0;height:2px;bottom:0;background:#e8ecf1;opacity:0}
-input.v{position:absolute;left:50%;top:50%;width:170px;height:36px;margin:0;transform:translate(-50%,-50%) rotate(-90deg);background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+input.v{position:absolute;left:50%;top:50%;width:var(--fh);height:36px;margin:0;transform:translate(-50%,-50%) rotate(-90deg);background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
 input.v::-webkit-slider-runnable-track{height:36px;background:transparent}
 input.v::-moz-range-track{height:36px;background:transparent}
 input.v::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:34px;border-radius:4px;background:linear-gradient(90deg,#9aa4b0,#e9edf2 45%,#6d7682 50%,#e9edf2 55%,#9aa4b0);border:1px solid #11151a;box-shadow:0 2px 6px rgba(0,0,0,.6)}
@@ -191,8 +193,8 @@ input.h:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ffd166}
 .loopmeter .val{font-variant-numeric:tabular-nums;width:74px;text-align:right;white-space:nowrap}
 
 /* filter strip: two knobs + response plot */
-.fbody{width:100%;height:170px;display:flex;flex-direction:column;align-items:center;gap:4px}
-.fplot{display:block;width:100%;height:66px;border-radius:6px;background:#0d1014;border:1px solid #232a33}
+.fbody{width:100%;height:var(--fh);display:flex;flex-direction:column;align-items:center;gap:4px}
+.fplot{display:block;width:100%;height:calc(var(--fh) - 104px);min-height:34px;border-radius:6px;background:#0d1014;border:1px solid #232a33}
 .knobs{display:flex;justify-content:space-around;width:100%}
 .kcol{display:flex;flex-direction:column;align-items:center;gap:2px}
 .kcol .kl{font-size:.68rem;color:var(--muted);font-weight:650;letter-spacing:.03em}
@@ -242,12 +244,12 @@ table.nv td.sel{background:#2d2450;color:#e3d9ff}
 .fx h3{margin:10px 0 6px}
 
 /* grid */
-.gridpanel{margin-bottom:10px}
+.gridpanel{margin-bottom:0}
 .gridhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px}
 .gridhead h2{margin-bottom:6px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
-#grid{display:block;width:100%;height:180px;border-radius:8px;background:#0d1014;border:1px solid var(--line)}
+#grid{display:block;width:100%;flex:1 1 auto;min-height:180px;height:180px;border-radius:8px;background:#0d1014;border:1px solid var(--line)}
 .lands{display:flex;flex-wrap:nowrap;gap:5px;margin-top:8px;font-size:.8rem;align-items:center;height:24px;overflow:hidden;white-space:nowrap}
 .chip{padding:2px 8px;border-radius:999px;border:1px solid var(--line-2);background:var(--panel-2);font-variant-numeric:tabular-nums}
 .chip.on{border-color:var(--c-ret)}
@@ -281,6 +283,45 @@ h3.ph{font-size:.86rem;color:var(--muted);text-transform:uppercase;letter-spacin
 .pcard li{margin:2px 0}
 .pcard .pnow{margin:6px 0 2px;font-size:.78rem;line-height:1.35;color:var(--pc);font-variant-numeric:tabular-nums;height:5.4em;overflow:hidden}
 .pcard .ptry{margin:0;font-size:.78rem;color:var(--muted)}
+h1 .ver{font-size:.72rem;font-weight:700;color:var(--muted);border:1px solid var(--line-2);border-radius:6px;padding:1px 6px;margin-left:8px;vertical-align:3px;letter-spacing:.03em}
+.chpill{cursor:pointer;color:var(--text)}
+.chpill b{color:var(--ok)}
+.seg.tiny span{min-width:0;padding:4px 8px;font-size:.8rem}
+.tempo2 .btn{padding:4px 8px;font-size:.8rem}
+.beats{flex-wrap:nowrap}
+.beats.eight .beat{width:30px;height:34px;font-size:.85rem}
+.beat.barstart{border-left:3px solid #566273}
+details.fold > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px}
+details.fold > summary::-webkit-details-marker{display:none}
+details.fold > summary::before{content:"▸";color:var(--muted);font-size:.9rem;transition:transform .15s;display:inline-block;width:12px}
+details.fold[open] > summary::before{transform:rotate(90deg)}
+details.fold > summary h2,details.fold > summary h3{margin:0}
+details.fold[open] > summary{margin-bottom:8px}
+.flowsum .fsub{font-size:.8rem;color:var(--faint)}
+/* source shaping mini-knobs */
+.mk{display:flex;align-items:center;gap:3px;font-size:.66rem;color:var(--muted)}
+.mknob{width:26px;height:26px;border-radius:50%;cursor:ns-resize;touch-action:none;outline:none;flex:none}
+.mknob svg{display:block;width:100%;height:100%}
+.mknob .kt{fill:none;stroke:#2a323c;stroke-width:5;stroke-linecap:round}
+.mknob .kv{fill:none;stroke:var(--c-src);stroke-width:5;stroke-linecap:round}
+.mknob .kc{fill:#2a323b;stroke:#0e1115;stroke-width:1}
+.mknob .kp{stroke:#f3f5f8;stroke-width:3.5;stroke-linecap:round}
+.mknob:focus-visible{box-shadow:var(--focus)}
+/* compact mode: shorter, visualisation only */
+body.compact{--fh:118px}
+body.compact .sub,body.compact .h2note,body.compact .strip output,body.compact .fader .tick span,body.compact .fader .tick b,
+body.compact .outmeter .val,body.compact .loopmeter .val,body.compact .loopmeter .lab2,body.compact .counter .lbl span,
+body.compact #delayMusical,body.compact .fieldmsg,body.compact .formula,body.compact .calcbox details,body.compact .lands,
+body.compact .kcol input,body.compact .kcol .kl,body.compact .strip .ctl.decay,body.compact .strip .filtout,body.compact #filtMsg,
+body.compact .task .th,body.compact #flow .blk .v,body.compact .barpos,body.compact .learn,body.compact .mk span,
+body.compact #flow .wl,body.compact .gridpanel .legend{display:none!important}
+body.compact .strip .lab{height:3.3em}
+body.compact .strip{gap:3px;padding:5px 5px 6px}
+body.compact .panel{padding:8px 10px}
+body.compact #grid{min-height:120px}
+body.compact .transport,body.compact .flowwrap,body.compact .mixer,body.compact .workspace{margin-bottom:8px}
+body.compact .bottom{grid-template-columns:minmax(0,1fr)}
+footer .credit{display:block;margin-top:6px;color:var(--muted)}
 footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 
 /* tooltips */
@@ -295,10 +336,12 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 <main class="app" id="app">
   <header class="top">
     <div>
-      <h1>Delay Designer</h1>
-      <div class="sub">One pulse per bar. Build rhythms from its echoes with an aux send, a filtered delay and a feedback loop.</div>
+      <h1>Delay Designer <span class="ver" id="ver"></span></h1>
+      <div class="sub">One pulse per bar (or every two bars). Build rhythms from its echoes with an aux send, a filtered delay and a feedback loop.</div>
     </div>
     <div class="topright">
+      <button type="button" class="pill chpill" id="chPill" title="Go to the challenges">Challenges <b id="chCount">0 / 5</b></button>
+      <button class="btn small" id="compactBtn" aria-pressed="false" title="Shorter layout with the visualisation only (hides numeric readouts)">Compact</button>
       <span class="pill" id="audioPill" role="status" aria-live="polite"><span class="dot"></span><span id="audioState">Audio off: press Start</span></span>
       <button class="btn small" id="fsBtn" aria-pressed="false" title="Fill the screen with Delay Designer (Esc to leave)">⛶ Full screen</button>
     </div>
@@ -313,12 +356,15 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
       <label for="bpmNum"><b>BPM</b></label>
       <input type="number" id="bpmNum" min="40" max="200" step="1" value="120" aria-describedby="tip-bpm">
       <input type="range" class="h" id="bpmRange" min="40" max="200" step="1" value="120" style="width:120px;--hc:var(--c-src)" aria-label="BPM slider" aria-describedby="tip-bpm">
-      <span class="tipw"><button type="button" class="info" aria-label="About BPM">i</button><span class="tip" role="tooltip" id="tip-bpm">Tempo in beats per minute (40–200). One beat lasts 60 000 ÷ BPM milliseconds. The source plays once per 4-beat bar, on beat 1.</span></span>
+      <span class="group tempo2"><button class="btn" id="halfBtn" title="Half tempo">½×</button><button class="btn" id="dblBtn" title="Double tempo">2×</button></span>
+      <span class="tipw"><button type="button" class="info" aria-label="About BPM">i</button><span class="tip" role="tooltip" id="tip-bpm">Tempo in beats per minute (40–200). One beat lasts 60 000 ÷ BPM milliseconds. The source plays once per cycle, on step 1: every bar in 1-bar mode, every other bar in 2-bar mode. ½× and 2× halve or double the tempo (within 40–200).</span></span>
     </div>
     <div class="group" aria-label="Beat indicator">
-      <div class="beats" id="beats" aria-hidden="true">
-        <div class="beat one">1</div><div class="beat">2</div><div class="beat">3</div><div class="beat">4</div>
+      <div class="seg tiny" role="radiogroup" aria-label="Pattern length">
+        <label title="One pulse every bar: 4 steps"><input type="radio" name="cycle" value="1"><span>1 bar</span></label>
+        <label title="One pulse every two bars: 8 steps"><input type="radio" name="cycle" value="2"><span>2 bars</span></label>
       </div>
+      <div class="beats" id="beats" aria-hidden="true"></div>
       <div class="barpos" id="barpos">Stopped</div>
     </div>
     <div class="outmeter" aria-label="Output meter">
@@ -330,8 +376,11 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
   </section>
 
   <div class="flowwrap">
-    <section class="panel" aria-label="Signal flow">
+    <section class="panel" aria-labelledby="flowH">
+      <details class="fold" open id="flowFold">
+        <summary class="flowsum"><h2 id="flowH">Signal flow: channel → aux send → delay loop → mix</h2><span class="fsub">click a block to jump to its control</span></summary>
       <svg id="flow" viewBox="0 0 1200 312" role="img" aria-labelledby="flowTitle flowDesc"></svg>
+      </details>
     </section>
   </div>
 
@@ -419,7 +468,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
       <div class="progress"><span id="chProgress">0 / 5 complete</span><span>Hold each setting while playing</span><button class="btn small" id="chReset">Reset challenges</button></div>
       <ol class="tasks" id="tasks"></ol>
     </section>
-    <section class="panel" aria-labelledby="learnH">
+    <section class="panel learn" aria-labelledby="learnH">
       <h2 id="learnH">Key ideas</h2>
       <h3 class="ph" style="margin-top:0">Key terms</h3>
       <dl class="concepts">
@@ -434,7 +483,8 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
         <dt><i style="background:var(--c-fb)"></i>Feedback</dt>
         <dd>Sends the filtered delay output back into the delay input. Below 100% repeats fade away; at 100% (unity) they sustain; above 100% each repeat is louder than the last, which is where overload happens.</dd>
       </dl>
-      <h3 class="ph">Core principles: how each control relates to amplitude, frequency, timbre and time</h3>
+      <details class="fold" open id="prFold">
+      <summary><h3 class="ph" style="margin:16px 0 0">Core principles: how each control relates to amplitude, frequency, timbre and time</h3></summary>
       <div class="principles">
         <article class="pcard" style="--pc:var(--p-amp)">
           <h4>Amplitude</h4>
@@ -481,6 +531,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
           <p class="ptry"><b>Try:</b> keep the same note value and change BPM with Tempo sync on, then off.</p>
         </article>
       </div>
+      </details>
     </section>
   </div>
   <div class="toasts">
@@ -496,6 +547,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
   <footer>
     Keyboard: Tab moves between controls; arrow keys adjust sliders and faders (Page Up/Down for bigger steps, Home/End for the extremes); Space starts and stops when no control has focus. Double-click a fader to return it to its default.
     <span id="selftest"></span>
+    <span class="credit">Delay Designer <span id="verFoot"></span> · Created by Charles.Norton · Bug reports and feature requests: please contact Charles.Norton.</span>
   </footer>
 </main>
 
@@ -505,6 +557,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 /* ================================================================
    Constants, maths and helpers
    ================================================================ */
+const VERSION = '1.4.0';
 const FADER_MIN = -60;               // bottom of the dB faders = off (−∞)
 const MAX_DELAY_MS = 6000, MIN_DELAY_MS = 1;
 const LOOKAHEAD = 0.12;              // seconds of audio scheduled ahead
@@ -539,7 +592,7 @@ const FEELS = [
 const DEFAULTS = {
   bpm: 120, src: -6, send: -6, fb: 35, ret: -3, master: -12,
   delayMs: 500, hpf: 20, lpf: 20000, note: 'quarter', feel: 'straight', sync: false,
-  sendPre: false, sendMute: false
+  sendPre: false, sendMute: false, bars: 1, tone: 0, pitch: 0
 };
 
 /** Quarter note = 60 000 ÷ BPM ms; other values scale by beats; dotted ×1.5, triplet ×2/3. */
@@ -592,6 +645,10 @@ function buildGraph(ctx, params) {
   const g = { ctx };
   const G = v => { const n = ctx.createGain(); n.gain.value = v; return n; };
   const A = size => { const a = ctx.createAnalyser(); a.fftSize = size; a.smoothingTimeConstant = 0; return a; };
+  g.shapeIn = G(1);                                 // pulses enter here
+  g.toneLo = ctx.createBiquadFilter(); g.toneLo.type = 'lowshelf'; g.toneLo.frequency.value = 400;
+  g.toneHi = ctx.createBiquadFilter(); g.toneHi.type = 'highshelf'; g.toneHi.frequency.value = 2500;
+  g.toneLo.gain.value = -p.tone; g.toneHi.gain.value = p.tone;   // spectral tilt: + brighter, − darker
   g.srcIn = G(1);
   g.srcFader = G(dbToGain(p.src));
   g.mix = G(1);
@@ -616,6 +673,7 @@ function buildGraph(ctx, params) {
   g.aRet = A(1024); g.aFb = A(1024); g.aOut = A(1024);
   g.p = { delayS: p.delayMs / 1000, hpf: p.hpf, lpf: p.lpf };
 
+  g.shapeIn.connect(g.toneLo); g.toneLo.connect(g.toneHi); g.toneHi.connect(g.srcIn);
   g.srcIn.connect(g.srcFader);
   g.srcFader.connect(g.mix);                       // dry
   g.srcFader.connect(g.aSrc);
@@ -653,21 +711,21 @@ function makeNoise(ctx) {
   return b;
 }
 /** Short, broadband percussive pulse (click + body + noise) so filtering is clearly audible. */
-function playPulse(ctx, dest, t, nb) {
-  const nodes = [];
+function playPulse(ctx, dest, t, nb, semis) {
+  const nodes = [], pr = Math.pow(2, (semis || 0) / 12);
   const env = (peak, dur) => {
     const e = ctx.createGain();
     e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(peak, t + 0.0015);
     e.gain.setTargetAtTime(0, t + 0.0015, dur / 4); e.connect(dest); return e;
   };
   const click = ctx.createOscillator(); click.type = 'triangle';
-  click.frequency.setValueAtTime(1900, t); click.frequency.exponentialRampToValueAtTime(950, t + 0.04);
+  click.frequency.setValueAtTime(1900 * pr, t); click.frequency.exponentialRampToValueAtTime(950 * pr, t + 0.04);
   click.connect(env(0.32, 0.07));
   const body = ctx.createOscillator(); body.type = 'sine';
-  body.frequency.setValueAtTime(190, t); body.frequency.exponentialRampToValueAtTime(95, t + 0.1);
+  body.frequency.setValueAtTime(190 * pr, t); body.frequency.exponentialRampToValueAtTime(95 * pr, t + 0.1);
   body.connect(env(0.38, 0.14));
   const nz = ctx.createBufferSource(); nz.buffer = nb || (noiseBuf = noiseBuf || makeNoise(ctx));
-  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2500;
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2500 * pr;
   nz.connect(hp); hp.connect(env(0.3, 0.035));
   [click, body, nz].forEach(n => { n.start(t); n.stop(t + 0.25); nodes.push(n); });
   return nodes;
@@ -766,11 +824,11 @@ function flushLoop() {
 /* ---------------- scheduler: exactly one pulse per 4-beat bar ---------------- */
 function scheduler() {
   while (nextBeatT < ctx.currentTime + LOOKAHEAD) {
-    const beat = beatIdx % 4, bar = Math.floor(beatIdx / 4) + 1;
-    beatLog.push({ t: nextBeatT, beat, bar });
+    const beat = beatIdx % 4, bar = Math.floor(beatIdx / 4) + 1, steps = 4 * S.bars, step = beatIdx % steps;
+    beatLog.push({ t: nextBeatT, beat, bar, step });
     stats.beats++;
-    if (beat === 0) {
-      playPulse(ctx, g.srcIn, nextBeatT, noiseBuf).forEach(n => { active.add(n); n.onended = () => active.delete(n); });
+    if (step === 0) {
+      playPulse(ctx, g.shapeIn, nextBeatT, noiseBuf, S.pitch).forEach(n => { active.add(n); n.onended = () => active.delete(n); });
       pulseLog.push({ t: nextBeatT, gated: P.state === 'tripped' });
       stats.pulses++; stats.pulseBeats.push(beat);
     }
@@ -795,7 +853,7 @@ function monitor() {
   const L = measure(g.aLoop, bufLoop), I = measure(g.aSend, bufSend);
   const k = 1 - Math.exp(-dt / 0.5);
   P.loopMs += (L.ms - P.loopMs) * k; P.injMs += (I.ms - P.injMs) * k;
-  const win = Math.max(2, 2 * S.delayMs / 1000 + 0.5);
+  const win = Math.max(2, 2 * S.delayMs / 1000 + 0.5, S.bars * 240 / S.bpm + 0.5);
   P.injHist.push({ t, pk: I.pk });
   while (P.injHist.length && P.injHist[0].t < t - win) P.injHist.shift();
   let inj = 0; for (const h of P.injHist) if (h.pk > inj) inj = h.pk;
@@ -867,6 +925,7 @@ function setParam(name) {
     case 'src': fadeTo(g.srcFader.gain, dbToGain(S.src), 0.02); break;
     case 'send': fadeTo(g.auxSend.gain, dbToGain(S.send), 0.02); break;
     case 'sendPre': fadeTo(g.preTap.gain, S.sendPre ? 1 : 0, 0.02); fadeTo(g.postTap.gain, S.sendPre ? 0 : 1, 0.02); break;
+    case 'tone': fadeTo(g.toneLo.gain, -S.tone, 0.03); fadeTo(g.toneHi.gain, S.tone, 0.03); break;
     case 'sendMute': fadeTo(g.sendMute.gain, S.sendMute ? 0 : 1, 0.015); break;
     case 'ret': fadeTo(g.ret.gain, dbToGain(S.ret), 0.02); break;
     case 'master': fadeTo(g.master.gain, dbToGain(S.master), 0.02); break;
@@ -882,7 +941,7 @@ function setParam(name) {
    ================================================================ */
 const FADERS = [
   { id: 'src', label: 'Source Level', min: FADER_MIN, max: 6, step: 0.5, color: '--c-src', marks: [6, 0, -6, -12, -24, -48],
-    tip: 'Level of the pulse channel, feeding the dry output. With a post-fader send it also sets how much reaches the delay; a pre-fader send ignores it.', foot: '→ dry out + send', meter: 'src' },
+    tip: 'Level of the pulse channel, feeding the dry output. With a post-fader send it also sets how much reaches the delay; a pre-fader send ignores it.', foot: '', meter: 'src' },
   { id: 'send', label: 'Aux Send', min: FADER_MIN, max: 6, step: 0.5, color: '--c-send', marks: [6, 0, -6, -12, -24, -48],
     tip: 'How much of the source is copied into the delay, setting how loud the first repeat is. Post: taken after Source Level, so it follows that fader. Pre: taken before it, so echoes remain with Source Level down. Mute stops new echoes; ones already in the loop carry on.', foot: '', meter: 'send' },
   { id: 'fb', label: 'Feedback — sends repeats back into the delay', min: 0, max: 110, step: 1, color: '--c-fb', marks: [0, 25, 50, 75, 110], wide: true,
@@ -928,6 +987,7 @@ function buildStrips() {
     input.addEventListener('dblclick', () => { S[f.id] = DEFAULTS[f.id]; setParam(f.id); refreshFader(f.id); onAnyChange(); });
   });
   buildFilterStrip(host);
+  buildSourceShaping();
   document.querySelectorAll('input[name=sendpos]').forEach(r => r.addEventListener('change', () => {
     S.sendPre = r.value === 'pre'; setParam('sendPre'); refreshSend(); onAnyChange();
   }));
@@ -940,6 +1000,46 @@ function knobPt(a, r) { const t = a * Math.PI / 180; return [24 + r * Math.sin(t
 function knobArc(a0, a1, r) {
   const [x0, y0] = knobPt(a0, r), [x1, y1] = knobPt(a1, r);
   return `M${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)},${y1.toFixed(2)}`;
+}
+/* ---------------- source shaping mini-knobs (Tone tilt, Pitch) ---------------- */
+const SHAPE = {
+  tone: { min: -12, max: 12, step: 1, label: 'Tone', fmt: v => v === 0 ? 'flat' : (v > 0 ? 'brighter +' : 'darker −') + Math.abs(v) + ' dB',
+    tip: 'Tone tilts the pulse spectrum: turn right for more treble and less bass (brighter), left for the opposite (darker).' },
+  pitch: { min: -12, max: 12, step: 1, label: 'Pitch', fmt: v => v === 0 ? '0 st' : minus((v > 0 ? '+' : '') + v) + ' semitones',
+    tip: 'Pitch moves every partial of the pulse up or down (±12 semitones = one octave), shifting where its energy sits in the spectrum.' }
+};
+const mknobs = {};
+function buildSourceShaping() {
+  const ctl = $('#foot-src');
+  ctl.innerHTML = Object.keys(SHAPE).map(k => `<span class="mk"><span id="mkl-${k}">${SHAPE[k].label}</span>
+    <div class="mknob" id="mk-${k}" role="slider" tabindex="0" aria-labelledby="mkl-${k}" aria-valuemin="${SHAPE[k].min}" aria-valuemax="${SHAPE[k].max}" title="${SHAPE[k].tip} Double-click to reset.">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path class="kt" d="${knobArc(-KNOB_A, KNOB_A, 19)}"/><path class="kv"/><circle class="kc" cx="24" cy="24" r="12"/><line class="kp" x1="24" y1="24" x2="24" y2="14"/></svg></div></span>`).join('');
+  Object.keys(SHAPE).forEach(k => {
+    const d = SHAPE[k], kn = document.getElementById('mk-' + k);
+    mknobs[k] = { el: kn, kv: kn.querySelector('.kv'), kp: kn.querySelector('.kp') };
+    const set = v => { v = clamp(Math.round(v), d.min, d.max); if (v === S[k]) return; S[k] = v; setParam(k); refreshShape(); onAnyChange(); };
+    let drag = null;
+    kn.addEventListener('pointerdown', e => { drag = { y: e.clientY, v: S[k] }; kn.setPointerCapture(e.pointerId); kn.focus(); e.preventDefault(); });
+    kn.addEventListener('pointermove', e => { if (drag) set(drag.v + (drag.y - e.clientY) / 6); });
+    kn.addEventListener('pointerup', () => { drag = null; }); kn.addEventListener('pointercancel', () => { drag = null; });
+    kn.addEventListener('wheel', e => { e.preventDefault(); set(S[k] - Math.sign(e.deltaY)); }, { passive: false });
+    kn.addEventListener('dblclick', () => set(0));
+    kn.addEventListener('keydown', e => {
+      const st = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1, PageUp: 4, PageDown: -4 }[e.key];
+      if (st) set(S[k] + st); else if (e.key === 'Home') set(d.min); else if (e.key === 'End') set(d.max); else return;
+      e.preventDefault();
+    });
+  });
+}
+function refreshShape() {
+  Object.keys(SHAPE).forEach(k => {
+    const d = SHAPE[k], m = mknobs[k]; if (!m) return;
+    const a = -KNOB_A + (S[k] - d.min) / (d.max - d.min) * 2 * KNOB_A;
+    m.kv.setAttribute('d', Math.abs(a) < 1 ? '' : (a < 0 ? knobArc(a, 0, 19) : knobArc(0, a, 19)));
+    const [x, y] = knobPt(a, 10); m.kp.setAttribute('x2', x.toFixed(2)); m.kp.setAttribute('y2', y.toFixed(2));
+    m.el.setAttribute('aria-valuenow', S[k]); m.el.setAttribute('aria-valuetext', d.fmt(S[k]));
+  });
+  updateFlowValues();
 }
 function buildFilterStrip(host) {
   const el = document.createElement('div');
@@ -1172,7 +1272,7 @@ function setBpm(v) {
   S.bpm = b;
   $('#bpmNum').value = b; $('#bpmRange').value = b; $('#bpmRange').setAttribute('aria-valuetext', b + ' BPM');
   if (S.sync) setDelay(calcValue(), false);    // sync off: manual delay time is left untouched
-  refreshCalc(); refreshDelay(); onAnyChange();
+  refreshCalc(); refreshDelay(); refreshTempoBtns(); onAnyChange();
 }
 
 function wireInputs() {
@@ -1209,7 +1309,7 @@ function wireInputs() {
 function resetAll() {
   Object.assign(S, DEFAULTS);
   FADERS.forEach(f => { setParam(f.id); refreshFader(f.id); });
-  setParam('sendPre'); setParam('sendMute'); refreshSend();
+  setParam('sendPre'); setParam('sendMute'); setParam('tone'); refreshSend(); refreshShape(); buildBeats();
   ['delay', 'hpf', 'lpf'].forEach(setParam);
   setMsg('#delayMsg', ''); filtRangeMsg = '';
   setBpm(DEFAULTS.bpm); refreshFilters(); refreshDelay(); refreshCalc();
@@ -1292,7 +1392,7 @@ function buildFlow() {
 }
 function updateFlowValues() {
   const set = (id, t) => { const el = document.getElementById('sv-' + id); if (el) el.textContent = t; };
-  set('src', 'pulse on beat 1'); set('srclvl', fmtDb(S.src));
+  set('src', (S.tone || S.pitch) ? `tone ${S.tone > 0 ? '+' : ''}${S.tone} · pitch ${S.pitch > 0 ? '+' : ''}${S.pitch}` : `pulse every ${S.bars === 2 ? '2 bars' : 'bar'}`); set('srclvl', fmtDb(S.src));
   set('send', S.sendMute ? 'MUTED' : fmtDb(S.send) + (S.sendPre ? ' · pre' : ' · post'));
   const w = id => document.getElementById(id);
   if (w('w-sendpre')) {
@@ -1370,7 +1470,7 @@ function drawGrid(t) {
   const dpr = window.devicePixelRatio || 1, W = gridCv.clientWidth, H = gridCv.clientHeight;
   if (gridCv.width !== Math.round(W * dpr) || gridCv.height !== Math.round(H * dpr)) { gridCv.width = Math.round(W * dpr); gridCv.height = Math.round(H * dpr); }
   g2.setTransform(dpr, 0, 0, dpr, 0, 0); g2.clearRect(0, 0, W, H);
-  const beatS = 60 / S.bpm, span = 8 * beatS, tL = t - span * 0.8, tR = t + span * 0.2;
+  const beatS = 60 / S.bpm, span = 8 * S.bars * beatS, tL = t - span * 0.8, tR = t + span * 0.2;
   const X = tt => 64 + (tt - tL) / span * (W - 70);
   const lanes = { head: [0, 20], src: [24, 60], exp: [66, 110], heard: [116, H - 6] };
   // lane labels
@@ -1487,7 +1587,7 @@ function renderBeat(t) {
   let cur = null;
   for (let i = beatLog.length - 1; i >= 0; i--) if (beatLog[i].t <= t) { cur = beatLog[i]; break; }
   const cells = document.querySelectorAll('.beat');
-  cells.forEach((c, i) => c.classList.toggle('active', !!cur && cur.beat === i));
+  cells.forEach((c, i) => c.classList.toggle('active', !!cur && cur.step === i));
   $('#barpos').textContent = cur ? `Bar ${cur.bar} · Beat ${cur.beat + 1}` : 'Count-in…';
 }
 function updateProtectUI() {
@@ -1579,6 +1679,7 @@ function renderTasks() {
       <span class="st" aria-hidden="true">✓</span><span class="tt">${c.t}<span class="sr-only">${c.done ? ' (complete)' : ''}</span></span>
       <span class="th">${c.h}</span><span class="bar" aria-hidden="true"><i></i></span></li>`).join('');
   $('#chProgress').textContent = `${CH.filter(c => c.done).length} / ${CH.length} complete`;
+  $('#chCount').textContent = `${CH.filter(c => c.done).length} / ${CH.length}`;
 }
 let lastChT = 0;
 function updateChallenges(t) {
@@ -1646,6 +1747,30 @@ function wireTooltips() {
   const hide = () => document.querySelectorAll('.tipw.open').forEach(w => w.classList.remove('open'));
   window.addEventListener('scroll', hide, true);
 }
+function buildBeats() {
+  const n = 4 * S.bars, box = $('#beats');
+  box.className = 'beats' + (S.bars === 2 ? ' eight' : '');
+  box.innerHTML = Array.from({ length: n }, (_, i) => `<div class="beat${i === 0 ? ' one' : ''}${i === 4 ? ' barstart' : ''}">${(i % 4) + 1}</div>`).join('');
+  document.querySelectorAll('input[name=cycle]').forEach(r => { r.checked = +r.value === S.bars; });
+  updateFlowValues();
+}
+function refreshTempoBtns() { $('#dblBtn').disabled = S.bpm * 2 > 200; $('#halfBtn').disabled = S.bpm / 2 < 40; }
+function wireExtras() {
+  $('#dblBtn').addEventListener('click', () => setBpm(S.bpm * 2));
+  $('#halfBtn').addEventListener('click', () => setBpm(S.bpm / 2));
+  document.querySelectorAll('input[name=cycle]').forEach(r => r.addEventListener('change', () => { S.bars = +r.value; buildBeats(); onAnyChange(); }));
+  $('#chPill').addEventListener('click', () => { const t = $('#chH'); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  const cb = $('#compactBtn');
+  const applyCompact = on => {
+    document.body.classList.toggle('compact', on); cb.setAttribute('aria-pressed', String(on));
+    cb.textContent = on ? 'Full view' : 'Compact'; storage.set('dd.compact', on);
+    requestAnimationFrame(drawFilterPlot);
+  };
+  cb.addEventListener('click', () => applyCompact(!document.body.classList.contains('compact')));
+  applyCompact(!!storage.get('dd.compact'));
+  $('#ver').textContent = 'v' + VERSION; $('#verFoot').textContent = 'v' + VERSION;
+  buildBeats(); refreshShape(); refreshTempoBtns();
+}
 function wireFullscreen() {
   const btn = $('#fsBtn'), root = document.documentElement;
   const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
@@ -1675,7 +1800,7 @@ function selfTest() {
 }
 function init() {
   buildFlow(); buildStrips(); buildCalc(); loadCh(); renderTasks(); wireInputs();
-  FADERS.forEach(f => refreshFader(f.id)); refreshSend(); wireTooltips(); wireFullscreen();
+  FADERS.forEach(f => refreshFader(f.id)); refreshSend(); wireTooltips(); wireFullscreen(); wireExtras();
   setBpm(S.bpm); refreshFilters(); refreshDelay(); refreshCalc(); updateProtectUI(); updateFlowValues(); refreshPrinciples();
   $('#loopMark').style.left = `calc(${((gainToDb(PROT.PEAK) + 60) / 66 * 100).toFixed(2)}% - 1px)`;
   checkEnvironment();
