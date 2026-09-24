@@ -14,8 +14,27 @@
   --danger:#ff5a5a; --ok:#4ade80; --warn:#fbbf24;
   --p-amp:#f472b6; --p-freq:#6ad08a; --p-timbre:#a78bfa; --p-time:#38bdf8;
   --radius:12px; --focus:0 0 0 3px #ffd166;
+  --inset:#0d1014; --chip:#141920; --rule:#2a323c; --body2:#c9d1db;
+  --grid-bar:#566273; --grid-beat:#39424e; --grid-8th:#2e3743; --grid-sub:#20272f;
   color-scheme:dark;
 }
+:root[data-theme="light"]{
+  --bg:#e9edf2; --panel:#ffffff; --panel-2:#f4f6f9; --line:#d3d9e1; --line-2:#b9c2cd;
+  --text:#18202a; --muted:#4f5a67; --faint:#6f7a87;
+  --c-src:#0e9c89; --c-send:#2a67d6; --c-delay:#7353dd; --c-filter:#26914c;
+  --c-ret:#0b86b8; --c-fb:#dc7410; --c-out:#3b4552; --c-lim:#d64545;
+  --p-amp:#c0307f; --p-freq:#26914c; --p-timbre:#7353dd; --p-time:#0b86b8;
+  --inset:#e3e8ee; --chip:#ffffff; --rule:#c9d1db; --body2:#2d3743;
+  --grid-bar:#8a95a3; --grid-beat:#b3bcc7; --grid-8th:#cbd2da; --grid-sub:#dde2e8;
+  color-scheme:light;
+}
+:root[data-theme="light"] .btn.primary{background:#bfeee4;border-color:#2aa58c}
+:root[data-theme="light"] .btn.primary[aria-pressed="true"]{background:#f7d0d3;border-color:#c24a52}
+:root[data-theme="light"] .btn.accent{background:#e6defc;border-color:#7d62c7}
+:root[data-theme="light"] .seg input:checked + span{color:#fff}
+:root[data-theme="light"] .beat.one.active{color:#fff}
+:root[data-theme="light"] #grid{background:#f8fafc}
+:root[data-theme="light"] .tip{background:#1b222b;color:#f3f5f8}
 *{box-sizing:border-box}
 html,body{margin:0;overflow-x:clip;background:var(--bg);color:var(--text);
   font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
@@ -55,16 +74,16 @@ header.top .sub{color:var(--muted);font-size:.9rem;margin-top:2px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .group{display:flex;align-items:center;gap:8px}
 .bpm input[type=number]{width:70px}
-input[type=number]{background:#0d1014;border:1px solid var(--line-2);border-radius:7px;padding:5px 7px;text-align:right}
+input[type=number]{background:var(--inset);border:1px solid var(--line-2);border-radius:7px;padding:5px 7px;text-align:right}
 input[type=number]:invalid{border-color:var(--danger)}
 .beats{display:flex;gap:6px}
 .beat{width:38px;height:38px;border-radius:9px;border:1px solid var(--line-2);display:grid;place-items:center;
-  font-weight:700;color:var(--faint);background:#12161b;position:relative;transition:background .06s,color .06s}
+  font-weight:700;color:var(--faint);background:var(--inset);position:relative;transition:background .06s,color .06s}
 .beat.one::after{content:"pulse";position:absolute;bottom:-14px;font-size:.6rem;font-weight:600;color:var(--c-src);letter-spacing:.05em}
-.beat.active{background:#2a323d;color:var(--text)}
+.beat.active{background:var(--rule);color:var(--text)}
 .beat.one.active{background:var(--c-src);color:#062c27;box-shadow:0 0 16px var(--c-src)}
 .barpos{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem;width:112px;white-space:nowrap}
-.meter{position:relative;height:12px;border-radius:6px;background:#0c0f13;border:1px solid var(--line);overflow:hidden}
+.meter{position:relative;height:12px;border-radius:6px;background:var(--inset);border:1px solid var(--line);overflow:hidden}
 .meter .fill{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,#2fbf71 0%,#2fbf71 70%,#f3c43b 85%,#ff5a5a 100%);background-size:var(--mw,200px) 100%}
 .meter .mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--danger)}
 .outmeter{display:grid;grid-template-columns:auto 150px auto auto;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);margin-left:auto}
@@ -93,7 +112,7 @@ input[type=number]:invalid{border-color:var(--danger)}
 .flowwrap .panel{min-width:760px;padding:8px 10px}
 #flow{display:block;width:100%;height:auto}
 #flow text{fill:var(--text);font-family:inherit}
-#flow .blk rect{fill:#141920;stroke:var(--bc);stroke-width:2}
+#flow .blk rect{fill:var(--chip);stroke:var(--bc);stroke-width:2}
 #flow .blk .t{font-size:13px;font-weight:700}
 #flow .blk .v{font-size:13px;fill:var(--muted);font-variant-numeric:tabular-nums}
 #flow .blk .glow{fill:var(--bc);opacity:calc(var(--l,0) * .28)}
@@ -108,7 +127,7 @@ input[type=number]:invalid{border-color:var(--danger)}
 #flow .wl{font-size:12px;fill:var(--muted)}
 #flow .flow.fbw{stroke-width:5}
 @keyframes dash{to{stroke-dashoffset:-16}}
-#flow .sum{fill:#141920;stroke:var(--line-2);stroke-width:2}
+#flow .sum{fill:var(--chip);stroke:var(--line-2);stroke-width:2}
 #flow .sumt{font-size:20px;font-weight:700;text-anchor:middle;dominant-baseline:central}
 #flow .zone{fill:none;stroke:var(--line-2);stroke-dasharray:6 6;stroke-width:1.5}
 #flow .zl{font-size:12px;fill:var(--muted);letter-spacing:.12em;font-weight:650}
@@ -140,15 +159,15 @@ h2 .h2note{text-transform:none;letter-spacing:0;font-weight:500;color:var(--fain
 :root{--fh:170px}
 .fader{position:relative;width:100%;height:var(--fh)}
 .fader .tick{position:absolute;left:0;right:0;height:0;pointer-events:none}
-.fader .tick::before{content:"";position:absolute;left:calc(50% - 21px);width:38px;border-top:1px solid #36404c}
+.fader .tick::before{content:"";position:absolute;left:calc(50% - 21px);width:38px;border-top:1px solid var(--rule)}
 .fader .tick span{position:absolute;right:calc(50% + 24px);transform:translateY(-52%);font-size:.62rem;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
 .fader .tick.unity::before{left:calc(50% - 26px);width:70px;border-top:2px solid var(--danger)}
 .fader .tick.unity span{color:#ffb4b4;font-weight:700}
 .fader .tick.unity b{position:absolute;left:calc(50% + 37px);transform:translateY(-52%);font-size:.58rem;color:#ffb4b4;letter-spacing:.05em}
 .fader .zone-hot{position:absolute;left:calc(50% - 6px);width:12px;background:repeating-linear-gradient(45deg,rgba(255,90,90,.45) 0 4px,transparent 4px 8px);border-radius:3px;pointer-events:none}
-.fader .slot{position:absolute;left:calc(50% - 3px);width:6px;top:8px;bottom:8px;background:#0b0e12;border-radius:3px;border:1px solid #2a323c;pointer-events:none}
+.fader .slot{position:absolute;left:calc(50% - 3px);width:6px;top:8px;bottom:8px;background:var(--inset);border-radius:3px;border:1px solid var(--rule);pointer-events:none}
 /* level meter beside each fader */
-.vm{position:absolute;left:calc(50% + 22px);width:8px;top:8px;bottom:8px;border-radius:3px;background:#0b0e12;border:1px solid #232a33;overflow:hidden;pointer-events:none}
+.vm{position:absolute;left:calc(50% + 22px);width:8px;top:8px;bottom:8px;border-radius:3px;background:var(--inset);border:1px solid var(--rule);overflow:hidden;pointer-events:none}
 .vm .mf{position:absolute;inset:0;background:linear-gradient(to top,#28b36b 0%,#3fd07f 62%,#e6c940 80%,#ff8a3d 90%,#ff4d4d 100%);
   -webkit-mask:repeating-linear-gradient(to top,#000 0 3px,transparent 3px 4px);mask:repeating-linear-gradient(to top,#000 0 3px,transparent 3px 4px);clip-path:inset(100% 0 0 0)}
 .vm .mp{position:absolute;left:0;right:0;height:2px;bottom:0;background:#e8ecf1;opacity:0}
@@ -162,14 +181,14 @@ input.v:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px #ffd166}
 input.v:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ffd166}
 .seg.mini span{min-width:0;padding:3px 6px;font-size:.74rem;border-radius:6px}
 .seg.mini input:checked + span{background:var(--c-send);border-color:var(--c-send);color:#071a3a}
-.mute{appearance:none;border:1px solid var(--line-2);background:#141920;border-radius:6px;padding:3px 0;width:52px;font-size:.74rem;font-weight:700;cursor:pointer;color:var(--muted)}
+.mute{appearance:none;border:1px solid var(--line-2);background:var(--chip);border-radius:6px;padding:3px 0;width:52px;font-size:.74rem;font-weight:700;cursor:pointer;color:var(--muted)}
 .mute[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:#241a00}
 .strip.muted .vm,.strip.muted input.v{opacity:.45}
 
 /* horizontal sliders */
 input.h{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;cursor:pointer;margin:0}
-input.h::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:#0b0e12;border:1px solid #2a323c}
-input.h::-moz-range-track{height:6px;border-radius:3px;background:#0b0e12;border:1px solid #2a323c}
+input.h::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:var(--inset);border:1px solid var(--rule)}
+input.h::-moz-range-track{height:6px;border-radius:3px;background:var(--inset);border:1px solid var(--rule)}
 input.h::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;background:var(--hc,#dfe4ea);border:2px solid #0e1115}
 input.h::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--hc,#dfe4ea);border:2px solid #0e1115}
 input.h:focus-visible{box-shadow:none}
@@ -194,14 +213,14 @@ input.h:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ffd166}
 
 /* filter strip: two knobs + response plot */
 .fbody{width:100%;height:var(--fh);display:flex;flex-direction:column;align-items:center;gap:4px}
-.fplot{display:block;width:100%;height:calc(var(--fh) - 104px);min-height:34px;border-radius:6px;background:#0d1014;border:1px solid #232a33}
+.fplot{display:block;width:100%;height:calc(var(--fh) - 104px);min-height:34px;border-radius:6px;background:var(--inset);border:1px solid var(--rule)}
 .knobs{display:flex;justify-content:space-around;width:100%}
 .kcol{display:flex;flex-direction:column;align-items:center;gap:2px}
 .kcol .kl{font-size:.68rem;color:var(--muted);font-weight:650;letter-spacing:.03em}
 .kcol input[type=number]{width:62px;padding:2px 4px;font-size:.76rem}
 .knob{width:46px;height:46px;border-radius:50%;cursor:ns-resize;touch-action:none;outline:none}
 .knob svg{display:block;width:100%;height:100%}
-.knob .kt{fill:none;stroke:#2a323c;stroke-width:4;stroke-linecap:round}
+.knob .kt{fill:none;stroke:var(--rule);stroke-width:4;stroke-linecap:round}
 .knob .kv{fill:none;stroke:var(--c-filter);stroke-width:4;stroke-linecap:round}
 .knob .kc{fill:url(#knobGrad);stroke:#0e1115;stroke-width:1}
 .knob .kp{stroke:#f3f5f8;stroke-width:2.5;stroke-linecap:round}
@@ -222,7 +241,7 @@ legend{font-size:.78rem;color:var(--muted);margin-bottom:4px;padding:0}
 .seg{display:flex;flex-wrap:wrap;gap:4px}
 .seg label{position:relative}
 .seg input{position:absolute;opacity:0;width:1px;height:1px}
-.seg span{display:inline-block;padding:5px 10px;border-radius:7px;border:1px solid var(--line-2);background:#141920;cursor:pointer;font-size:.88rem;font-weight:600;min-width:44px;text-align:center}
+.seg span{display:inline-block;padding:5px 10px;border-radius:7px;border:1px solid var(--line-2);background:var(--chip);cursor:pointer;font-size:.88rem;font-weight:600;min-width:44px;text-align:center}
 .seg input:checked + span{background:var(--c-delay);border-color:var(--c-delay);color:#160b33}
 .seg input:focus-visible + span{box-shadow:var(--focus)}
 .calcrow{display:flex;flex-wrap:wrap;gap:4px 16px}
@@ -249,7 +268,7 @@ table.nv td.sel{background:#2d2450;color:#e3d9ff}
 .gridhead h2{margin-bottom:6px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
-#grid{display:block;width:100%;flex:1 1 auto;min-height:180px;height:180px;border-radius:8px;background:#0d1014;border:1px solid var(--line)}
+#grid{display:block;width:100%;flex:1 1 auto;min-height:180px;height:180px;border-radius:8px;background:var(--inset);border:1px solid var(--line)}
 .lands{display:flex;flex-wrap:nowrap;gap:5px;margin-top:8px;font-size:.8rem;align-items:center;height:24px;overflow:hidden;white-space:nowrap}
 .chip{padding:2px 8px;border-radius:999px;border:1px solid var(--line-2);background:var(--panel-2);font-variant-numeric:tabular-nums}
 .chip.on{border-color:var(--c-ret)}
@@ -265,7 +284,7 @@ table.nv td.sel{background:#2d2450;color:#e3d9ff}
 .task.live .st{border-color:var(--c-ret)}
 .task .tt{font-weight:650;font-size:.9rem}
 .task .th{grid-column:2;font-size:.8rem;color:var(--muted)}
-.task .bar{grid-column:2;height:4px;border-radius:2px;background:#0c0f13;overflow:hidden}
+.task .bar{grid-column:2;height:4px;border-radius:2px;background:var(--inset);overflow:hidden}
 .task .bar i{display:block;height:100%;width:0;background:var(--c-ret)}
 .task.done .bar i{background:var(--ok);width:100%!important}
 .progress{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 10px;margin-bottom:8px;font-size:.86rem;color:var(--muted)}
@@ -273,13 +292,13 @@ table.nv td.sel{background:#2d2450;color:#e3d9ff}
 dl.concepts{margin:0;display:grid;gap:8px}
 dl.concepts dt{font-weight:700;font-size:.9rem}
 dl.concepts dt i{font-style:normal;display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
-dl.concepts dd{margin:0 0 0 16px;font-size:.86rem;color:#c9d1db}
+dl.concepts dd{margin:0 0 0 16px;font-size:.86rem;color:var(--body2)}
 h3.ph{font-size:.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:16px 0 8px}
 .principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
 .pcard{background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--pc);border-radius:9px;padding:8px 10px}
 .pcard h4{margin:0 0 2px;color:var(--pc);font-size:.95rem}
 .pcard .pctl{margin:0 0 4px;font-size:.74rem;color:var(--faint)}
-.pcard ul{margin:0;padding-left:16px;font-size:.82rem;color:#c9d1db}
+.pcard ul{margin:0;padding-left:16px;font-size:.82rem;color:var(--body2)}
 .pcard li{margin:2px 0}
 .pcard .pnow{margin:6px 0 2px;font-size:.78rem;line-height:1.35;color:var(--pc);font-variant-numeric:tabular-nums;height:5.4em;overflow:hidden}
 .pcard .ptry{margin:0;font-size:.78rem;color:var(--muted)}
@@ -302,9 +321,9 @@ details.fold[open] > summary{margin-bottom:8px}
 .mk{display:flex;align-items:center;gap:3px;font-size:.66rem;color:var(--muted)}
 .mknob{width:26px;height:26px;border-radius:50%;cursor:ns-resize;touch-action:none;outline:none;flex:none}
 .mknob svg{display:block;width:100%;height:100%}
-.mknob .kt{fill:none;stroke:#2a323c;stroke-width:5;stroke-linecap:round}
+.mknob .kt{fill:none;stroke:var(--line-2);stroke-width:5;stroke-linecap:round}
 .mknob .kv{fill:none;stroke:var(--c-src);stroke-width:5;stroke-linecap:round}
-.mknob .kc{fill:#2a323b;stroke:#0e1115;stroke-width:1}
+.mknob .kc{fill:#5a6573;stroke:#aab4c0;stroke-width:1.5}
 .mknob .kp{stroke:#f3f5f8;stroke-width:3.5;stroke-linecap:round}
 .mknob:focus-visible{box-shadow:var(--focus)}
 /* compact mode: shorter, visualisation only */
@@ -326,8 +345,8 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 
 /* tooltips */
 .tipw{position:relative;display:inline-flex}
-.info{appearance:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--line-2);background:#141920;color:var(--muted);font-size:.7rem;font-weight:800;line-height:1;padding:0;cursor:help;flex:none}
-.tip{position:fixed;z-index:60;left:0;top:0;width:min(230px,80vw);background:#f3f5f8;color:#141920;border-radius:8px;padding:8px 10px;font-size:.8rem;font-weight:500;line-height:1.35;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;pointer-events:none;text-transform:none;letter-spacing:0}
+.info{appearance:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--line-2);background:var(--chip);color:var(--muted);font-size:.7rem;font-weight:800;line-height:1;padding:0;cursor:help;flex:none}
+.tip{position:fixed;z-index:60;left:0;top:0;width:min(230px,80vw);background:#f3f5f8;color:var(--chip);border-radius:8px;padding:8px 10px;font-size:.8rem;font-weight:500;line-height:1.35;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;pointer-events:none;text-transform:none;letter-spacing:0}
 .tipw:hover .tip,.info:focus-visible + .tip,.tipw.open .tip{display:block}
 </style>
 </head>
@@ -341,6 +360,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
     </div>
     <div class="topright">
       <button type="button" class="pill chpill" id="chPill" title="Go to the challenges">Challenges <b id="chCount">0 / 5</b></button>
+      <button class="btn small" id="themeBtn" aria-pressed="false" title="Switch between light and dark mode">☀ Light</button>
       <button class="btn small" id="compactBtn" aria-pressed="false" title="Shorter layout with the visualisation only (hides numeric readouts)">Compact</button>
       <span class="pill" id="audioPill" role="status" aria-live="polite"><span class="dot"></span><span id="audioState">Audio off: press Start</span></span>
       <button class="btn small" id="fsBtn" aria-pressed="false" title="Fill the screen with Delay Designer (Esc to leave)">⛶ Full screen</button>
@@ -354,10 +374,10 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
     </div>
     <div class="group bpm">
       <label for="bpmNum"><b>BPM</b></label>
-      <input type="number" id="bpmNum" min="40" max="200" step="1" value="120" aria-describedby="tip-bpm">
-      <input type="range" class="h" id="bpmRange" min="40" max="200" step="1" value="120" style="width:120px;--hc:var(--c-src)" aria-label="BPM slider" aria-describedby="tip-bpm">
+      <input type="number" id="bpmNum" min="40" max="1000" step="1" value="120" aria-describedby="tip-bpm">
+      <input type="range" class="h" id="bpmRange" min="40" max="1000" step="1" value="120" style="width:120px;--hc:var(--c-src)" aria-label="BPM slider" aria-describedby="tip-bpm">
       <span class="group tempo2"><button class="btn" id="halfBtn" title="Half tempo">½×</button><button class="btn" id="dblBtn" title="Double tempo">2×</button></span>
-      <span class="tipw"><button type="button" class="info" aria-label="About BPM">i</button><span class="tip" role="tooltip" id="tip-bpm">Tempo in beats per minute (40–200). One beat lasts 60 000 ÷ BPM milliseconds. The source plays once per cycle, on step 1: every bar in 1-bar mode, every other bar in 2-bar mode. ½× and 2× halve or double the tempo (within 40–200).</span></span>
+      <span class="tipw"><button type="button" class="info" aria-label="About BPM">i</button><span class="tip" role="tooltip" id="tip-bpm">Tempo in beats per minute (40–1 000). One beat lasts 60 000 ÷ BPM milliseconds. The source plays once per cycle, on step 1: every bar in 1-bar mode, every other bar in 2-bar mode. ½× and 2× halve or double the tempo (within 40–1 000).</span></span>
     </div>
     <div class="group" aria-label="Beat indicator">
       <div class="seg tiny" role="radiogroup" aria-label="Pattern length">
@@ -418,7 +438,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
         <span class="unit">ms</span>
         <span class="tipw"><button type="button" class="info" aria-label="About delay time">i</button><span class="tip" role="tooltip" id="tip-delay">How long after the original each repeat arrives (1–6 000 ms). Type a value and press Enter, use the slider, or calculate it from the tempo below. Changing it by hand switches tempo sync off.</span></span>
       </div>
-      <input type="range" class="h" id="delayRange" min="0" max="1000" step="1" style="--hc:var(--c-delay);margin-top:2px" aria-label="Delay time slider (logarithmic)">
+      <input type="range" class="h" id="delayRange" min="0" max="100000" step="1" style="--hc:var(--c-delay);margin-top:2px" aria-label="Delay time slider (logarithmic)">
       <p class="hint" id="delayMusical"></p>
       <div class="fieldmsg" id="delayMsg" aria-live="polite"></div>
       <div class="calcbox" role="group" aria-labelledby="calcH">
@@ -483,7 +503,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
         <dt><i style="background:var(--c-fb)"></i>Feedback</dt>
         <dd>Sends the filtered delay output back into the delay input. Below 100% repeats fade away; at 100% (unity) they sustain; above 100% each repeat is louder than the last, which is where overload happens.</dd>
       </dl>
-      <details class="fold" open id="prFold">
+      <details class="fold" id="prFold">
       <summary><h3 class="ph" style="margin:16px 0 0">Core principles: how each control relates to amplitude, frequency, timbre and time</h3></summary>
       <div class="principles">
         <article class="pcard" style="--pc:var(--p-amp)">
@@ -557,7 +577,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 /* ================================================================
    Constants, maths and helpers
    ================================================================ */
-const VERSION = '1.4.0';
+const VERSION = '1.5.0';
 const FADER_MIN = -60;               // bottom of the dB faders = off (−∞)
 const MAX_DELAY_MS = 6000, MIN_DELAY_MS = 1;
 const LOOKAHEAD = 0.12;              // seconds of audio scheduled ahead
@@ -610,7 +630,7 @@ const fmtHz = hz => (hz >= 1000 ? (hz / 1000).toFixed(hz >= 10000 ? 1 : 2) + ' k
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const near = (a, b) => Math.abs(a - b) <= Math.max(1.5, b * 0.01);
 // log-scale slider mapping (slider 0–1000)
-const logPos = (v, lo, hi) => Math.round(1000 * Math.log(v / lo) / Math.log(hi / lo));
+const logPos = (v, lo, hi) => 1000 * Math.log(v / lo) / Math.log(hi / lo);
 const posLog = (p, lo, hi) => lo * Math.pow(hi / lo, p / 1000);
 const $ = (s, r = document) => r.querySelector(s);
 const storage = {
@@ -1114,10 +1134,10 @@ function drawFilterPlot() {
   const Y = db => 3 + (TOP - clamp(db, BOT, TOP)) / (TOP - BOT) * (H - 14);
   c.font = '9px system-ui,sans-serif'; c.textBaseline = 'bottom';
   [100, 1000, 10000].forEach((f, i) => {
-    c.strokeStyle = '#222a33'; c.lineWidth = 1; c.beginPath(); c.moveTo(X(f), 0); c.lineTo(X(f), H - 10); c.stroke();
-    c.fillStyle = '#6b7684'; c.fillText(['100', '1k', '10k'][i], X(f) - 6, H);
+    c.strokeStyle = CSSV('--grid-8th'); c.lineWidth = 1; c.beginPath(); c.moveTo(X(f), 0); c.lineTo(X(f), H - 10); c.stroke();
+    c.fillStyle = CSSV('--faint'); c.fillText(['100', '1k', '10k'][i], X(f) - 6, H);
   });
-  c.strokeStyle = '#3a4450'; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(0, Y(0)); c.lineTo(W, Y(0)); c.stroke(); c.setLineDash([]);
+  c.strokeStyle = CSSV('--grid-bar'); c.setLineDash([2, 3]); c.beginPath(); c.moveTo(0, Y(0)); c.lineTo(W, Y(0)); c.stroke(); c.setLineDash([]);
   const r = filterResponse(PLOT_F);
   if (r) {
     const green = CSSV('--c-filter') || '#6ad08a';
@@ -1236,8 +1256,8 @@ function musicalName(ms) {
   return best;
 }
 function refreshDelay() {
-  $('#delayNum').value = S.delayMs;
-  $('#delayRange').value = logPos(S.delayMs, MIN_DELAY_MS, MAX_DELAY_MS);
+  $('#delayNum').value = S.delayMs.toFixed(2);
+  $('#delayRange').value = Math.round(logPos(S.delayMs, MIN_DELAY_MS, MAX_DELAY_MS) * 100);
   $('#delayRange').setAttribute('aria-valuetext', fmtMs(S.delayMs));
   const beats = S.delayMs / (60000 / S.bpm), b = musicalName(S.delayMs);
   let txt = `= <b>${beats.toFixed(3).replace(/\.?0+$/, '')} beats</b> at ${S.bpm} BPM. `;
@@ -1268,7 +1288,7 @@ function refreshFilters() {
 
 function setBpm(v) {
   if (!isFinite(v)) { $('#bpmNum').value = S.bpm; return; }
-  const b = clamp(Math.round(v), 40, 200);
+  const b = clamp(Math.round(v), 40, 1000);
   S.bpm = b;
   $('#bpmNum').value = b; $('#bpmRange').value = b; $('#bpmRange').setAttribute('aria-valuetext', b + ' BPM');
   if (S.sync) setDelay(calcValue(), false);    // sync off: manual delay time is left untouched
@@ -1282,8 +1302,7 @@ function wireInputs() {
   $('#bpmRange').addEventListener('input', e => setBpm(parseFloat(e.target.value)));
   $('#delayNum').addEventListener('change', e => setDelay(parseFloat(e.target.value), true));
   $('#delayRange').addEventListener('input', e => {
-    const v = posLog(+e.target.value, MIN_DELAY_MS, MAX_DELAY_MS);
-    setDelay(v >= 10 ? Math.round(v) : v, true);
+    setDelay(Math.round(posLog(+e.target.value / 100, MIN_DELAY_MS, MAX_DELAY_MS) * 100) / 100, true);
   });
   ['hpf', 'lpf'].forEach(k => {
     $('#' + k + 'Num').addEventListener('change', e => setFilter(k, parseFloat(e.target.value)));
@@ -1392,7 +1411,7 @@ function buildFlow() {
 }
 function updateFlowValues() {
   const set = (id, t) => { const el = document.getElementById('sv-' + id); if (el) el.textContent = t; };
-  set('src', (S.tone || S.pitch) ? `tone ${S.tone > 0 ? '+' : ''}${S.tone} · pitch ${S.pitch > 0 ? '+' : ''}${S.pitch}` : `pulse every ${S.bars === 2 ? '2 bars' : 'bar'}`); set('srclvl', fmtDb(S.src));
+  set('src', (S.tone || S.pitch) ? `tone ${S.tone > 0 ? '+' : ''}${S.tone} · pitch ${S.pitch > 0 ? '+' : ''}${S.pitch}` : `every ${S.bars === 2 ? '2 bars' : 'bar'}`); set('srclvl', fmtDb(S.src));
   set('send', S.sendMute ? 'MUTED' : fmtDb(S.send) + (S.sendPre ? ' · pre' : ' · post'));
   const w = id => document.getElementById(id);
   if (w('w-sendpre')) {
@@ -1466,7 +1485,7 @@ const gridCv = $('#grid'), g2 = gridCv.getContext('2d');
 const CSSV = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 let COL = null;
 function drawGrid(t) {
-  if (!COL) COL = { src: CSSV('--c-src'), delay: CSSV('--c-delay'), line: CSSV('--line'), muted: CSSV('--muted'), faint: CSSV('--faint'), text: CSSV('--text'), ret: CSSV('--c-ret'), danger: CSSV('--danger') };
+  if (!COL) COL = { bar: CSSV('--grid-bar'), beat: CSSV('--grid-beat'), e8: CSSV('--grid-8th'), sub: CSSV('--grid-sub'), src: CSSV('--c-src'), delay: CSSV('--c-delay'), line: CSSV('--line'), muted: CSSV('--muted'), faint: CSSV('--faint'), text: CSSV('--text'), ret: CSSV('--c-ret'), danger: CSSV('--danger') };
   const dpr = window.devicePixelRatio || 1, W = gridCv.clientWidth, H = gridCv.clientHeight;
   if (gridCv.width !== Math.round(W * dpr) || gridCv.height !== Math.round(H * dpr)) { gridCv.width = Math.round(W * dpr); gridCv.height = Math.round(H * dpr); }
   g2.setTransform(dpr, 0, 0, dpr, 0, 0); g2.clearRect(0, 0, W, H);
@@ -1491,14 +1510,14 @@ function drawGrid(t) {
     if (nb.t < tL || b.t > tR) continue;
     for (let s = 1; s < sub; s++) {
       const x = X(b.t + (nb.t - b.t) * s / sub);
-      g2.strokeStyle = (sub === 4 && s === 2) ? '#2e3743' : '#20272f'; g2.lineWidth = 1;
+      g2.strokeStyle = (sub === 4 && s === 2) ? COL.e8 : COL.sub; g2.lineWidth = 1;
       g2.beginPath(); g2.moveTo(x, lanes.src[0]); g2.lineTo(x, H); g2.stroke();
     }
   }
   beats.forEach(b => {
     if (b.t < tL - 1 || b.t > tR + 1) return;
     const x = X(b.t);
-    g2.strokeStyle = b.beat === 0 ? '#566273' : '#39424e'; g2.lineWidth = b.beat === 0 ? 2 : 1;
+    g2.strokeStyle = b.beat === 0 ? COL.bar : COL.beat; g2.lineWidth = b.beat === 0 ? 2 : 1;
     g2.beginPath(); g2.moveTo(x, lanes.head[1]); g2.lineTo(x, H); g2.stroke();
     g2.fillStyle = b.beat === 0 ? COL.text : COL.faint; g2.font = (b.beat === 0 ? '700 ' : '500 ') + '11px system-ui,sans-serif';
     g2.fillText(b.beat === 0 ? `Bar ${b.bar > 0 ? b.bar : '–'} · 1` : String(b.beat + 1), x + 4, 10);
@@ -1754,8 +1773,16 @@ function buildBeats() {
   document.querySelectorAll('input[name=cycle]').forEach(r => { r.checked = +r.value === S.bars; });
   updateFlowValues();
 }
-function refreshTempoBtns() { $('#dblBtn').disabled = S.bpm * 2 > 200; $('#halfBtn').disabled = S.bpm / 2 < 40; }
+function refreshTempoBtns() { $('#dblBtn').disabled = S.bpm * 2 > 1000; $('#halfBtn').disabled = S.bpm / 2 < 40; }
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const b = $('#themeBtn'); b.textContent = t === 'light' ? '☾ Dark' : '☀ Light'; b.setAttribute('aria-pressed', String(t === 'light'));
+  COL = null; drawFilterPlot(); storage.set('dd.theme', t);
+}
 function wireExtras() {
+  const prefLight = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches;
+  applyTheme(storage.get('dd.theme') || (prefLight ? 'light' : 'dark'));
+  $('#themeBtn').addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light'));
   $('#dblBtn').addEventListener('click', () => setBpm(S.bpm * 2));
   $('#halfBtn').addEventListener('click', () => setBpm(S.bpm / 2));
   document.querySelectorAll('input[name=cycle]').forEach(r => r.addEventListener('change', () => { S.bars = +r.value; buildBeats(); onAnyChange(); }));
