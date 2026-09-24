@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delay Designer</title>
+<meta name="description" content="Interactive delay routing trainer: aux send, delay, filters, return and feedback, with a BPM-to-delay calculator, beat grid and rhythm challenges.">
+<style>
+:root{
+  --bg:#101318; --panel:#191e25; --panel-2:#20262f; --line:#2d3540; --line-2:#3a4450;
+  --text:#e8ecf1; --muted:#9ba6b3; --faint:#6b7684;
+  --c-src:#34c3b0; --c-send:#5b9cff; --c-delay:#a78bfa; --c-filter:#6ad08a;
+  --c-ret:#38bdf8; --c-fb:#ff9f43; --c-out:#e5e7eb; --c-lim:#ff6b6b;
+  --danger:#ff5a5a; --ok:#4ade80; --warn:#fbbf24;
+  --radius:12px; --focus:0 0 0 3px #ffd166;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:clip;background:var(--bg);color:var(--text);
+  font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:none;box-shadow:var(--focus);border-radius:6px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.app{max-width:1280px;margin:0 auto;padding:14px 16px 28px}
+h1{font-size:1.45rem;margin:0;letter-spacing:.01em}
+h2{font-size:.82rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 10px;font-weight:650}
+h3{font-size:.95rem;margin:14px 0 8px}
+p{margin:.3em 0}
+.small{font-size:.83rem;color:var(--muted)}
+header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin-bottom:10px}
+header.top .sub{color:var(--muted);font-size:.9rem;margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line);font-size:.82rem;color:var(--muted)}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.pill.on .dot{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.pill.bad .dot{background:var(--danger)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.notices:empty{display:none}
+.notice{border-radius:10px;padding:10px 12px;margin-bottom:10px;border:1px solid;font-size:.9rem}
+.notice.warn{background:#2b2410;border-color:#6b5617;color:#fde7a6}
+.notice.error{background:#2d1416;border-color:#7a2a2f;color:#ffd0d0}
+.notice a{color:inherit;font-weight:650}
+
+/* transport */
+.transport{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin-bottom:12px}
+.btn{appearance:none;border:1px solid var(--line-2);background:var(--panel-2);border-radius:9px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:#566273}
+.btn.primary{background:#1f6f5f;border-color:#2aa58c;min-width:92px}
+.btn.primary[aria-pressed="true"]{background:#7a2a2f;border-color:#c24a52}
+.btn.accent{background:#3a2c5c;border-color:#7d62c7}
+.btn.small{padding:4px 10px;font-size:.84rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.group{display:flex;align-items:center;gap:8px}
+.bpm input[type=number]{width:70px}
+input[type=number]{background:#0d1014;border:1px solid var(--line-2);border-radius:7px;padding:5px 7px;text-align:right}
+input[type=number]:invalid{border-color:var(--danger)}
+.beats{display:flex;gap:6px}
+.beat{width:40px;height:40px;border-radius:9px;border:1px solid var(--line-2);display:grid;place-items:center;
+  font-weight:700;color:var(--faint);background:#12161b;position:relative;transition:background .06s,color .06s}
+.beat.one::after{content:"pulse";position:absolute;bottom:-15px;font-size:.62rem;font-weight:600;color:var(--c-src);letter-spacing:.05em}
+.beat.active{background:#2a323d;color:var(--text)}
+.beat.one.active{background:var(--c-src);color:#062c27;box-shadow:0 0 16px var(--c-src)}
+.barpos{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem;min-width:98px}
+.meter{position:relative;height:12px;border-radius:6px;background:#0c0f13;border:1px solid var(--line);overflow:hidden}
+.meter .fill{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,#2fbf71 0%,#2fbf71 70%,#f3c43b 85%,#ff5a5a 100%);background-size:var(--mw,200px) 100%}
+.meter .mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--danger)}
+.outmeter{display:grid;grid-template-columns:auto 170px auto auto;align-items:center;gap:8px;font-size:.82rem;color:var(--muted)}
+.outmeter .val{font-variant-numeric:tabular-nums;min-width:62px;text-align:right}
+.led{display:inline-block;padding:1px 6px;border-radius:5px;font-size:.7rem;font-weight:700;border:1px solid var(--line-2);color:var(--faint)}
+.led.lit{color:#1b0b0b;background:var(--warn);border-color:var(--warn)}
+.kbd{font-size:.78rem;color:var(--faint)}
+
+/* overload banner */
+.overload{display:none;align-items:flex-start;gap:12px;border:2px solid var(--danger);background:#34121a;border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;animation:throb 1.2s ease-in-out infinite}
+.overload.show{display:flex}
+.overload strong{font-size:1.05rem}
+.overload .icon{font-size:1.6rem;line-height:1}
+@keyframes throb{50%{box-shadow:0 0 22px rgba(255,90,90,.45)}}
+
+/* flow diagram */
+.flowwrap{overflow-x:auto;margin-bottom:12px}
+.flowwrap .panel{min-width:760px;padding:8px 10px}
+#flow{display:block;width:100%;height:auto}
+#flow text{fill:var(--text);font-family:inherit}
+#flow .blk rect{fill:#141920;stroke:var(--bc);stroke-width:2}
+#flow .blk .t{font-size:13.5px;font-weight:700}
+#flow .blk .v{font-size:13px;fill:var(--muted);font-variant-numeric:tabular-nums}
+#flow .blk .glow{fill:var(--bc);opacity:calc(var(--l,0) * .28)}
+#flow .blk .ledc{fill:var(--bc);opacity:calc(.15 + var(--l,0) * .85)}
+#flow .blk{cursor:pointer}
+#flow .blk:hover rect{stroke-width:3}
+#flow .wire{fill:none;stroke:var(--wc);stroke-width:3;opacity:.4}
+#flow .flow{fill:none;stroke:var(--wc);stroke-width:3.5;stroke-dasharray:5 11;opacity:var(--l,0);animation:dash .55s linear infinite}
+#flow .wire.fbw{stroke-width:4;opacity:.6}
+#flow .flow.fbw{stroke-width:5}
+@keyframes dash{to{stroke-dashoffset:-16}}
+#flow .sum{fill:#141920;stroke:var(--line-2);stroke-width:2}
+#flow .sumt{font-size:20px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+#flow .zone{fill:none;stroke:var(--line-2);stroke-dasharray:6 6;stroke-width:1.5}
+#flow .zl{font-size:12px;fill:var(--muted);letter-spacing:.12em;font-weight:650}
+#flow .fbl{font-size:13px;fill:var(--c-fb);font-weight:700;letter-spacing:.04em}
+#flow .brk,#flow .mute{display:none}
+#flow.tripped .brk,#flow.tripped .mute{display:inline}
+#flow.tripped .fbw.flow{opacity:0}
+#flow.tripped .wire.fbw{stroke:var(--danger);stroke-dasharray:4 6}
+@media (prefers-reduced-motion:reduce){#flow .flow{animation:none;stroke-dasharray:none}.overload{animation:none}}
+
+/* workspace */
+.workspace{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:12px;margin-bottom:12px}
+@media (max-width:1000px){.workspace{grid-template-columns:minmax(0,1fr)}}
+
+/* mixer strips */
+.mixer .strips{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+.strip{flex:1 1 92px;min-width:92px;max-width:150px;background:var(--panel-2);border:1px solid var(--line);border-top:4px solid var(--sc);border-radius:10px;padding:8px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.strip.wide{flex:1.7 1 150px;max-width:210px}
+.strip .lab{display:flex;align-items:flex-start;gap:4px;min-height:40px;text-align:center;font-weight:650;font-size:.84rem;line-height:1.2}
+.strip output{font-variant-numeric:tabular-nums;font-weight:700;font-size:.95rem}
+.strip .foot{font-size:.72rem;color:var(--muted);text-align:center;min-height:2.2em}
+.fader{position:relative;width:100%;height:190px}
+.fader .scale{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none}
+.fader .tick{position:absolute;left:4px;right:4px;height:0;border-top:1px solid #3b4552}
+.fader .tick span{position:absolute;right:0;transform:translateY(-55%);font-size:.64rem;color:var(--faint);font-variant-numeric:tabular-nums}
+.fader .tick.unity{border-top:2px solid var(--danger);left:0;right:0}
+.fader .tick.unity span{color:#ffb4b4;font-weight:700}
+.fader .zone-hot{position:absolute;left:calc(50% - 7px);width:14px;background:repeating-linear-gradient(45deg,rgba(255,90,90,.45) 0 4px,transparent 4px 8px);border-radius:3px}
+.fader .slot{position:absolute;left:calc(50% - 3px);width:6px;top:8px;bottom:8px;background:#0b0e12;border-radius:3px;border:1px solid #2a323c}
+input.v{position:absolute;left:50%;top:50%;width:190px;height:36px;margin:0;transform:translate(-50%,-50%) rotate(-90deg);background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+input.v::-webkit-slider-runnable-track{height:36px;background:transparent}
+input.v::-moz-range-track{height:36px;background:transparent}
+input.v::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:34px;border-radius:4px;background:linear-gradient(90deg,#9aa4b0,#e9edf2 45%,#6d7682 50%,#e9edf2 55%,#9aa4b0);border:1px solid #11151a;box-shadow:0 2px 6px rgba(0,0,0,.6)}
+input.v::-moz-range-thumb{width:16px;height:34px;border-radius:4px;background:linear-gradient(90deg,#9aa4b0,#e9edf2 45%,#6d7682 50%,#e9edf2 55%,#9aa4b0);border:1px solid #11151a}
+input.v:focus-visible{box-shadow:none}
+input.v:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px #ffd166}
+input.v:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ffd166}
+.strip .decay{font-size:.72rem;color:var(--c-fb);text-align:center;min-height:2.3em}
+
+/* horizontal sliders */
+input.h{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;cursor:pointer;margin:0}
+input.h::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:#0b0e12;border:1px solid #2a323c}
+input.h::-moz-range-track{height:6px;border-radius:3px;background:#0b0e12;border:1px solid #2a323c}
+input.h::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;background:var(--hc,#dfe4ea);border:2px solid #0e1115}
+input.h::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--hc,#dfe4ea);border:2px solid #0e1115}
+input.h:focus-visible{box-shadow:none}
+input.h:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px #ffd166}
+input.h:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ffd166}
+
+/* protection */
+.protect{margin-top:12px;display:grid;grid-template-columns:auto 1fr;gap:10px 16px;align-items:center}
+.counter{display:flex;align-items:center;gap:10px}
+.counter .n{font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums;min-width:1.6ch;text-align:center;color:var(--c-lim)}
+.counter .lbl{font-size:.8rem;line-height:1.25}
+.counter .lbl b{font-size:.9rem}
+.pstatus{font-weight:700}
+.pstatus.ok{color:var(--ok)}
+.pstatus.bad{color:var(--danger)}
+.loopmeter{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:.8rem;color:var(--muted)}
+.loopmeter .val{font-variant-numeric:tabular-nums;min-width:62px;text-align:right}
+@media (max-width:560px){.protect{grid-template-columns:1fr}}
+
+/* fx panel */
+.frow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.frow label.main{font-weight:650;min-width:92px}
+.frow .unit{color:var(--muted)}
+.frow input[type=number]{width:96px}
+.hint{font-size:.84rem;color:var(--muted)}
+.hint b{color:var(--text)}
+.fieldmsg{font-size:.8rem;color:var(--warn);min-height:1.1em}
+.calc{margin-top:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.calc h3{margin-top:0}
+fieldset{border:0;padding:0;margin:0 0 8px}
+legend{font-size:.78rem;color:var(--muted);margin-bottom:4px;padding:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg span{display:inline-block;padding:5px 10px;border-radius:7px;border:1px solid var(--line-2);background:#141920;cursor:pointer;font-size:.88rem;font-weight:600;min-width:44px;text-align:center}
+.seg input:checked + span{background:var(--c-delay);border-color:var(--c-delay);color:#160b33}
+.seg input:focus-visible + span{box-shadow:var(--focus)}
+.result{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:8px 0}
+.result output{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--c-delay)}
+.formula{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.check{display:flex;align-items:center;gap:8px;font-size:.9rem;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--c-delay)}
+details{margin-top:8px}
+summary{cursor:pointer;font-size:.86rem;color:var(--muted)}
+table.nv{border-collapse:collapse;width:100%;margin-top:6px;font-size:.84rem;font-variant-numeric:tabular-nums}
+table.nv th,table.nv td{border:1px solid var(--line);padding:3px 6px;text-align:right}
+table.nv th{color:var(--muted);font-weight:600}
+table.nv td button{all:unset;cursor:pointer;display:block;width:100%;text-align:right;border-radius:4px}
+table.nv td button:focus-visible{box-shadow:var(--focus)}
+table.nv td.sel{background:#2d2450;color:#e3d9ff}
+.filters{margin-top:12px}
+.fgrid{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.fgrid input[type=number]{width:84px}
+
+/* grid */
+.gridpanel{margin-bottom:12px}
+.gridhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+#grid{display:block;width:100%;height:190px;border-radius:8px;background:#0d1014;border:1px solid var(--line)}
+.lands{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;font-size:.8rem;align-items:center}
+.chip{padding:2px 8px;border-radius:999px;border:1px solid var(--line-2);background:var(--panel-2);font-variant-numeric:tabular-nums}
+.chip.on{border-color:var(--c-ret)}
+
+/* bottom */
+.bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:900px){.bottom{grid-template-columns:minmax(0,1fr)}}
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.task{display:grid;grid-template-columns:26px 1fr;gap:4px 8px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.task .st{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2);display:grid;place-items:center;font-size:.8rem;font-weight:800;color:transparent}
+.task.done{border-color:#2f7a52}
+.task.done .st{background:var(--ok);border-color:var(--ok);color:#06240f}
+.task.live .st{border-color:var(--c-ret)}
+.task .tt{font-weight:650;font-size:.9rem}
+.task .th{grid-column:2;font-size:.8rem;color:var(--muted)}
+.task .bar{grid-column:2;height:4px;border-radius:2px;background:#0c0f13;overflow:hidden}
+.task .bar i{display:block;height:100%;width:0;background:var(--c-ret)}
+.task.done .bar i{background:var(--ok);width:100%!important}
+.progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.86rem;color:var(--muted)}
+dl.concepts{margin:0;display:grid;gap:8px}
+dl.concepts dt{font-weight:700;font-size:.9rem}
+dl.concepts dt i{font-style:normal;display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+dl.concepts dd{margin:0 0 0 16px;font-size:.86rem;color:#c9d1db}
+footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
+
+/* tooltips */
+.tipw{position:relative;display:inline-flex}
+.info{appearance:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--line-2);background:#141920;color:var(--muted);font-size:.7rem;font-weight:800;line-height:1;padding:0;cursor:help;flex:none}
+.tip{position:absolute;z-index:20;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:min(230px,80vw);background:#f3f5f8;color:#141920;border-radius:8px;padding:8px 10px;font-size:.8rem;font-weight:500;line-height:1.35;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;pointer-events:none;text-transform:none;letter-spacing:0}
+.tipw:hover .tip,.info:focus-visible + .tip,.tipw.open .tip{display:block}
+.tip.left{left:auto;right:-8px;transform:none}
+.tip.right{left:-8px;transform:none}
+</style>
+</head>
+<body>
+<noscript><p style="padding:16px">Delay Designer needs JavaScript enabled to run.</p></noscript>
+<main class="app" id="app">
+  <header class="top">
+    <div>
+      <h1>Delay Designer</h1>
+      <div class="sub">One pulse per bar. Build rhythms from its echoes with an aux send, a filtered delay and a feedback loop.</div>
+    </div>
+    <span class="pill" id="audioPill" role="status" aria-live="polite"><span class="dot"></span><span id="audioState">Audio off: press Start</span></span>
+  </header>
+
+  <div class="notices" id="notices" aria-live="polite"></div>
+
+  <section class="panel transport" aria-label="Transport">
+    <div class="group">
+      <button class="btn primary" id="startBtn" aria-pressed="false">▶ Start</button>
+      <button class="btn" id="resetBtn" title="Restore default settings, clear the delay buffer and restart from beat 1">Reset</button>
+    </div>
+    <div class="group bpm">
+      <label for="bpmNum"><b>BPM</b></label>
+      <input type="number" id="bpmNum" min="40" max="200" step="1" value="120" aria-describedby="tip-bpm">
+      <input type="range" class="h" id="bpmRange" min="40" max="200" step="1" value="120" style="width:130px;--hc:var(--c-src)" aria-label="BPM slider" aria-describedby="tip-bpm">
+      <span class="tipw"><button type="button" class="info" aria-label="About BPM">i</button><span class="tip" role="tooltip" id="tip-bpm">Tempo in beats per minute (40–200). One beat lasts 60 000 ÷ BPM milliseconds. The source plays once per 4-beat bar, on beat 1.</span></span>
+    </div>
+    <div class="group" aria-label="Beat indicator">
+      <div class="beats" id="beats" aria-hidden="true">
+        <div class="beat one">1</div><div class="beat">2</div><div class="beat">3</div><div class="beat">4</div>
+      </div>
+      <div class="barpos" id="barpos">Bar – · Beat –</div>
+    </div>
+    <div class="outmeter" aria-label="Output meter">
+      <span>Output</span>
+      <div class="meter" id="outMeter" style="--mw:170px"><div class="fill"></div></div>
+      <span class="val" id="outVal">−∞ dBFS</span>
+      <span class="led" id="limLed" title="Lights when the safety limiter is reducing the level">LIMIT</span>
+    </div>
+  </section>
+
+  <div class="overload" id="overload" role="alert">
+    <span class="icon" aria-hidden="true">⚠</span>
+    <div>
+      <strong>Feedback overload: reduce feedback below 100% to continue.</strong>
+      <div class="small" id="overloadHint" style="color:#ffc9c9"></div>
+    </div>
+  </div>
+
+  <div class="flowwrap">
+    <section class="panel" aria-label="Signal flow">
+      <svg id="flow" viewBox="0 0 1200 312" role="img" aria-labelledby="flowTitle flowDesc"></svg>
+    </section>
+  </div>
+
+  <div class="workspace">
+    <section class="panel mixer" aria-labelledby="mixH">
+      <h2 id="mixH">Mixer &amp; aux loop</h2>
+      <div class="strips" id="strips"></div>
+      <div class="protect panel" style="background:var(--panel-2)" aria-labelledby="protH">
+        <div class="counter">
+          <span class="n" id="eventCount" aria-live="polite">0</span>
+          <span class="lbl"><b>Feedback Events</b><br>protection-triggering incidents<br><span class="small">(not individual echoes)</span></span>
+        </div>
+        <div>
+          <h2 id="protH" style="margin-bottom:6px">Feedback protection · <span class="pstatus ok" id="protStatus">Armed</span></h2>
+          <div class="loopmeter">
+            <span>Loop level</span>
+            <div class="meter" id="loopMeter" style="--mw:100%"><div class="fill"></div><div class="mark" id="loopMark" title="Protection threshold"></div></div>
+            <span class="val" id="loopVal">−∞ dBFS</span>
+          </div>
+          <p class="small" style="margin-top:6px">Monitors the signal circulating in the loop. If repeats pile up past the red line (well above what the send is feeding in) the output mutes and the loop is broken.
+            <button class="btn small" id="resetEvents" style="margin-left:4px">Reset counter</button></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel fx" aria-labelledby="fxH">
+      <h2 id="fxH">Delay, calculator &amp; filters</h2>
+      <div class="frow">
+        <label class="main" for="delayNum">Delay time</label>
+        <input type="number" id="delayNum" min="1" max="6000" step="0.01" value="500" aria-describedby="tip-delay delayMusical">
+        <span class="unit">ms</span>
+        <span class="tipw"><button type="button" class="info" aria-label="About delay time">i</button><span class="tip" role="tooltip" id="tip-delay">How long after the original each repeat arrives (1–6 000 ms). Type a value and press Enter, or use the slider. Changing it by hand switches tempo sync off.</span></span>
+      </div>
+      <input type="range" class="h" id="delayRange" min="0" max="1000" step="1" style="--hc:var(--c-delay);margin-top:4px" aria-label="Delay time slider (logarithmic)">
+      <div class="fieldmsg" id="delayMsg" aria-live="polite"></div>
+      <p class="hint" id="delayMusical"></p>
+
+      <div class="calc" role="group" aria-labelledby="calcH">
+        <h3 id="calcH">BPM → delay calculator</h3>
+        <fieldset>
+          <legend>Note value</legend>
+          <div class="seg" id="noteSeg"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Feel</legend>
+          <div class="seg" id="feelSeg"></div>
+        </fieldset>
+        <div class="result">
+          <output id="calcOut" aria-live="polite">500.00 ms</output>
+          <button class="btn accent" id="applyBtn">Apply to Delay</button>
+          <label class="check"><input type="checkbox" id="syncChk" aria-describedby="tip-sync"> Tempo sync</label>
+          <span class="tipw"><button type="button" class="info" aria-label="About tempo sync">i</button><span class="tip left" role="tooltip" id="tip-sync">When on, the delay follows the calculator whenever BPM, note value or feel changes. When off, changing BPM leaves your delay time exactly as it is.</span></span>
+        </div>
+        <div class="formula" id="calcFormula"></div>
+        <details>
+          <summary>All note values at this tempo</summary>
+          <table class="nv" id="nvTable"></table>
+        </details>
+      </div>
+
+      <div class="filters">
+        <h3>Filters on the delay output <span class="tipw"><button type="button" class="info" aria-label="About the filters">i</button><span class="tip" role="tooltip">The filters sit inside the loop, after the delay. Every repeat passes through them again, so their effect builds up: each echo gets thinner (high-pass) or darker (low-pass) than the last.</span></span></h3>
+        <div class="fgrid">
+          <label for="hpfNum">High-pass</label>
+          <input type="range" class="h" id="hpfRange" min="0" max="1000" step="1" style="--hc:var(--c-filter)" aria-label="High-pass cutoff slider">
+          <span><input type="number" id="hpfNum" min="20" max="20000" step="1"> Hz</span>
+          <label for="lpfNum">Low-pass</label>
+          <input type="range" class="h" id="lpfRange" min="0" max="1000" step="1" style="--hc:var(--c-filter)" aria-label="Low-pass cutoff slider">
+          <span><input type="number" id="lpfNum" min="20" max="20000" step="1"> Hz</span>
+        </div>
+        <div class="fieldmsg" id="filtMsg" aria-live="polite"></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel gridpanel" aria-labelledby="gridH">
+    <div class="gridhead">
+      <h2 id="gridH">Beat grid: where the repeats land</h2>
+      <div class="legend">
+        <span><i style="background:var(--c-src)"></i>Source pulse</span>
+        <span><i style="background:var(--c-delay);opacity:.7"></i>Expected repeats (from settings)</span>
+        <span><i style="background:linear-gradient(90deg,#6b2f8f,#ff8a3d,#fff3b0)"></i>Heard repeats (colour = brightness)</span>
+        <span id="gridSub">Grid: 16ths</span>
+      </div>
+    </div>
+    <canvas id="grid" role="img" aria-label="Scrolling beat grid showing source pulses and delay repeats against beats and subdivisions"></canvas>
+    <div class="lands" id="lands" aria-live="off"></div>
+  </section>
+
+  <div class="bottom">
+    <section class="panel" aria-labelledby="chH">
+      <h2 id="chH">Challenges</h2>
+      <div class="progress"><span id="chProgress">0 / 5 complete</span><span>Hold each setting while playing <button class="btn small" id="chReset">Reset challenges</button></span></div>
+      <ol class="tasks" id="tasks"></ol>
+    </section>
+    <section class="panel" aria-labelledby="learnH">
+      <h2 id="learnH">Key ideas</h2>
+      <dl class="concepts">
+        <dt><i style="background:var(--c-delay)"></i>Delay time</dt>
+        <dd>The gap between a sound and its copy. One beat = 60 000 ÷ BPM ms, so at 120 BPM a quarter note is 500 ms. Dotted = ×1.5, triplet = ×⅔.</dd>
+        <dt><i style="background:var(--c-send)"></i>Send</dt>
+        <dd>Copies some of a channel to an effect without changing the channel itself. This send is <b>post-fader</b>: pull Source Level down and the send drops with it.</dd>
+        <dt><i style="background:var(--c-ret)"></i>Return</dt>
+        <dd>How loud the effect's output (the “wet” signal) is in the mix. The dry pulse and the return are summed before the Master Output.</dd>
+        <dt><i style="background:var(--c-filter)"></i>Filtering</dt>
+        <dd>High-pass removes lows; low-pass removes highs. Because the filters are inside the loop, each repeat is filtered again, so echoes get progressively darker or thinner.</dd>
+        <dt><i style="background:var(--c-fb)"></i>Feedback</dt>
+        <dd>Sends the filtered delay output back into the delay input. Below 100% repeats fade away; at 100% (unity) they sustain; above 100% each repeat is louder than the last, which is where overload happens.</dd>
+      </dl>
+    </section>
+  </div>
+  <footer>
+    Keyboard: Tab moves between controls; arrow keys adjust sliders and faders (Page Up/Down for bigger steps, Home/End for the extremes); Space starts and stops when no control has focus. Double-click a fader to return it to its default.
+    <span id="selftest"></span>
+  </footer>
+</main>
+
+<script>
+'use strict';
+(function () {
+/* ================================================================
+   Constants, maths and helpers
+   ================================================================ */
+const FADER_MIN = -60;               // bottom of the dB faders = off (−∞)
+const MAX_DELAY_MS = 6000, MIN_DELAY_MS = 1;
+const LOOKAHEAD = 0.12;              // seconds of audio scheduled ahead
+const TICK_MS = 25;                  // scheduler / monitor period
+const BUTTERWORTH_Q_DB = -3.0103;    // Web Audio LP/HP Q is in dB; this = Q 0.707 (no resonant peak in the loop)
+// Protection thresholds (applied to the signal circulating in the feedback loop)
+const PROT = {
+  PEAK: Math.pow(10, -3 / 20),       // loop peak ≥ −3 dBFS …
+  RMS: Math.pow(10, -12 / 20),       // … or loop RMS (0.5 s average) ≥ −12 dBFS …
+  RATIO: 4,                          // … AND at least 12 dB above what the send is feeding in
+  HARD: 4,                           // ≥ +12 dBFS (or non-finite) trips regardless
+  QUIET: 0.001,                      // −60 dBFS: loop counts as cleared
+  QUIET_TIME: 0.3,                   // seconds the loop must stay quiet before audio returns
+  GROW_BARS: 6,                      // sustained build-up: loop energy rose in at least 5 of the last 6 bars …
+  GROW_KEEP: 0.6,                    // … without the per-bar increase dying away (it shrinks when feedback < unity) …
+  GROW_FLOOR: Math.pow(10, -30 / 20) // … and the loop RMS is above −30 dBFS
+};
+const LIMIT = { threshold: -12, ratio: 20, attack: 0.002, release: 0.12 };
+
+const NOTES = [
+  { id: 'whole', label: '1/1', name: 'whole note', beats: 4 },
+  { id: 'half', label: '1/2', name: 'half note', beats: 2 },
+  { id: 'quarter', label: '1/4', name: 'quarter note', beats: 1 },
+  { id: 'eighth', label: '1/8', name: 'eighth note', beats: 0.5 },
+  { id: 'sixteenth', label: '1/16', name: 'sixteenth note', beats: 0.25 }
+];
+const FEELS = [
+  { id: 'straight', label: 'Straight', factor: 1, word: '' },
+  { id: 'dotted', label: 'Dotted', factor: 1.5, word: 'dotted ' },
+  { id: 'triplet', label: 'Triplet', factor: 2 / 3, word: 'triplet ' }
+];
+const DEFAULTS = {
+  bpm: 120, src: -6, send: -6, fb: 35, ret: -3, master: -12,
+  delayMs: 500, hpf: 20, lpf: 20000, note: 'quarter', feel: 'straight', sync: false
+};
+
+/** Quarter note = 60 000 ÷ BPM ms; other values scale by beats; dotted ×1.5, triplet ×2/3. */
+function noteMs(bpm, noteId, feelId) {
+  const n = NOTES.find(x => x.id === noteId), f = FEELS.find(x => x.id === feelId);
+  return (60000 / bpm) * n.beats * f.factor;
+}
+const dbToGain = db => (db <= FADER_MIN ? 0 : Math.pow(10, db / 20));
+const gainToDb = g => (g > 1e-9 ? 20 * Math.log10(g) : -Infinity);
+const minus = s => s.replace(/-/g, '−');
+const fmtDb = db => (db <= FADER_MIN ? '−∞ dB' : minus((db > 0 ? '+' : '') + db.toFixed(1)) + ' dB');
+const fmtDbfs = g => { const d = gainToDb(g); return d < -60 ? '−∞ dBFS' : minus(d.toFixed(1)) + ' dBFS'; };
+const fmtMs = ms => ms.toFixed(2) + ' ms';
+const fmtHz = hz => (hz >= 1000 ? (hz / 1000).toFixed(hz >= 10000 ? 1 : 2) + ' kHz' : Math.round(hz) + ' Hz');
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const near = (a, b) => Math.abs(a - b) <= Math.max(1.5, b * 0.01);
+// log-scale slider mapping (slider 0–1000)
+const logPos = (v, lo, hi) => Math.round(1000 * Math.log(v / lo) / Math.log(hi / lo));
+const posLog = (p, lo, hi) => lo * Math.pow(hi / lo, p / 1000);
+const $ = (s, r = document) => r.querySelector(s);
+const storage = {
+  get(k) { try { return JSON.parse(window.localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { window.localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage blocked (e.g. sandboxed frame) */ } }
+};
+
+/* ================================================================
+   Audio graph (context-agnostic so it can also be rendered offline)
+   Source → Source Level → mix (dry)
+   Source Level → Aux Send → gate → Σ → Delay → HPF → LPF → loopOut
+   loopOut → Return → mix;  loopOut → Feedback → break → Σ
+   mix → Master Output → protection mute → limiter → ceiling → out
+   ================================================================ */
+function limiterTrim() {
+  // DynamicsCompressorNode applies automatic make-up gain = (1/compress(0 dBFS))^0.6; undo it so
+  // signals below the threshold pass at unity and the limiter only ever reduces level.
+  const outDb = LIMIT.threshold + (0 - LIMIT.threshold) / LIMIT.ratio;
+  return 1 / Math.pow(1 / Math.pow(10, outDb / 20), 0.6);
+}
+function ceilingCurve() {
+  const n = 4097, c = new Float32Array(n), knee = 0.5, lim = 0.891; // soft ceiling, never above −1 dBFS
+  for (let i = 0; i < n; i++) {
+    const x = (i / (n - 1)) * 2 - 1, ax = Math.abs(x);
+    const y = ax <= knee ? ax : knee + (lim - knee) * Math.tanh((ax - knee) / (lim - knee));
+    c[i] = Math.sign(x) * y;
+  }
+  return c;
+}
+function buildGraph(ctx, params) {
+  const p = Object.assign({}, DEFAULTS, params || {});
+  const g = { ctx };
+  const G = v => { const n = ctx.createGain(); n.gain.value = v; return n; };
+  const A = size => { const a = ctx.createAnalyser(); a.fftSize = size; a.smoothingTimeConstant = 0; return a; };
+  g.srcIn = G(1);
+  g.srcFader = G(dbToGain(p.src));
+  g.mix = G(1);
+  g.auxSend = G(dbToGain(p.send));
+  g.inGate = G(1);
+  g.loopIn = G(1);
+  g.loopOut = G(1);
+  g.ret = G(dbToGain(p.ret));
+  g.fb = G(p.fb / 100);
+  g.fbBreak = G(1);
+  g.master = G(dbToGain(p.master));
+  g.protect = G(1);
+  g.limiter = ctx.createDynamicsCompressor();
+  g.limiter.threshold.value = LIMIT.threshold; g.limiter.knee.value = 0; g.limiter.ratio.value = LIMIT.ratio;
+  g.limiter.attack.value = LIMIT.attack; g.limiter.release.value = LIMIT.release;
+  g.trim = G(limiterTrim());
+  g.ceiling = ctx.createWaveShaper(); g.ceiling.curve = ceilingCurve();
+  g.aSrc = A(1024); g.aSend = A(2048); g.aDelay = A(1024); g.aLoop = A(2048);
+  g.aRet = A(1024); g.aFb = A(1024); g.aOut = A(1024);
+  g.p = { delayS: p.delayMs / 1000, hpf: p.hpf, lpf: p.lpf };
+
+  g.srcIn.connect(g.srcFader);
+  g.srcFader.connect(g.mix);                       // dry
+  g.srcFader.connect(g.aSrc);
+  g.srcFader.connect(g.auxSend);                   // post-fader aux send
+  g.auxSend.connect(g.inGate); g.inGate.connect(g.loopIn); g.inGate.connect(g.aSend);
+  g.loopOut.connect(g.ret); g.ret.connect(g.mix); g.ret.connect(g.aRet);
+  g.loopOut.connect(g.fb); g.fb.connect(g.fbBreak); g.fbBreak.connect(g.loopIn); g.fbBreak.connect(g.aFb);
+  g.loopOut.connect(g.aLoop);
+  g.mix.connect(g.master); g.master.connect(g.protect); g.protect.connect(g.limiter);
+  g.limiter.connect(g.trim); g.trim.connect(g.ceiling); g.ceiling.connect(g.aOut); g.ceiling.connect(ctx.destination);
+
+  g.makeLoop = function () {
+    const d = ctx.createDelay(6.5); d.delayTime.value = g.p.delayS;
+    const h = ctx.createBiquadFilter(); h.type = 'highpass'; h.frequency.value = g.p.hpf; h.Q.value = BUTTERWORTH_Q_DB;
+    const l = ctx.createBiquadFilter(); l.type = 'lowpass'; l.frequency.value = g.p.lpf; l.Q.value = BUTTERWORTH_Q_DB;
+    g.loopIn.connect(d); d.connect(h); h.connect(l); l.connect(g.loopOut); d.connect(g.aDelay);
+    g.delay = d; g.hpf = h; g.lpf = l;
+  };
+  /** Empties the delay buffer and filter memories by swapping in fresh nodes. */
+  g.clearLoop = function () {
+    try { g.loopIn.disconnect(g.delay); } catch (e) { /* already detached */ }
+    g.delay.disconnect(); g.hpf.disconnect(); g.lpf.disconnect();
+    g.makeLoop();
+  };
+  g.makeLoop();
+  return g;
+}
+
+let noiseBuf = null;
+function makeNoise(ctx) {
+  const len = Math.floor(ctx.sampleRate * 0.06), b = ctx.createBuffer(1, len, ctx.sampleRate), d = b.getChannelData(0);
+  let s = 12345;
+  for (let i = 0; i < len; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; d[i] = (s / 0x3fffffff) - 1; }
+  return b;
+}
+/** Short, broadband percussive pulse (click + body + noise) so filtering is clearly audible. */
+function playPulse(ctx, dest, t, nb) {
+  const nodes = [];
+  const env = (peak, dur) => {
+    const e = ctx.createGain();
+    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(peak, t + 0.0015);
+    e.gain.setTargetAtTime(0, t + 0.0015, dur / 4); e.connect(dest); return e;
+  };
+  const click = ctx.createOscillator(); click.type = 'triangle';
+  click.frequency.setValueAtTime(1900, t); click.frequency.exponentialRampToValueAtTime(950, t + 0.04);
+  click.connect(env(0.32, 0.07));
+  const body = ctx.createOscillator(); body.type = 'sine';
+  body.frequency.setValueAtTime(190, t); body.frequency.exponentialRampToValueAtTime(95, t + 0.1);
+  body.connect(env(0.38, 0.14));
+  const nz = ctx.createBufferSource(); nz.buffer = nb || (noiseBuf = noiseBuf || makeNoise(ctx));
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2500;
+  nz.connect(hp); hp.connect(env(0.3, 0.035));
+  [click, body, nz].forEach(n => { n.start(t); n.stop(t + 0.25); nodes.push(n); });
+  return nodes;
+}
+
+/* ================================================================
+   Application state
+   ================================================================ */
+const S = Object.assign({}, DEFAULTS);
+let ctx = null, g = null, timer = null;
+let playing = false, beatIdx = 0, nextBeatT = 0;
+let beatLog = [], pulseLog = [], retHist = [];
+const active = new Set();
+let lastClearT = -1, frozenNow = 0;
+const stats = { pulses: 0, beats: 0, pulseBeats: [] };
+const P = { state: 'ok', events: storage.get('dd.events') || 0, cleared: false, quiet: 0, injHist: [], loopMs: 0, injMs: 0, lastTick: 0, reason: '',
+  barE: [], barAcc: 0, barN: 0, barPulse: -1 };
+
+/* ================================================================
+   Audio lifecycle
+   ================================================================ */
+function now() { return ctx ? ctx.currentTime : 0; }
+function fadeTo(param, v, dur) {
+  const t = ctx.currentTime;
+  if (param.cancelAndHoldAtTime) param.cancelAndHoldAtTime(t);
+  else { param.cancelScheduledValues(t); param.setValueAtTime(param.value, t); }
+  param.linearRampToValueAtTime(v, t + Math.max(0.005, dur));
+}
+function makeTimer(cb) {
+  let fallback = null, w = null;
+  const useInterval = () => { if (!fallback) fallback = setInterval(cb, TICK_MS); };
+  try { // a worker timer keeps ticking when the tab is in the background
+    const src = 'let id=null;onmessage=e=>{clearInterval(id);if(e.data==="go")id=setInterval(()=>postMessage(0),' + TICK_MS + ')}';
+    w = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+    w.onmessage = cb; w.onerror = () => { w = null; useInterval(); };
+    w.postMessage('go');
+  } catch (e) { useInterval(); }
+}
+async function ensureAudio() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) { setAudioState('Web Audio unavailable', 'bad'); return false; }
+  if (!ctx) {
+    try { ctx = new AC({ latencyHint: 'interactive' }); }
+    catch (e) { reportBlocked('The browser refused to create an audio engine (' + e.name + ').'); return false; }
+    noiseBuf = makeNoise(ctx);
+    g = buildGraph(ctx, S);
+    ctx.onstatechange = () => { if (ctx.state !== 'running' && playing) reportBlocked('Audio was suspended by the browser or host page.'); updateAudioPill(); };
+    makeTimer(tick);
+  }
+  if (ctx.state !== 'running') {
+    const res = ctx.resume().then(() => true, () => false);
+    const ok = await Promise.race([res, new Promise(r => setTimeout(() => r(false), 1500))]);
+    if (!ok || ctx.state !== 'running') {
+      reportBlocked('Audio playback did not start.');
+      return false;
+    }
+  }
+  clearNotice('blocked');
+  updateAudioPill();
+  return true;
+}
+async function start() {
+  if (playing) return;
+  if (!(await ensureAudio())) return;
+  playing = true;
+  beatIdx = 0; nextBeatT = ctx.currentTime + 0.08;
+  pulseLog = []; beatLog = []; retHist = []; resetBars();
+  if (P.state === 'ok') { fadeTo(g.fbBreak.gain, 1, 0.01); fadeTo(g.inGate.gain, 1, 0.01); fadeTo(g.protect.gain, 1, 0.03); }
+  updateTransportUI();
+}
+/** Stop: silence, cancel pending pulses and empty the feedback loop. */
+function stop() {
+  if (!playing && !ctx) return;
+  playing = false; frozenNow = now();
+  updateTransportUI();
+  if (!ctx) return;
+  fadeTo(g.protect.gain, 0, 0.015); fadeTo(g.fbBreak.gain, 0, 0.01); fadeTo(g.inGate.gain, 0, 0.01);
+  setTimeout(() => {
+    active.forEach(n => { try { n.stop(); } catch (e) { /* not started */ } }); active.clear();
+    g.clearLoop(); lastClearT = now();
+    if (P.state === 'tripped') { P.cleared = true; return; }
+    if (!playing) { fadeTo(g.fbBreak.gain, 1, 0.01); fadeTo(g.inGate.gain, 1, 0.01); fadeTo(g.protect.gain, 1, 0.05); }
+  }, 45);
+}
+/** Duck, clear the loop and fade back (used by Reset). */
+function flushLoop() {
+  if (!ctx) return;
+  fadeTo(g.protect.gain, 0, 0.015); fadeTo(g.fbBreak.gain, 0, 0.01); fadeTo(g.inGate.gain, 0, 0.01);
+  setTimeout(() => {
+    g.clearLoop(); lastClearT = now();
+    if (P.state === 'tripped') { P.cleared = true; return; }
+    fadeTo(g.fbBreak.gain, 1, 0.01); fadeTo(g.inGate.gain, 1, 0.01); fadeTo(g.protect.gain, 1, 0.12);
+  }, 45);
+}
+
+/* ---------------- scheduler: exactly one pulse per 4-beat bar ---------------- */
+function scheduler() {
+  while (nextBeatT < ctx.currentTime + LOOKAHEAD) {
+    const beat = beatIdx % 4, bar = Math.floor(beatIdx / 4) + 1;
+    beatLog.push({ t: nextBeatT, beat, bar });
+    stats.beats++;
+    if (beat === 0) {
+      playPulse(ctx, g.srcIn, nextBeatT, noiseBuf).forEach(n => { active.add(n); n.onended = () => active.delete(n); });
+      pulseLog.push({ t: nextBeatT, gated: P.state === 'tripped' });
+      stats.pulses++; stats.pulseBeats.push(beat);
+    }
+    nextBeatT += 60 / S.bpm;
+    beatIdx++;
+  }
+  const cut = ctx.currentTime - 30;
+  while (beatLog.length > 8 && beatLog[0].t < cut) beatLog.shift();
+  while (pulseLog.length > 4 && pulseLog[0].t < cut - 60) pulseLog.shift();
+}
+
+/* ---------------- feedback protection monitor ---------------- */
+const bufLoop = new Float32Array(2048), bufSend = new Float32Array(2048);
+function measure(an, buf) {
+  an.getFloatTimeDomainData(buf);
+  let pk = 0, ss = 0;
+  for (let i = 0; i < buf.length; i++) { const v = buf[i], a = v < 0 ? -v : v; if (a > pk || a !== a) pk = a !== a ? Infinity : a; ss += v * v; }
+  return { pk, ms: ss / buf.length };
+}
+function monitor() {
+  const t = ctx.currentTime, dt = P.lastTick ? clamp(t - P.lastTick, 0, 1) : 0; P.lastTick = t;
+  const L = measure(g.aLoop, bufLoop), I = measure(g.aSend, bufSend);
+  const k = 1 - Math.exp(-dt / 0.5);
+  P.loopMs += (L.ms - P.loopMs) * k; P.injMs += (I.ms - P.injMs) * k;
+  const win = Math.max(2, 2 * S.delayMs / 1000 + 0.5);
+  P.injHist.push({ t, pk: I.pk });
+  while (P.injHist.length && P.injHist[0].t < t - win) P.injHist.shift();
+  let inj = 0; for (const h of P.injHist) if (h.pk > inj) inj = h.pk;
+  P.loopPk = L.pk;
+  const grew = trackBars(t, L.ms);
+
+  if (P.state === 'ok') {
+    const loopRms = Math.sqrt(P.loopMs), injRms = Math.sqrt(P.injMs);
+    let reason = '';
+    if (!isFinite(L.pk) || L.pk >= PROT.HARD) reason = 'runaway';
+    else if (L.pk >= PROT.PEAK && L.pk >= PROT.RATIO * inj) reason = 'peak';
+    else if (loopRms >= PROT.RMS && loopRms >= PROT.RATIO * injRms) reason = 'energy';
+    else if (grew) reason = 'sustained';
+    if (reason) trip(reason);
+  } else {
+    if (S.fb < 100 && P.cleared) {
+      P.quiet = L.pk < PROT.QUIET ? P.quiet + dt : 0;
+      if (P.quiet >= PROT.QUIET_TIME) recover();
+    } else P.quiet = 0;
+  }
+}
+/** Average loop energy per bar (bars delimited by the source pulses). Returns true when the loop keeps
+    gaining roughly the same energy every bar, i.e. repeats are not dying away (loop gain at or above unity). */
+function trackBars(t, ms) {
+  P.barAcc += ms; P.barN++;
+  let last = -1;
+  for (let i = pulseLog.length - 1; i >= 0; i--) if (pulseLog[i].t <= t) { last = i; break; }
+  if (last < 0 || pulseLog[last].t === P.barPulse) return false;
+  P.barPulse = pulseLog[last].t;
+  if (P.barN) P.barE.push(P.barAcc / P.barN);
+  P.barAcc = 0; P.barN = 0;
+  const n = PROT.GROW_BARS;
+  if (P.barE.length > n + 2) P.barE.shift();
+  if (P.barE.length < n + 2 || !playing || S.send <= FADER_MIN) return false;
+  const e = P.barE.slice(1), d = [];                 // skip the first (possibly partial) bar
+  for (let i = 1; i < e.length; i++) d.push(e[i] - e[i - 1]);
+  if (d.filter(x => x > 0).length < n - 1) return false;
+  const h = n / 2, early = d.slice(0, h).reduce((a, b) => a + b, 0), late = d.slice(h).reduce((a, b) => a + b, 0);
+  return early > 0 && late >= PROT.GROW_KEEP * early && Math.sqrt(e[e.length - 1]) >= PROT.GROW_FLOOR;
+}
+function resetBars() { P.barE = []; P.barAcc = 0; P.barN = 0; }
+function trip(reason) {
+  P.state = 'tripped'; P.reason = reason; P.cleared = false; P.quiet = 0;
+  P.events++; storage.set('dd.events', P.events);
+  P.fbAtTrip = S.fb;
+  fadeTo(g.protect.gain, 0, 0.008);       // mute master output immediately (8 ms, click-free)
+  fadeTo(g.fbBreak.gain, 0, 0.004);       // interrupt the feedback loop
+  fadeTo(g.inGate.gain, 0, 0.004);        // stop new material entering the delay
+  pulseLog.forEach(p => { if (p.t > now()) p.gated = true; });
+  setTimeout(() => { if (P.state === 'tripped') { g.clearLoop(); lastClearT = now(); P.cleared = true; } }, 60);
+  updateProtectUI();
+}
+function recover() {
+  P.state = 'ok'; P.injHist = []; P.loopMs = 0; P.injMs = 0; resetBars();
+  fadeTo(g.fbBreak.gain, 1, 0.02); fadeTo(g.inGate.gain, 1, 0.02);
+  fadeTo(g.protect.gain, 1, 0.3);   // short fade back in
+  updateProtectUI();
+}
+function tick() {
+  if (!ctx) return;
+  if (playing) scheduler();
+  monitor();
+}
+
+/* ---------------- parameter changes ---------------- */
+function setParam(name) {
+  if (!g) return;
+  switch (name) {
+    case 'src': fadeTo(g.srcFader.gain, dbToGain(S.src), 0.02); break;
+    case 'send': fadeTo(g.auxSend.gain, dbToGain(S.send), 0.02); break;
+    case 'ret': fadeTo(g.ret.gain, dbToGain(S.ret), 0.02); break;
+    case 'master': fadeTo(g.master.gain, dbToGain(S.master), 0.02); break;
+    case 'fb': fadeTo(g.fb.gain, S.fb / 100, 0.02); break;
+    case 'delay': g.p.delayS = S.delayMs / 1000; fadeTo(g.delay.delayTime, g.p.delayS, 0.05); break;
+    case 'hpf': g.p.hpf = S.hpf; fadeTo(g.hpf.frequency, S.hpf, 0.03); break;
+    case 'lpf': g.p.lpf = S.lpf; fadeTo(g.lpf.frequency, S.lpf, 0.03); break;
+  }
+}
+
+/* ================================================================
+   UI construction
+   ================================================================ */
+const FADERS = [
+  { id: 'src', label: 'Source Level', min: FADER_MIN, max: 6, step: 0.5, color: '--c-src', marks: [6, 0, -6, -12, -24, -48],
+    tip: 'Level of the pulse channel. It feeds the dry output, and the aux send is taken after this fader (post-fader), so it also changes how much reaches the delay.', foot: '→ dry out + aux send' },
+  { id: 'send', label: 'Aux Send', min: FADER_MIN, max: 6, step: 0.5, color: '--c-send', marks: [6, 0, -6, -12, -24, -48],
+    tip: 'How much of the post-fader source is copied into the delay. Controls how loud the first repeat is. Down = no new echoes (the dry pulse is unaffected).', foot: '→ delay input' },
+  { id: 'fb', label: 'Feedback — sends repeats back into the delay', min: 0, max: 110, step: 1, color: '--c-fb', marks: [0, 25, 50, 75, 110], wide: true,
+    tip: 'An aux send from the filtered delay output back into the delay input. Below 100% repeats die away; 100% (unity) keeps them going; above 100% they grow until protection steps in.', foot: '' },
+  { id: 'ret', label: 'Return Level', min: FADER_MIN, max: 6, step: 0.5, color: '--c-ret', marks: [6, 0, -6, -12, -24, -48],
+    tip: 'Level of the delay (wet) signal added back into the mix. Pulling it down silences the echoes, but they keep circulating in the loop.', foot: '→ mix' },
+  { id: 'master', label: 'Master Output', min: FADER_MIN, max: 0, step: 0.5, color: '--c-out', marks: [0, -6, -12, -24, -48],
+    tip: 'Overall level of dry + return. A safety limiter and a −1 dBFS ceiling follow it. Start low and raise gently.', foot: '→ limiter → speakers' }
+];
+const THUMB = 16, FADER_H = 190;
+const fracPos = frac => `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${frac})`;
+const faderEls = {};
+function buildStrips() {
+  const host = $('#strips');
+  FADERS.forEach(f => {
+    const el = document.createElement('div');
+    el.className = 'strip' + (f.wide ? ' wide' : '');
+    el.style.setProperty('--sc', `var(${f.color})`);
+    const tipId = 'tip-' + f.id;
+    const frac = v => (v - f.min) / (f.max - f.min);
+    let ticks = f.marks.map(m => `<div class="tick" style="bottom:${fracPos(frac(m))}"><span>${f.id === 'fb' ? m + '%' : minus((m > 0 ? '+' : '') + m)}</span></div>`).join('');
+    if (f.id === 'fb') {
+      ticks += `<div class="zone-hot" style="bottom:${fracPos(frac(100))};top:${THUMB / 2}px"></div>` +
+        `<div class="tick unity" style="bottom:${fracPos(frac(100))}"><span>UNITY 100%</span></div>`;
+    } else ticks += `<div class="tick" style="bottom:${fracPos(0)}"><span>−∞</span></div>`;
+    el.innerHTML = `
+      <div class="lab"><label for="f-${f.id}">${f.label}</label>
+        <span class="tipw"><button type="button" class="info" aria-label="About ${f.label}">i</button><span class="tip" role="tooltip" id="${tipId}">${f.tip}</span></span></div>
+      <div class="fader"><div class="slot"></div><div class="scale">${ticks}</div>
+        <input type="range" class="v" id="f-${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" aria-describedby="${tipId}" aria-orientation="vertical"></div>
+      <output id="o-${f.id}" for="f-${f.id}"></output>
+      <div class="${f.id === 'fb' ? 'decay' : 'foot'}" id="foot-${f.id}">${f.foot}</div>`;
+    host.appendChild(el);
+    const input = el.querySelector('input');
+    faderEls[f.id] = { input, out: el.querySelector('output'), f };
+    input.addEventListener('input', () => { S[f.id] = parseFloat(input.value); setParam(f.id); refreshFader(f.id); onAnyChange(); });
+    input.addEventListener('dblclick', () => { S[f.id] = DEFAULTS[f.id]; setParam(f.id); refreshFader(f.id); onAnyChange(); });
+  });
+  // keep tooltips inside the panel at the edges
+  const tips = host.querySelectorAll('.tip');
+  tips[0].classList.add('right'); tips[tips.length - 1].classList.add('left');
+}
+function refreshFader(id) {
+  const { input, out } = faderEls[id];
+  input.value = S[id];
+  const txt = id === 'fb' ? S.fb + '%' + (S.fb === 100 ? ' (unity)' : '') : fmtDb(S[id]);
+  out.textContent = txt; input.setAttribute('aria-valuetext', txt);
+  if (id === 'fb') $('#foot-fb').textContent = decayText();
+  updateFlowValues();
+}
+function t60() {  // seconds for repeats to fall 60 dB (feedback gain only, ignoring filter losses)
+  const gg = S.fb / 100;
+  if (gg <= 0) return 0;
+  if (gg >= 1) return Infinity;
+  return (S.delayMs / 1000) * 3 / -Math.log10(gg);
+}
+function decayText() {
+  const gg = S.fb / 100;
+  if (gg === 0) return 'One repeat only';
+  if (gg > 1) return 'Above unity: repeats grow louder';
+  if (gg === 1) return 'Unity: repeats never fade';
+  const n = 3 / -Math.log10(gg);
+  return `≈ ${n < 10 ? n.toFixed(1) : Math.round(n)} repeats / ${t60().toFixed(1)} s to fade by 60 dB`;
+}
+
+function buildCalc() {
+  $('#noteSeg').innerHTML = NOTES.map(n => `<label><input type="radio" name="note" value="${n.id}"><span title="${n.name}">${n.label}</span></label>`).join('');
+  $('#feelSeg').innerHTML = FEELS.map(f => `<label><input type="radio" name="feel" value="${f.id}"><span>${f.label}</span></label>`).join('');
+  document.querySelectorAll('input[name=note]').forEach(r => r.addEventListener('change', () => { S.note = r.value; calcChanged(); }));
+  document.querySelectorAll('input[name=feel]').forEach(r => r.addEventListener('change', () => { S.feel = r.value; calcChanged(); }));
+  $('#applyBtn').addEventListener('click', () => { setDelay(calcValue(), false); announceDelay(); });
+  $('#syncChk').addEventListener('change', e => { S.sync = e.target.checked; if (S.sync) setDelay(calcValue(), false); onAnyChange(); });
+  $('#nvTable').addEventListener('click', e => {
+    const b = e.target.closest('button[data-n]'); if (!b) return;
+    S.note = b.dataset.n; S.feel = b.dataset.f; calcChanged();
+  });
+}
+const calcValue = () => Math.round(noteMs(S.bpm, S.note, S.feel) * 100) / 100;
+function calcChanged() {
+  if (S.sync) setDelay(calcValue(), false);
+  refreshCalc(); onAnyChange();
+}
+function refreshCalc() {
+  document.querySelectorAll('input[name=note]').forEach(r => { r.checked = r.value === S.note; });
+  document.querySelectorAll('input[name=feel]').forEach(r => { r.checked = r.value === S.feel; });
+  const n = NOTES.find(x => x.id === S.note), f = FEELS.find(x => x.id === S.feel);
+  const v = noteMs(S.bpm, S.note, S.feel);
+  $('#calcOut').textContent = fmtMs(v);
+  $('#calcFormula').textContent = `60 000 ÷ ${S.bpm} BPM = ${(60000 / S.bpm).toFixed(2)} ms per quarter note × ${n.beats} (${n.label})` +
+    (f.factor !== 1 ? ` × ${f.id === 'dotted' ? '1.5 (dotted)' : '2/3 (triplet)'}` : '') + ` = ${v.toFixed(2)} ms`;
+  $('#syncChk').checked = S.sync;
+  let h = '<thead><tr><th scope="col">Note</th>' + FEELS.map(x => `<th scope="col">${x.label}</th>`).join('') + '</tr></thead><tbody>';
+  NOTES.forEach(nn => {
+    h += `<tr><th scope="row">${nn.label}</th>` + FEELS.map(ff => {
+      const sel = nn.id === S.note && ff.id === S.feel;
+      return `<td class="${sel ? 'sel' : ''}"><button data-n="${nn.id}" data-f="${ff.id}" aria-label="${ff.word}${nn.name}: ${noteMs(S.bpm, nn.id, ff.id).toFixed(2)} ms">${noteMs(S.bpm, nn.id, ff.id).toFixed(2)}</button></td>`;
+    }).join('') + '</tr>';
+  });
+  $('#nvTable').innerHTML = h + '</tbody>';
+  $('#gridSub').textContent = 'Grid: ' + (S.feel === 'triplet' ? 'triplets' : '16ths');
+}
+
+function setDelay(ms, manual) {
+  if (!isFinite(ms)) return;
+  const v = clamp(Math.round(ms * 100) / 100, MIN_DELAY_MS, MAX_DELAY_MS);
+  $('#delayMsg').textContent = v !== Math.round(ms * 100) / 100 ? `Delay time must be 1–6 000 ms; set to ${v} ms.` : '';
+  S.delayMs = v;
+  if (manual && S.sync) { S.sync = false; $('#delayMsg').textContent += ' Tempo sync switched off (manual delay time).'; }
+  setParam('delay'); refreshDelay(); refreshCalc(); onAnyChange();
+}
+function musicalName(ms) {
+  let best = null;
+  NOTES.forEach(n => FEELS.forEach(f => {
+    const v = noteMs(S.bpm, n.id, f.id), err = Math.abs(v - ms) / v;
+    if (!best || err < best.err) best = { n, f, v, err };
+  }));
+  return best;
+}
+function refreshDelay() {
+  $('#delayNum').value = S.delayMs;
+  $('#delayRange').value = logPos(S.delayMs, MIN_DELAY_MS, MAX_DELAY_MS);
+  $('#delayRange').setAttribute('aria-valuetext', fmtMs(S.delayMs));
+  const beats = S.delayMs / (60000 / S.bpm), b = musicalName(S.delayMs);
+  let txt = `= <b>${beats.toFixed(3).replace(/\.?0+$/, '')} beats</b> at ${S.bpm} BPM. `;
+  txt += b.err <= 0.005 ? `That is a <b>${b.f.word}${b.n.name}</b> (${b.n.label}${b.f.id !== 'straight' ? ' ' + b.f.label.toLowerCase() : ''}).`
+    : `Nearest note value: ${b.f.word}${b.n.name} = ${b.v.toFixed(2)} ms.`;
+  if (S.delayMs < 3) txt += ' <br>Note: inside a feedback loop the browser cannot go below one 128-sample block (≈2.7 ms), so recirculating repeats use that minimum.';
+  $('#delayMusical').innerHTML = txt;
+  $('#foot-fb').textContent = decayText();
+  updateFlowValues(); refreshLands();
+}
+function announceDelay() { $('#delayMsg').textContent = `Delay set to ${fmtMs(S.delayMs)}.`; }
+
+function setFilter(which, hz) {
+  if (!isFinite(hz)) return;
+  const v = clamp(Math.round(hz), 20, 20000);
+  $('#filtMsg').textContent = v !== Math.round(hz) ? 'Cutoff must be 20–20 000 Hz.' : '';
+  S[which] = v; setParam(which); refreshFilters(); onAnyChange();
+}
+function refreshFilters() {
+  ['hpf', 'lpf'].forEach(k => {
+    $('#' + k + 'Num').value = S[k];
+    $('#' + k + 'Range').value = logPos(S[k], 20, 20000);
+    $('#' + k + 'Range').setAttribute('aria-valuetext', fmtHz(S[k]));
+  });
+  const m = [];
+  if (S.hpf >= S.lpf) m.push('High-pass is above low-pass: almost nothing gets through the loop.');
+  if (!$('#filtMsg').textContent || m.length) $('#filtMsg').textContent = m.join(' ');
+  updateFlowValues();
+}
+
+function setBpm(v) {
+  if (!isFinite(v)) { $('#bpmNum').value = S.bpm; return; }
+  const b = clamp(Math.round(v), 40, 200);
+  S.bpm = b;
+  $('#bpmNum').value = b; $('#bpmRange').value = b; $('#bpmRange').setAttribute('aria-valuetext', b + ' BPM');
+  if (S.sync) setDelay(calcValue(), false);    // sync off: manual delay time is left untouched
+  refreshCalc(); refreshDelay(); onAnyChange();
+}
+
+function wireInputs() {
+  $('#startBtn').addEventListener('click', () => (playing ? stop() : start()));
+  $('#resetBtn').addEventListener('click', resetAll);
+  $('#bpmNum').addEventListener('change', e => setBpm(parseFloat(e.target.value)));
+  $('#bpmRange').addEventListener('input', e => setBpm(parseFloat(e.target.value)));
+  $('#delayNum').addEventListener('change', e => setDelay(parseFloat(e.target.value), true));
+  $('#delayRange').addEventListener('input', e => {
+    const v = posLog(+e.target.value, MIN_DELAY_MS, MAX_DELAY_MS);
+    setDelay(v >= 10 ? Math.round(v) : v, true);
+  });
+  ['hpf', 'lpf'].forEach(k => {
+    $('#' + k + 'Num').addEventListener('change', e => setFilter(k, parseFloat(e.target.value)));
+    $('#' + k + 'Range').addEventListener('input', e => setFilter(k, posLog(+e.target.value, 20, 20000)));
+  });
+  document.querySelectorAll('input[type=number]').forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') i.dispatchEvent(new Event('change')); }));
+  $('#resetEvents').addEventListener('click', () => { P.events = 0; storage.set('dd.events', 0); updateProtectUI(); });
+  $('#chReset').addEventListener('click', () => { CH.forEach(c => { c.done = false; c.hold = 0; }); saveCh(); renderTasks(); });
+  document.addEventListener('keydown', e => {
+    if (e.code !== 'Space' && e.key !== ' ') return;
+    const t = e.target, tag = t && t.tagName;
+    if (t && (t.isContentEditable || /^(INPUT|BUTTON|SELECT|TEXTAREA|SUMMARY|A)$/.test(tag))) return;
+    e.preventDefault(); playing ? stop() : start();
+  });
+  // touch devices: tap the (i) buttons to toggle tooltips
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.info');
+    document.querySelectorAll('.tipw.open').forEach(w => { if (!b || w !== b.parentElement) w.classList.remove('open'); });
+    if (b) b.parentElement.classList.toggle('open');
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.tipw.open').forEach(w => w.classList.remove('open')); });
+}
+
+function resetAll() {
+  Object.assign(S, DEFAULTS);
+  FADERS.forEach(f => { setParam(f.id); refreshFader(f.id); });
+  ['delay', 'hpf', 'lpf'].forEach(setParam);
+  $('#delayMsg').textContent = ''; $('#filtMsg').textContent = '';
+  setBpm(DEFAULTS.bpm); refreshFilters(); refreshDelay(); refreshCalc();
+  flushLoop();
+  if (playing && ctx) { beatIdx = 0; nextBeatT = Math.max(nextBeatT, ctx.currentTime + 0.05); }
+  CH.forEach(c => { c.hold = 0; });
+  onAnyChange();
+}
+
+/* ---------------- flow diagram (SVG built from a spec) ---------------- */
+const WIRES = [
+  { id: 'w-src', d: 'M130,60 H158', c: '--c-src', m: 'pre' },
+  { id: 'w-dry', d: 'M280,60 H894', c: '--c-src', m: 'src' },
+  { id: 'w-sendin', d: 'M320,60 V148', c: '--c-send', m: 'src' },
+  { id: 'w-sendout', d: 'M375,175 H402', c: '--c-send', m: 'send' },
+  { id: 'w-dlyin', d: 'M436,175 H458', c: '--c-delay', m: 'din' },
+  { id: 'w-hpf', d: 'M580,175 H603', c: '--c-delay', m: 'delay' },
+  { id: 'w-lpf', d: 'M705,175 H728', c: '--c-filter', m: 'loop' },
+  { id: 'w-split', d: 'M830,175 H860', c: '--c-filter', m: 'loop', noArrow: true },
+  { id: 'w-retin', d: 'M860,175 H873', c: '--c-ret', m: 'loop' },
+  { id: 'w-retmix', d: 'M920,150 V86', c: '--c-ret', m: 'ret' },
+  { id: 'w-fbin', d: 'M860,175 V265 H724', c: '--c-fb', m: 'loop', fb: true },
+  { id: 'w-fbout', d: 'M560,265 H420 V193', c: '--c-fb', m: 'fb', fb: true },
+  { id: 'w-master', d: 'M944,60 H968', c: '--c-out', m: 'mix' },
+  { id: 'w-lim', d: 'M1080,60 H1098', c: '--c-out', m: 'mixm' },
+  { id: 'w-out', d: 'M1145,88 V116', c: '--c-out', m: 'out' }
+];
+const BLOCKS = [
+  { id: 'src', x: 20, y: 32, w: 110, h: 56, t: 'Source', c: '--c-src', m: 'pre', focus: 'startBtn' },
+  { id: 'srclvl', x: 160, y: 32, w: 120, h: 56, t: 'Source Level', c: '--c-src', m: 'src', focus: 'f-src' },
+  { id: 'send', x: 265, y: 150, w: 110, h: 50, t: 'Aux Send', c: '--c-send', m: 'send', focus: 'f-send' },
+  { id: 'delay', x: 460, y: 150, w: 120, h: 50, t: 'Delay', c: '--c-delay', m: 'delay', focus: 'delayNum' },
+  { id: 'hpf', x: 605, y: 150, w: 100, h: 50, t: 'High-pass', c: '--c-filter', m: 'loop', focus: 'hpfNum' },
+  { id: 'lpf', x: 730, y: 150, w: 100, h: 50, t: 'Low-pass', c: '--c-filter', m: 'loop', focus: 'lpfNum' },
+  { id: 'ret', x: 875, y: 150, w: 90, h: 50, t: 'Return', c: '--c-ret', m: 'ret', focus: 'f-ret' },
+  { id: 'fb', x: 560, y: 243, w: 164, h: 44, t: 'Feedback send', c: '--c-fb', m: 'fb', focus: 'f-fb' },
+  { id: 'master', x: 970, y: 32, w: 110, h: 56, t: 'Master Output', c: '--c-out', m: 'mixm', focus: 'f-master' },
+  { id: 'lim', x: 1100, y: 32, w: 90, h: 56, t: 'Limiter', c: '--c-lim', m: 'out', focus: 'outMeter' }
+];
+function buildFlow() {
+  const svg = $('#flow');
+  const colors = [...new Set(WIRES.map(w => w.c))];
+  let h = `<title id="flowTitle">Signal flow diagram</title>
+    <desc id="flowDesc">The source pulse passes through the Source Level fader to the dry path and the mix. After the fader, an aux send feeds the delay, then a high-pass and a low-pass filter. The filtered delay output goes to the Return level and into the mix, and also through the Feedback send back into the delay input, forming a loop. The mix goes through the Master Output fader and a safety limiter to the speakers.</desc><defs>`;
+  colors.forEach(c => { h += `<marker id="ah${c}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(${c})"/></marker>`; });
+  h += `</defs>
+    <rect class="zone" x="245" y="126" width="740" height="176" rx="14"/>
+    <text class="zl" x="258" y="294">AUX EFFECTS LOOP</text>
+    <text class="zl" x="560" y="50">DRY PATH</text>
+    <text class="fbl" x="640" y="229" text-anchor="middle">↻ FEEDBACK LOOP: filtered repeats go round again</text>`;
+  WIRES.forEach(w => {
+    const cls = w.fb ? ' fbw' : '';
+    h += `<g id="${w.id}" style="--wc:var(${w.c})"><path class="wire${cls}" d="${w.d}" ${w.noArrow ? '' : `marker-end="url(#ah${w.c})"`}/><path class="flow${cls}" d="${w.d}"/></g>`;
+  });
+  h += `<circle cx="320" cy="60" r="5" style="fill:var(--c-src)"/><circle cx="860" cy="175" r="5" style="fill:var(--c-filter)"/>
+    <circle class="sum" cx="920" cy="60" r="24"/><text class="sumt" x="920" y="61">Σ</text><text class="zl" x="920" y="24" text-anchor="middle">MIX</text>
+    <circle class="sum" cx="420" cy="175" r="16"/><text class="sumt" x="420" y="176" style="font-size:16px">Σ</text>
+    <text class="v" x="328" y="112" style="font-size:12px;fill:var(--muted)">post-fader</text>`;
+  BLOCKS.forEach(b => {
+    const cy = b.y + b.h / 2;
+    h += `<g class="blk" id="b-${b.id}" data-focus="${b.focus}" style="--bc:var(${b.c})">
+      <rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="9"/>
+      <rect class="glow" x="${b.x + 2}" y="${b.y + 2}" width="${b.w - 4}" height="${b.h - 4}" rx="7"/>
+      <circle class="ledc" cx="${b.x + b.w - 10}" cy="${b.y + 10}" r="4"/>
+      <text class="t" x="${b.x + 10}" y="${cy - 3}">${b.t}</text>
+      <text class="v" id="sv-${b.id}" x="${b.x + 10}" y="${cy + 15}"></text></g>`;
+  });
+  // speaker + protection markers
+  h += `<g transform="translate(1133,118)" style="fill:var(--c-out)"><rect x="0" y="6" width="8" height="12"/><path d="M8,6 L18,0 V24 L8,18 z"/><path d="M22,5 Q28,12 22,19" style="fill:none;stroke:var(--c-out);stroke-width:2"/></g>
+    <g class="brk"><circle cx="490" cy="265" r="13" style="fill:#34121a;stroke:var(--danger);stroke-width:2"/><path d="M484,259 L496,271 M496,259 L484,271" style="stroke:var(--danger);stroke-width:3"/>
+      <text x="490" y="298" text-anchor="middle" style="font-size:12px;fill:#ffb4b4;font-weight:700">LOOP BROKEN</text></g>
+    <g class="mute"><rect x="973" y="92" width="104" height="20" rx="5" style="fill:var(--danger)"/><text x="1025" y="106" text-anchor="middle" style="font-size:12px;font-weight:800;fill:#1b0b0b">MUTED</text></g>`;
+  svg.innerHTML = h;
+  svg.addEventListener('click', e => {
+    const b = e.target.closest('.blk'); if (!b) return;
+    const el = document.getElementById(b.dataset.focus); if (el) { el.focus(); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+  });
+}
+function updateFlowValues() {
+  const set = (id, t) => { const el = document.getElementById('sv-' + id); if (el) el.textContent = t; };
+  set('src', 'pulse on beat 1'); set('srclvl', fmtDb(S.src)); set('send', fmtDb(S.send));
+  set('delay', fmtMs(S.delayMs)); set('hpf', fmtHz(S.hpf)); set('lpf', fmtHz(S.lpf));
+  set('ret', fmtDb(S.ret)); set('fb', S.fb + '%' + (S.fb === 100 ? ' unity' : S.fb > 100 ? ' ▲ grows' : ''));
+  set('master', fmtDb(S.master)); set('lim', '−1 dB ceiling');
+}
+
+/* ================================================================
+   Metering, animation and beat grid
+   ================================================================ */
+const lv = {};
+const tmpBufs = {};
+function peakOf(an) {
+  const n = an.fftSize, b = tmpBufs[n] || (tmpBufs[n] = new Float32Array(n));
+  an.getFloatTimeDomainData(b);
+  let pk = 0, idx = 0;
+  for (let i = 0; i < n; i++) { const a = Math.abs(b[i]); if (a > pk) { pk = a; idx = i; } }
+  return { pk, idx, n };
+}
+const lvl01 = pk => clamp((gainToDb(pk) + 54) / 54, 0, 1);
+function smooth(key, v) { const o = lv[key] || 0; lv[key] = v > o ? v : o * 0.9 + v * 0.1; return lv[key]; }
+
+function renderLevels(t) {
+  if (!g) return;
+  const m = {};
+  m.src = peakOf(g.aSrc).pk; m.send = peakOf(g.aSend).pk; m.delay = peakOf(g.aDelay).pk;
+  m.loop = P.loopPk || 0; m.ret = peakOf(g.aRet).pk; m.fb = peakOf(g.aFb).pk; m.out = peakOf(g.aOut).pk;
+  m.din = Math.max(m.send, m.fb);
+  m.mix = Math.max(m.src, m.ret); m.mixm = m.mix * dbToGain(S.master) * (P.state === 'tripped' ? 0 : 1);
+  const lp = pulseLog.length ? pulseLog[pulseLog.length - 1] : null;
+  m.pre = lp && t >= lp.t ? Math.exp(-(t - lp.t) / 0.08) * 0.7 : 0;
+  const L = {};
+  Object.keys(m).forEach(k => { L[k] = smooth(k, lvl01(m[k])); });
+  WIRES.forEach(w => { document.getElementById(w.id).style.setProperty('--l', L[w.m].toFixed(3)); });
+  BLOCKS.forEach(b => { document.getElementById('b-' + b.id).style.setProperty('--l', L[b.m].toFixed(3)); });
+  // output meter
+  const outDb = gainToDb(lv.outPk = Math.max(m.out, (lv.outPk || 0) * 0.93));
+  $('#outMeter .fill').style.width = (clamp((outDb + 60) / 60, 0, 1) * 100).toFixed(1) + '%';
+  $('#outVal').textContent = fmtDbfs(lv.outPk);
+  $('#limLed').classList.toggle('lit', g.limiter.reduction < -1);
+  // loop meter: −60 … +6 dBFS
+  const lpk = lv.loopPk = Math.max(isFinite(m.loop) ? m.loop : 10, (lv.loopPk || 0) * 0.93);
+  $('#loopMeter .fill').style.width = (clamp((gainToDb(lpk) + 60) / 66, 0, 1) * 100).toFixed(1) + '%';
+  $('#loopVal').textContent = fmtDbfs(lpk);
+  // heard repeats history for the grid (timestamp at the peak inside the analyser window)
+  if (playing) {
+    const r = peakOf(g.aRet);
+    retHist.push({ t: t - (r.n - r.idx) / ctx.sampleRate, pk: r.pk, cen: centroid() });
+    const cut = t - 30; while (retHist.length && retHist[0].t < cut) retHist.shift();
+  }
+}
+const fbuf = new Float32Array(512);
+function centroid() {
+  g.aRet.getFloatFrequencyData(fbuf);
+  const binHz = ctx.sampleRate / g.aRet.fftSize; let num = 0, den = 0;
+  for (let i = 1; i < fbuf.length; i++) { const a = Math.pow(10, fbuf[i] / 20); num += a * i * binHz; den += a; }
+  return den > 0 ? num / den : 0;
+}
+function brightColour(cen, alpha) { // dark (purple) → bright (pale yellow) by spectral centroid
+  const x = clamp(Math.log(Math.max(cen, 150) / 150) / Math.log(6000 / 150), 0, 1);
+  const hue = 285 + x * 135, light = 34 + x * 50;
+  return `hsla(${hue % 360},${80 - x * 10}%,${light}%,${alpha})`;
+}
+
+const gridCv = $('#grid'), g2 = gridCv.getContext('2d');
+const CSSV = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let COL = null;
+function drawGrid(t) {
+  if (!COL) COL = { src: CSSV('--c-src'), delay: CSSV('--c-delay'), line: CSSV('--line'), muted: CSSV('--muted'), faint: CSSV('--faint'), text: CSSV('--text'), ret: CSSV('--c-ret'), danger: CSSV('--danger') };
+  const dpr = window.devicePixelRatio || 1, W = gridCv.clientWidth, H = gridCv.clientHeight;
+  if (gridCv.width !== Math.round(W * dpr) || gridCv.height !== Math.round(H * dpr)) { gridCv.width = Math.round(W * dpr); gridCv.height = Math.round(H * dpr); }
+  g2.setTransform(dpr, 0, 0, dpr, 0, 0); g2.clearRect(0, 0, W, H);
+  const beatS = 60 / S.bpm, span = 8 * beatS, tL = t - span * 0.8, tR = t + span * 0.2;
+  const X = tt => 64 + (tt - tL) / span * (W - 70);
+  const lanes = { head: [0, 20], src: [24, 60], exp: [66, 110], heard: [116, H - 6] };
+  // lane labels
+  g2.font = '600 11px system-ui,sans-serif'; g2.fillStyle = COL.muted; g2.textBaseline = 'middle';
+  g2.fillText('Source', 6, (lanes.src[0] + lanes.src[1]) / 2);
+  g2.fillText('Expected', 6, (lanes.exp[0] + lanes.exp[1]) / 2);
+  g2.fillText('Heard', 6, (lanes.heard[0] + lanes.heard[1]) / 2);
+  g2.save(); g2.beginPath(); g2.rect(62, 0, W - 62, H); g2.clip();
+  // beats: logged (actual) times, extrapolated beyond both ends at the current tempo
+  let beats = beatLog.map(b => ({ t: b.t, beat: b.beat, bar: b.bar }));
+  if (!beats.length) beats = [{ t: 0, beat: 0, bar: 1 }];
+  while (beats[0].t > tL - beatS) { const f = beats[0]; beats.unshift({ t: f.t - beatS, beat: (f.beat + 3) % 4, bar: f.beat === 0 ? f.bar - 1 : f.bar }); }
+  while (beats[beats.length - 1].t < tR + beatS) { const l = beats[beats.length - 1]; beats.push({ t: l.t + beatS, beat: (l.beat + 1) % 4, bar: l.beat === 3 ? l.bar + 1 : l.bar }); }
+  const sub = S.feel === 'triplet' ? 3 : 4;
+  for (let i = 0; i < beats.length - 1; i++) {
+    const b = beats[i], nb = beats[i + 1];
+    if (nb.t < tL || b.t > tR) continue;
+    for (let s = 1; s < sub; s++) {
+      const x = X(b.t + (nb.t - b.t) * s / sub);
+      g2.strokeStyle = (sub === 4 && s === 2) ? '#2e3743' : '#20272f'; g2.lineWidth = 1;
+      g2.beginPath(); g2.moveTo(x, lanes.src[0]); g2.lineTo(x, H); g2.stroke();
+    }
+  }
+  beats.forEach(b => {
+    if (b.t < tL - 1 || b.t > tR + 1) return;
+    const x = X(b.t);
+    g2.strokeStyle = b.beat === 0 ? '#566273' : '#39424e'; g2.lineWidth = b.beat === 0 ? 2 : 1;
+    g2.beginPath(); g2.moveTo(x, lanes.head[1]); g2.lineTo(x, H); g2.stroke();
+    g2.fillStyle = b.beat === 0 ? COL.text : COL.faint; g2.font = (b.beat === 0 ? '700 ' : '500 ') + '11px system-ui,sans-serif';
+    g2.fillText(b.beat === 0 ? `Bar ${b.bar > 0 ? b.bar : '–'} · 1` : String(b.beat + 1), x + 4, 10);
+  });
+  // expected repeats
+  const srcG = dbToGain(S.src), sendG = dbToGain(S.send), retG = dbToGain(S.ret), fbG = S.fb / 100, D = S.delayMs / 1000;
+  const toH = a => clamp((gainToDb(a) + 48) / 48, 0, 1);
+  pulseLog.forEach(p => {
+    if (p.gated || p.t < lastClearT) return;
+    let a = srcG * sendG * retG;
+    for (let k = 1; k <= 400; k++) {
+      const rt = p.t + k * D;
+      if (rt > tR || a < 0.004) break;
+      if (P.state === 'tripped' && rt > (P.tripT || 0)) break;
+      if (rt >= tL) {
+        const hh = toH(a) * (lanes.exp[1] - lanes.exp[0]), x = X(rt);
+        g2.fillStyle = COL.delay; g2.globalAlpha = 0.35 + 0.6 * toH(a);
+        g2.fillRect(x - 1.5, lanes.exp[1] - hh, 3, hh);
+        g2.globalAlpha = 1;
+      }
+      a *= fbG; if (k > 1 && fbG >= 1 && a > 4) break;
+    }
+  });
+  // source pulses + delay bracket on the latest pulse
+  pulseLog.forEach(p => {
+    if (p.t < tL - 0.2 || p.t > tR) return;
+    const x = X(p.t), hh = Math.max(4, toH(srcG) * (lanes.src[1] - lanes.src[0]));
+    g2.fillStyle = COL.src; g2.fillRect(x - 3, lanes.src[1] - hh, 6, hh);
+  });
+  const vis = pulseLog.filter(p => p.t <= t && p.t >= tL);
+  if (vis.length && D > 0) {
+    const p = vis[vis.length - 1], x0 = X(p.t), x1 = X(p.t + D), y = lanes.exp[0] + 6;
+    g2.strokeStyle = COL.delay; g2.lineWidth = 1.5; g2.beginPath();
+    g2.moveTo(x0, y + 5); g2.lineTo(x0, y); g2.lineTo(x1, y); g2.lineTo(x1, y + 5); g2.stroke();
+    g2.fillStyle = COL.delay; g2.font = '700 11px system-ui,sans-serif';
+    const label = `${S.delayMs.toFixed(S.delayMs % 1 ? 2 : 0)} ms`;
+    g2.fillText(label, Math.min(x0 + 4, W - 60), y + 12);
+  }
+  // heard repeats (measured at the return)
+  retHist.forEach(r => {
+    if (r.t < tL || r.pk < 0.003) return;
+    const hh = toH(r.pk) * (lanes.heard[1] - lanes.heard[0]);
+    g2.fillStyle = brightColour(r.cen, 0.9);
+    g2.fillRect(X(r.t) - 1.5, lanes.heard[1] - hh, 3, hh);
+  });
+  // now line
+  const xn = X(t); g2.strokeStyle = '#ffd166'; g2.lineWidth = 1.5; g2.beginPath(); g2.moveTo(xn, 0); g2.lineTo(xn, H); g2.stroke();
+  if (P.state === 'tripped') { g2.fillStyle = COL.danger; g2.font = '700 12px system-ui,sans-serif'; g2.fillText('MUTED: feedback overload', 70, H - 12); }
+  if (!playing && !pulseLog.length) { g2.fillStyle = COL.muted; g2.font = '500 13px system-ui,sans-serif'; g2.fillText('Press Start to see the pulse and its repeats scroll past.', 72, (lanes.exp[0] + lanes.exp[1]) / 2); }
+  g2.restore();
+}
+/** Where do the first repeats land, counted in beats ("1 e & a", "1 trip let")? */
+function posName(pBeats) {
+  const eps = 0.02;
+  const bar = Math.floor(pBeats / 4 + 1e-9), inBar = pBeats - bar * 4;
+  let beat = Math.floor(inBar + 1e-9), frac = inBar - beat;
+  if (frac > 1 - eps) { beat++; frac = 0; }
+  const names = [[0, ''], [0.25, 'e'], [0.5, '&'], [0.75, 'a'], [1 / 3, 'trip'], [2 / 3, 'let']];
+  const hit = names.find(n => Math.abs(frac - n[0]) < eps);
+  const bb = (beat % 4) + 1, barN = bar + 1 + Math.floor(beat / 4);
+  const pos = hit ? `${bb}${hit[1] ? ' ' + hit[1] : ''}` : `${bb} +${frac.toFixed(2)}`;
+  return (barN > 1 ? `bar ${barN}: ` : '') + pos;
+}
+function refreshLands() {
+  const beatMs = 60000 / S.bpm, n = Math.min(8, S.fb === 0 ? 1 : 8);
+  let h = '<span class="small">Repeats land on:</span> <span class="chip on">pulse = 1</span>';
+  for (let k = 1; k <= n; k++) h += `<span class="chip">${k}: ${posName(k * S.delayMs / beatMs)}</span>`;
+  $('#lands').innerHTML = h;
+  $('#grid').setAttribute('aria-label', `Beat grid. Delay ${fmtMs(S.delayMs)} = ${(S.delayMs / beatMs).toFixed(3)} beats. First repeats land on ` +
+    Array.from({ length: Math.min(4, n) }, (_, i) => posName((i + 1) * S.delayMs / beatMs)).join(', ') + '.');
+}
+
+/* ================================================================
+   Transport / protection UI
+   ================================================================ */
+function updateTransportUI() {
+  const b = $('#startBtn');
+  b.setAttribute('aria-pressed', String(playing));
+  b.textContent = playing ? '■ Stop' : '▶ Start';
+  if (!playing) { document.querySelectorAll('.beat').forEach(x => x.classList.remove('active')); $('#barpos').textContent = 'Stopped'; }
+  updateAudioPill();
+}
+function renderBeat(t) {
+  if (!playing) return;
+  let cur = null;
+  for (let i = beatLog.length - 1; i >= 0; i--) if (beatLog[i].t <= t) { cur = beatLog[i]; break; }
+  const cells = document.querySelectorAll('.beat');
+  cells.forEach((c, i) => c.classList.toggle('active', !!cur && cur.beat === i));
+  $('#barpos').textContent = cur ? `Bar ${cur.bar} · Beat ${cur.beat + 1}` : 'Count-in…';
+}
+function updateProtectUI() {
+  const tripped = P.state === 'tripped';
+  $('#overload').classList.toggle('show', tripped);
+  $('#flow').classList.toggle('tripped', tripped);
+  $('#eventCount').textContent = P.events;
+  const st = $('#protStatus');
+  st.textContent = tripped ? 'Tripped: output muted' : 'Armed';
+  st.className = 'pstatus ' + (tripped ? 'bad' : 'ok');
+  if (tripped && !P.tripT) P.tripT = now();
+  if (!tripped) P.tripT = 0;
+  updateOverloadHint();
+}
+function updateOverloadHint() {
+  if (P.state !== 'tripped') return;
+  let h;
+  if (S.fb >= 100) h = `Feedback is at ${S.fb}%. Pull the Feedback fader below the 100% unity line; the delay buffer is being cleared, then audio fades back in.`;
+  else if (!P.cleared || P.quiet < PROT.QUIET_TIME) h = 'Feedback is below 100%. Clearing the delay buffer, audio will fade back in…';
+  else h = '';
+  if (P.fbAtTrip < 100) h += ' Repeats were piling up on top of new pulses even below unity; try less Feedback or less Aux Send.';
+  $('#overloadHint').textContent = h;
+}
+function setAudioState(txt, cls) {
+  const pill = $('#audioPill'); pill.className = 'pill ' + (cls || ''); $('#audioState').textContent = txt;
+}
+function updateAudioPill() {
+  if (!ctx) return setAudioState('Audio off: press Start');
+  if (ctx.state !== 'running') return setAudioState('Audio ' + ctx.state, 'bad');
+  setAudioState(playing ? 'Audio running' : 'Audio ready (stopped)', playing ? 'on' : '');
+}
+
+/* ---------------- environment / embedding checks ---------------- */
+const framed = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+function notice(id, level, html) {
+  let el = document.getElementById('n-' + id);
+  if (!el) { el = document.createElement('div'); el.id = 'n-' + id; $('#notices').appendChild(el); }
+  el.className = 'notice ' + level; el.setAttribute('role', level === 'error' ? 'alert' : 'status'); el.innerHTML = html;
+}
+function clearNotice(id) { const el = document.getElementById('n-' + id); if (el) el.remove(); }
+const newTabLink = () => `<a href="${location.href.replace(/"/g, '&quot;')}" target="_blank" rel="noopener">Open Delay Designer in a new tab</a>`;
+function reportBlocked(why) {
+  setAudioState('Audio blocked', 'bad');
+  playing = false; updateTransportUI(); setAudioState('Audio blocked', 'bad');
+  notice('blocked', 'error', `<b>No sound: ${why}</b> ` + (framed
+    ? `This page is embedded in another site (for example your VLE), and the embedding frame appears to block audio playback. ${newTabLink()}, or ask your tutor to allow <code>autoplay</code> for this embed.`
+    : 'Your browser may be blocking audio for this page. Check the site sound/autoplay permission (address-bar icon), unmute the tab, then press Start again.'));
+}
+function checkEnvironment() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) {
+    notice('noaudio', 'error', '<b>This browser does not support the Web Audio API</b>, so the tool cannot make sound. Please use a current version of Chrome, Edge, Firefox or Safari.');
+    $('#startBtn').disabled = true; setAudioState('Web Audio unavailable', 'bad');
+  }
+  if (framed) {
+    const pol = document.permissionsPolicy || document.featurePolicy;
+    let blocked = false;
+    try { blocked = !!(pol && pol.allowsFeature && !pol.allowsFeature('autoplay')); } catch (e) { /* ignore */ }
+    if (blocked) notice('frame', 'warn', `This tool is embedded in a frame that restricts audio autoplay. Sound should still start when you press Start; if you hear nothing, ${newTabLink()}.`);
+  }
+}
+
+/* ================================================================
+   Challenges
+   ================================================================ */
+const audible = () => playing && P.state === 'ok' && S.src > FADER_MIN && S.send > FADER_MIN && S.ret > FADER_MIN && S.master > FADER_MIN;
+const rhythmic = () => audible() && S.fb >= 20;
+const CH = [
+  { id: 'eighth', t: 'Create straight eighth-note repeats', h: 'Delay = one eighth note (half a beat). Use the calculator: 1/8 + Straight, then Apply. Feedback 20% or more so you hear several repeats.', bars: 2,
+    test: () => rhythmic() && near(S.delayMs, noteMs(S.bpm, 'eighth', 'straight')) },
+  { id: 'dotted', t: 'Create a dotted eighth-note rhythm', h: 'Three sixteenths long (0.75 beat): 375 ms at 120 BPM. Listen for the galloping “1 … a … & …” pattern.', bars: 2,
+    test: () => rhythmic() && near(S.delayMs, noteMs(S.bpm, 'eighth', 'dotted')) },
+  { id: 'triplet', t: 'Create triplet repeats', h: 'Three equal repeats per beat (1/8 triplet) or per two beats (1/4 triplet). Switch Feel to Triplet; the grid changes to triplets.', bars: 2,
+    test: () => rhythmic() && ['quarter', 'eighth', 'sixteenth'].some(n => near(S.delayMs, noteMs(S.bpm, n, 'triplet'))) },
+  { id: 'darker', t: 'Make successive repeats become darker using filtering', h: 'Bring the Low-pass down to about 3 kHz or lower with Feedback ≥ 40%. The loop filters each repeat again, so every echo loses more treble. Watch the Heard lane change colour.', bars: 2,
+    test: () => audible() && S.lpf <= 3000 && S.fb >= 40 && S.delayMs >= 60 },
+  { id: 'decay', t: 'Find a feedback setting that produces a long but decaying pattern', h: 'Feedback below 100% (so it fades) but high enough that repeats last at least 6 s before dropping 60 dB. The readout under the Feedback fader shows the decay time.', bars: 3,
+    test: () => audible() && S.fb >= 60 && S.fb < 100 && t60() >= 6 }
+];
+function loadCh() { const s = storage.get('dd.challenges') || {}; CH.forEach(c => { c.done = !!s[c.id]; c.hold = 0; }); }
+function saveCh() { const o = {}; CH.forEach(c => { o[c.id] = c.done; }); storage.set('dd.challenges', o); }
+function renderTasks() {
+  $('#tasks').innerHTML = CH.map(c => `<li class="task${c.done ? ' done' : ''}" id="task-${c.id}">
+      <span class="st" aria-hidden="true">✓</span><span class="tt">${c.t}<span class="sr-only">${c.done ? ' (complete)' : ''}</span></span>
+      <span class="th">${c.h}</span><span class="bar" aria-hidden="true"><i></i></span></li>`).join('');
+  $('#chProgress').textContent = `${CH.filter(c => c.done).length} / ${CH.length} complete`;
+}
+let lastChT = 0;
+function updateChallenges(t) {
+  const dt = lastChT ? clamp(t - lastChT, 0, 0.5) : 0; lastChT = t;
+  const barS = 240 / S.bpm;
+  CH.forEach(c => {
+    if (c.done) return;
+    const ok = c.test();
+    c.hold = ok ? c.hold + dt / barS : 0;
+    const li = document.getElementById('task-' + c.id);
+    li.classList.toggle('live', ok);
+    li.querySelector('.bar i').style.width = (clamp(c.hold / c.bars, 0, 1) * 100) + '%';
+    if (c.hold >= c.bars) { c.done = true; saveCh(); renderTasks(); $('#chProgress').textContent += ` · Done: ${c.t}!`; }
+  });
+}
+function onAnyChange() { resetBars(); CH.forEach(c => { if (!c.done) c.hold = Math.min(c.hold, 0); }); updateOverloadHint(); }
+
+/* ================================================================
+   Main loop + init
+   ================================================================ */
+function frame() {
+  const t = playing ? now() : (ctx ? frozenNow : 0);
+  if (ctx) { renderLevels(now()); renderBeat(now()); }
+  drawGrid(t);
+  updateChallenges(now());
+  if (P.state === 'tripped') updateOverloadHint();
+  requestAnimationFrame(frame);
+}
+function selfTest() {
+  const r = [
+    ['120 BPM quarter = 500 ms', noteMs(120, 'quarter', 'straight'), 500],
+    ['120 BPM dotted eighth = 375 ms', noteMs(120, 'eighth', 'dotted'), 375],
+    ['120 BPM eighth triplet ≈ 166.67 ms', Math.round(noteMs(120, 'eighth', 'triplet') * 100) / 100, 166.67]
+  ].map(([n, got, want]) => ({ n, got, pass: Math.abs(got - want) < 1e-9 }));
+  if (window.console) console.info('[Delay Designer] self-test', r);
+  return r;
+}
+function init() {
+  buildFlow(); buildStrips(); buildCalc(); loadCh(); renderTasks(); wireInputs();
+  FADERS.forEach(f => refreshFader(f.id));
+  setBpm(S.bpm); refreshFilters(); refreshDelay(); refreshCalc(); updateProtectUI(); updateFlowValues();
+  $('#loopMark').style.left = `calc(${((gainToDb(PROT.PEAK) + 60) / 66 * 100).toFixed(2)}% - 1px)`;
+  checkEnvironment();
+  if (/[?&]selftest/.test(location.search)) $('#selftest').textContent = ' Self-test: ' + selfTest().map(x => (x.pass ? '✓ ' : '✗ ') + x.n).join(' · ');
+  else selfTest();
+  requestAnimationFrame(frame);
+}
+window.DelayDesigner = {
+  noteMs, NOTES, FEELS, DEFAULTS, PROT, buildGraph, playPulse, makeNoise, selfTest, stats, posName,
+  get state() { return S; }, get protection() { return P; }, get graph() { return g; }, get context() { return ctx; },
+  get playing() { return playing; }, start, stop, setBpm, setDelay: ms => setDelay(ms, true), setFilter,
+  setFader(id, v) { S[id] = v; setParam(id); refreshFader(id); onAnyChange(); }
+};
+init();
+})();
+</script>
+</body>
+</html>
