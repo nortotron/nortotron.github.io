@@ -12,6 +12,7 @@
   --c-src:#34c3b0; --c-send:#5b9cff; --c-delay:#a78bfa; --c-filter:#6ad08a;
   --c-ret:#38bdf8; --c-fb:#ff9f43; --c-out:#e5e7eb; --c-lim:#ff6b6b;
   --danger:#ff5a5a; --ok:#4ade80; --warn:#fbbf24;
+  --p-amp:#f472b6; --p-freq:#6ad08a; --p-timbre:#a78bfa; --p-time:#38bdf8;
   --radius:12px; --focus:0 0 0 3px #ffd166;
   color-scheme:dark;
 }
@@ -119,18 +120,18 @@ input[type=number]:invalid{border-color:var(--danger)}
 @media (prefers-reduced-motion:reduce){#flow .flow{animation:none;stroke-dasharray:none}.overload{animation:none}}
 
 /* workspace */
-.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:10px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:10px;margin-bottom:10px;align-items:start}
+.calcbox{margin-top:8px;border-top:1px solid var(--line);padding-top:4px}
+.calcbox h3{margin:6px 0 6px}
+.gridpanel .legend{margin:0 0 6px}
 @media (max-width:900px){.workspace{grid-template-columns:minmax(0,1fr)}}
 h2 .h2note{text-transform:none;letter-spacing:0;font-weight:500;color:var(--faint);margin-left:6px;font-size:.78rem}
 
 /* mixer: one row of strips + protection column */
 .mixer{margin-bottom:10px}
-.mixrow{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px}
-@media (max-width:760px){.mixrow{grid-template-columns:minmax(0,1fr)}}
+.mixrow{display:flex;flex-direction:column;gap:10px}
 .strips{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding-bottom:2px}
-.strip{flex:1 1 0;min-width:108px;background:var(--panel-2);border:1px solid var(--line);border-top:4px solid var(--sc);border-radius:10px;padding:7px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:5px}
-.strip.wide{flex:1.6 1 0;min-width:184px}
-.strip.send{min-width:156px}
+.strip{flex:1 1 0;min-width:178px;background:var(--panel-2);border:1px solid var(--line);border-top:4px solid var(--sc);border-radius:10px;padding:7px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:5px}
 .strip .lab{display:flex;align-items:flex-start;justify-content:center;gap:4px;height:3.3em;text-align:center;font-weight:650;font-size:.8rem;line-height:1.1;overflow:hidden}
 .strip output{font-variant-numeric:tabular-nums;font-weight:700;font-size:.92rem;height:1.3em;white-space:nowrap}
 .strip .ctl{height:30px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.15;overflow:hidden}
@@ -173,19 +174,37 @@ input.h:focus-visible{box-shadow:none}
 input.h:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px #ffd166}
 input.h:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ffd166}
 
-/* protection column */
-.protect{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+/* protection bar (under the strips) */
+.protect{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
 .protect h2{margin:0}
-.counter{display:flex;align-items:center;gap:10px}
-.counter .n{font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums;width:2.2ch;text-align:center;color:var(--c-lim);line-height:1}
-.counter .lbl{font-size:.78rem;line-height:1.25}
-.counter .lbl b{font-size:.88rem}
-.pstatus{font-weight:700;font-size:.88rem;height:1.3em;white-space:nowrap}
+.protect .ph2{display:flex;flex-direction:column;gap:2px;width:236px}
+.protect .ph2 h2{white-space:nowrap}
+.counter{display:flex;align-items:center;gap:8px}
+.counter .n{font-size:1.8rem;font-weight:800;font-variant-numeric:tabular-nums;width:2.2ch;text-align:center;color:var(--c-lim);line-height:1}
+.counter .lbl{font-size:.76rem;line-height:1.2}
+.counter .lbl b{font-size:.86rem}
+.pstatus{font-weight:700;font-size:.86rem;height:1.3em;white-space:nowrap}
 .pstatus.ok{color:var(--ok)}
 .pstatus.bad{color:var(--danger)}
-.loopmeter{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center;font-size:.78rem;color:var(--muted)}
+.loopmeter{flex:1 1 240px;display:grid;grid-template-columns:1fr auto;gap:3px 8px;align-items:center;font-size:.76rem;color:var(--muted)}
 .loopmeter .lab2{grid-column:1 / -1}
 .loopmeter .val{font-variant-numeric:tabular-nums;width:74px;text-align:right;white-space:nowrap}
+
+/* filter strip: two knobs + response plot */
+.fbody{width:100%;height:170px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.fplot{display:block;width:100%;height:66px;border-radius:6px;background:#0d1014;border:1px solid #232a33}
+.knobs{display:flex;justify-content:space-around;width:100%}
+.kcol{display:flex;flex-direction:column;align-items:center;gap:2px}
+.kcol .kl{font-size:.68rem;color:var(--muted);font-weight:650;letter-spacing:.03em}
+.kcol input[type=number]{width:62px;padding:2px 4px;font-size:.76rem}
+.knob{width:46px;height:46px;border-radius:50%;cursor:ns-resize;touch-action:none;outline:none}
+.knob svg{display:block;width:100%;height:100%}
+.knob .kt{fill:none;stroke:#2a323c;stroke-width:4;stroke-linecap:round}
+.knob .kv{fill:none;stroke:var(--c-filter);stroke-width:4;stroke-linecap:round}
+.knob .kc{fill:url(#knobGrad);stroke:#0e1115;stroke-width:1}
+.knob .kp{stroke:#f3f5f8;stroke-width:2.5;stroke-linecap:round}
+.knob:focus-visible{box-shadow:var(--focus)}
+.strip .filtout{font-size:.8rem;font-weight:700}
 
 /* fx + calculator panels */
 .frow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
@@ -225,6 +244,7 @@ table.nv td.sel{background:#2d2450;color:#e3d9ff}
 /* grid */
 .gridpanel{margin-bottom:10px}
 .gridhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px}
+.gridhead h2{margin-bottom:6px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 #grid{display:block;width:100%;height:180px;border-radius:8px;background:#0d1014;border:1px solid var(--line)}
@@ -252,6 +272,15 @@ dl.concepts{margin:0;display:grid;gap:8px}
 dl.concepts dt{font-weight:700;font-size:.9rem}
 dl.concepts dt i{font-style:normal;display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
 dl.concepts dd{margin:0 0 0 16px;font-size:.86rem;color:#c9d1db}
+h3.ph{font-size:.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:16px 0 8px}
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.pcard{background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--pc);border-radius:9px;padding:8px 10px}
+.pcard h4{margin:0 0 2px;color:var(--pc);font-size:.95rem}
+.pcard .pctl{margin:0 0 4px;font-size:.74rem;color:var(--faint)}
+.pcard ul{margin:0;padding-left:16px;font-size:.82rem;color:#c9d1db}
+.pcard li{margin:2px 0}
+.pcard .pnow{margin:6px 0 2px;font-size:.78rem;color:var(--pc);font-variant-numeric:tabular-nums;min-height:2.4em}
+.pcard .ptry{margin:0;font-size:.78rem;color:var(--muted)}
 footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 
 /* tooltips */
@@ -313,8 +342,10 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
         <div class="strips" id="strips"></div>
       </div>
       <div class="protect" aria-labelledby="protH">
-        <h2 id="protH">Feedback protection</h2>
-        <div class="pstatus ok" id="protStatus">Armed</div>
+        <div class="ph2">
+          <h2 id="protH">Feedback protection <span class="tipw"><button type="button" class="info" aria-label="About feedback protection">i</button><span class="tip" role="tooltip">Watches the signal circulating in the loop, not the fader position. If repeats pile up far beyond what the send feeds in (past the red line, or building up bar after bar at or above unity), the output mutes and the loop is broken until Feedback is below 100% and the buffer is clear.</span></span></h2>
+          <div class="pstatus ok" id="protStatus">Armed</div>
+        </div>
         <div class="counter">
           <span class="n" id="eventCount" aria-live="polite">0</span>
           <span class="lbl"><b>Feedback Events</b><br>protection-triggering incidents<br><span class="small">(not individual echoes)</span></span>
@@ -324,78 +355,65 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
           <div class="meter" id="loopMeter" style="--mw:100%"><div class="fill"></div><div class="mark" id="loopMark"></div></div>
           <span class="val" id="loopVal">−∞ dBFS</span>
         </div>
-        <p class="small" style="margin:0">If repeats pile up far beyond what the send feeds in, the output mutes and the loop is broken.</p>
-        <div><button class="btn small" id="resetEvents">Reset counter</button></div>
+        <button class="btn small" id="resetEvents">Reset counter</button>
       </div>
     </div>
   </section>
 
   <div class="workspace">
-    <section class="panel fx" aria-labelledby="fxH">
-      <h2 id="fxH">Delay &amp; filters</h2>
+    <section class="panel delayp" aria-labelledby="dH">
+      <h2 id="dH">Delay time &amp; BPM calculator</h2>
       <div class="frow">
         <label class="main" for="delayNum">Delay time</label>
         <input type="number" id="delayNum" min="1" max="6000" step="0.01" value="500" aria-describedby="tip-delay delayMusical">
         <span class="unit">ms</span>
-        <span class="tipw"><button type="button" class="info" aria-label="About delay time">i</button><span class="tip" role="tooltip" id="tip-delay">How long after the original each repeat arrives (1–6 000 ms). Type a value and press Enter, or use the slider. Changing it by hand switches tempo sync off.</span></span>
+        <span class="tipw"><button type="button" class="info" aria-label="About delay time">i</button><span class="tip" role="tooltip" id="tip-delay">How long after the original each repeat arrives (1–6 000 ms). Type a value and press Enter, use the slider, or calculate it from the tempo below. Changing it by hand switches tempo sync off.</span></span>
       </div>
       <input type="range" class="h" id="delayRange" min="0" max="1000" step="1" style="--hc:var(--c-delay);margin-top:2px" aria-label="Delay time slider (logarithmic)">
       <p class="hint" id="delayMusical"></p>
       <div class="fieldmsg" id="delayMsg" aria-live="polite"></div>
-      <h3>Filters on the delay output <span class="tipw"><button type="button" class="info" aria-label="About the filters">i</button><span class="tip" role="tooltip">The filters sit inside the loop, after the delay. Every repeat passes through them again, so their effect builds up: each echo gets thinner (high-pass) or darker (low-pass) than the last.</span></span></h3>
-      <div class="fgrid">
-        <label for="hpfNum">High-pass</label>
-        <input type="range" class="h" id="hpfRange" min="0" max="1000" step="1" style="--hc:var(--c-filter)" aria-label="High-pass cutoff slider">
-        <span><input type="number" id="hpfNum" min="20" max="20000" step="1"> Hz</span>
-        <label for="lpfNum">Low-pass</label>
-        <input type="range" class="h" id="lpfRange" min="0" max="1000" step="1" style="--hc:var(--c-filter)" aria-label="Low-pass cutoff slider">
-        <span><input type="number" id="lpfNum" min="20" max="20000" step="1"> Hz</span>
+      <div class="calcbox" role="group" aria-labelledby="calcH">
+        <h3 id="calcH">Calculate from tempo</h3>
+        <div class="calcrow">
+          <fieldset>
+            <legend>Note value</legend>
+            <div class="seg" id="noteSeg"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Feel</legend>
+            <div class="seg" id="feelSeg"></div>
+          </fieldset>
+        </div>
+        <div class="result">
+          <output id="calcOut" aria-live="polite">500.00 ms</output>
+          <button class="btn accent" id="applyBtn">Apply to Delay</button>
+          <label class="check"><input type="checkbox" id="syncChk" aria-describedby="tip-sync"> Tempo sync</label>
+          <span class="tipw"><button type="button" class="info" aria-label="About tempo sync">i</button><span class="tip" role="tooltip" id="tip-sync">When on, the delay follows the calculator whenever BPM, note value or feel changes. When off, changing BPM leaves your delay time exactly as it is.</span></span>
+        </div>
+        <div class="formula" id="calcFormula"></div>
+        <details>
+          <summary>All note values at this tempo</summary>
+          <table class="nv" id="nvTable"></table>
+        </details>
       </div>
-      <div class="fieldmsg" id="filtMsg" aria-live="polite"></div>
     </section>
 
-    <section class="panel" role="group" aria-labelledby="calcH">
-      <h2 id="calcH">BPM → delay calculator</h2>
-      <div class="calcrow">
-        <fieldset>
-          <legend>Note value</legend>
-          <div class="seg" id="noteSeg"></div>
-        </fieldset>
-        <fieldset>
-          <legend>Feel</legend>
-          <div class="seg" id="feelSeg"></div>
-        </fieldset>
+    <section class="panel gridpanel" aria-labelledby="gridH">
+      <div class="gridhead">
+        <h2 id="gridH">Beat grid: where the repeats land</h2>
+        <span class="small" id="gridSub">Grid: 16ths</span>
       </div>
-      <div class="result">
-        <output id="calcOut" aria-live="polite">500.00 ms</output>
-        <button class="btn accent" id="applyBtn">Apply to Delay</button>
-        <label class="check"><input type="checkbox" id="syncChk" aria-describedby="tip-sync"> Tempo sync</label>
-        <span class="tipw"><button type="button" class="info" aria-label="About tempo sync">i</button><span class="tip left" role="tooltip" id="tip-sync">When on, the delay follows the calculator whenever BPM, note value or feel changes. When off, changing BPM leaves your delay time exactly as it is.</span></span>
-      </div>
-      <div class="formula" id="calcFormula"></div>
-      <details>
-        <summary>All note values at this tempo</summary>
-        <table class="nv" id="nvTable"></table>
-      </details>
-    </section>
-  </div>
-
-
-  <section class="panel gridpanel" aria-labelledby="gridH">
-    <div class="gridhead">
-      <h2 id="gridH">Beat grid: where the repeats land</h2>
       <div class="legend">
         <span><i style="background:var(--c-src)"></i>Source pulse</span>
         <span><i style="background:var(--c-delay);opacity:.7"></i>Expected repeats (from settings)</span>
         <span><i style="background:linear-gradient(90deg,#6b2f8f,#ff8a3d,#fff3b0)"></i>Heard repeats (colour = brightness)</span>
-        <span id="gridSub">Grid: 16ths</span>
       </div>
-    </div>
-    <canvas id="grid" role="img" aria-label="Scrolling beat grid showing source pulses and delay repeats against beats and subdivisions"></canvas>
-    <div class="lands" id="lands" aria-live="off"></div>
-  </section>
+      <canvas id="grid" role="img" aria-label="Scrolling beat grid showing source pulses and delay repeats against beats and subdivisions"></canvas>
+      <div class="lands" id="lands" aria-live="off"></div>
+    </section>
+  </div>
 
-  <div class="bottom">
+<div class="bottom">
     <section class="panel" aria-labelledby="chH">
       <h2 id="chH">Challenges</h2>
       <div class="progress"><span id="chProgress">0 / 5 complete</span><span>Hold each setting while playing</span><button class="btn small" id="chReset">Reset challenges</button></div>
@@ -403,6 +421,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
     </section>
     <section class="panel" aria-labelledby="learnH">
       <h2 id="learnH">Key ideas</h2>
+      <h3 class="ph" style="margin-top:0">Key terms</h3>
       <dl class="concepts">
         <dt><i style="background:var(--c-delay)"></i>Delay time</dt>
         <dd>The gap between a sound and its copy. One beat = 60 000 ÷ BPM ms, so at 120 BPM a quarter note is 500 ms. Dotted = ×1.5, triplet = ×⅔.</dd>
@@ -415,6 +434,53 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
         <dt><i style="background:var(--c-fb)"></i>Feedback</dt>
         <dd>Sends the filtered delay output back into the delay input. Below 100% repeats fade away; at 100% (unity) they sustain; above 100% each repeat is louder than the last, which is where overload happens.</dd>
       </dl>
+      <h3 class="ph">Core principles: how each control relates to amplitude, frequency, timbre and time</h3>
+      <div class="principles">
+        <article class="pcard" style="--pc:var(--p-amp)">
+          <h4>Amplitude</h4>
+          <p class="pctl">Source Level · Aux Send · Return Level · Master Output · Feedback · meters</p>
+          <ul>
+            <li>Faders are gain in decibels: −6 dB roughly halves the amplitude and +6 dB doubles it. Levels in a signal chain add in dB.</li>
+            <li>Feedback multiplies each repeat's amplitude by the same factor. At 50%, repeat <i>n</i> is 0.5<sup>n</sup> (−6 dB per repeat). At 100% (unity) nothing is lost; above 100% it grows.</li>
+            <li>The meters and the limiter work in dBFS: 0 dBFS is the digital ceiling.</li>
+          </ul>
+          <p class="pnow" id="nowAmp"></p>
+          <p class="ptry"><b>Try:</b> set Feedback to 50% and watch each Heard bar drop by the same amount.</p>
+        </article>
+        <article class="pcard" style="--pc:var(--p-freq)">
+          <h4>Frequency</h4>
+          <p class="pctl">High-pass · Low-pass · BPM · Delay time</p>
+          <ul>
+            <li>Cutoffs are in hertz (cycles per second). Frequency is logarithmic: each octave doubles it (100 → 200 → 400 Hz), which is why the knobs and plot use a log scale.</li>
+            <li>Tempo is also a frequency: 120 BPM = 2 beats per second (2 Hz). A delay of <i>D</i> ms repeats at 1000 ÷ <i>D</i> Hz.</li>
+            <li>Very short delays with feedback reinforce frequencies spaced 1000 ÷ <i>D</i> Hz apart (a comb filter).</li>
+          </ul>
+          <p class="pnow" id="nowFreq"></p>
+          <p class="ptry"><b>Try:</b> set the delay to 5 ms with 90% feedback. The pulse rings at about 200 Hz.</p>
+        </article>
+        <article class="pcard" style="--pc:var(--p-timbre)">
+          <h4>Timbre</h4>
+          <p class="pctl">High-pass · Low-pass · Feedback · short Delay times</p>
+          <ul>
+            <li>Timbre is the tone colour set by a sound's spectrum. Filtering removes parts of the spectrum; low-pass sounds darker, high-pass thinner.</li>
+            <li>Because the filters are in the loop, repeat <i>n</i> is filtered <i>n</i> times, so the change builds up. The dashed curve in the filter plot shows 4 passes.</li>
+            <li>Below roughly 30 ms, repeats fuse with the original and change its tone instead of sounding as echoes.</li>
+          </ul>
+          <p class="pnow" id="nowTimbre"></p>
+          <p class="ptry"><b>Try:</b> lower the Low-pass to 2 kHz with 60% feedback and watch the Heard colours darken.</p>
+        </article>
+        <article class="pcard" style="--pc:var(--p-time)">
+          <h4>Time</h4>
+          <p class="pctl">Delay time · BPM · note value &amp; feel · Feedback (decay)</p>
+          <ul>
+            <li>One beat = 60 000 ÷ BPM ms. Note values scale it; dotted ×1.5, triplet ×⅔.</li>
+            <li>Perception depends on delay time: under ~30 ms repeats fuse, ~30–100 ms is “slapback”, and longer delays are heard as distinct rhythmic echoes.</li>
+            <li>Feedback sets how long the pattern lasts (decay time), just as reverb time does for a room.</li>
+          </ul>
+          <p class="pnow" id="nowTime"></p>
+          <p class="ptry"><b>Try:</b> keep the same note value and change BPM with Tempo sync on, then off.</p>
+        </article>
+      </div>
     </section>
   </div>
   <div class="toasts">
@@ -861,10 +927,114 @@ function buildStrips() {
     input.addEventListener('input', () => { S[f.id] = parseFloat(input.value); setParam(f.id); refreshFader(f.id); onAnyChange(); });
     input.addEventListener('dblclick', () => { S[f.id] = DEFAULTS[f.id]; setParam(f.id); refreshFader(f.id); onAnyChange(); });
   });
+  buildFilterStrip(host);
   document.querySelectorAll('input[name=sendpos]').forEach(r => r.addEventListener('change', () => {
     S.sendPre = r.value === 'pre'; setParam('sendPre'); refreshSend(); onAnyChange();
   }));
   $('#sendMuteBtn').addEventListener('click', () => { S.sendMute = !S.sendMute; setParam('sendMute'); refreshSend(); onAnyChange(); });
+}
+/* ---------------- filter strip: HPF / LPF knobs + combined response plot ---------------- */
+const KNOB_A = 135;   // knob travel: −135° … +135°
+const knobs = {};
+function knobPt(a, r) { const t = a * Math.PI / 180; return [24 + r * Math.sin(t), 24 - r * Math.cos(t)]; }
+function knobArc(a0, a1, r) {
+  const [x0, y0] = knobPt(a0, r), [x1, y1] = knobPt(a1, r);
+  return `M${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)},${y1.toFixed(2)}`;
+}
+function buildFilterStrip(host) {
+  const el = document.createElement('div');
+  el.className = 'strip filt'; el.style.setProperty('--sc', 'var(--c-filter)');
+  const knob = (k, label) => `
+    <div class="kcol">
+      <span class="kl" id="kl-${k}">${label}</span>
+      <div class="knob" id="k-${k}" role="slider" tabindex="0" aria-labelledby="kl-${k}" aria-describedby="tip-filt" aria-valuemin="20" aria-valuemax="20000">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><defs><radialGradient id="kg-${k}" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#5b6572"/><stop offset="1" stop-color="#1c2229"/></radialGradient></defs>
+          <path class="kt" d="${knobArc(-KNOB_A, KNOB_A, 20)}"/><path class="kv"/>
+          <circle class="kc" cx="24" cy="24" r="14" style="fill:url(#kg-${k})"/><line class="kp" x1="24" y1="24" x2="24" y2="13"/></svg>
+      </div>
+      <input type="number" id="${k}Num" min="20" max="20000" step="1" aria-label="${label} cutoff in hertz">
+    </div>`;
+  el.innerHTML = `
+    <div class="lab"><span>Filters (in the loop)</span>
+      <span class="tipw"><button type="button" class="info" aria-label="About the filters">i</button><span class="tip" role="tooltip" id="tip-filt">High-pass and low-pass filters sit inside the loop, after the delay. Every repeat passes through them again, so each echo gets thinner (high-pass) or darker (low-pass) than the last. The plot shows one pass (solid) and four passes (dashed). Drag a knob up or down, scroll, use the arrow keys, or type a value in Hz.</span></span></div>
+    <div class="fbody">
+      <canvas class="fplot" id="fplot" role="img"></canvas>
+      <div class="knobs">${knob('hpf', 'High-pass')}${knob('lpf', 'Low-pass')}</div>
+    </div>
+    <output class="filtout" id="o-filt"></output>
+    <div class="ctl" id="filtMsg" aria-live="polite"></div>`;
+  host.insertBefore(el, faderEls.fb.el);
+  ['hpf', 'lpf'].forEach(k => {
+    const kn = document.getElementById('k-' + k);
+    knobs[k] = { el: kn, kv: kn.querySelector('.kv'), kp: kn.querySelector('.kp') };
+    const pos = () => logPos(S[k], 20, 20000);
+    const setPos = v => setFilter(k, posLog(clamp(v, 0, 1000), 20, 20000));
+    let drag = null;
+    kn.addEventListener('pointerdown', e => { drag = { y: e.clientY, p: pos() }; kn.setPointerCapture(e.pointerId); kn.focus(); e.preventDefault(); });
+    kn.addEventListener('pointermove', e => { if (drag) setPos(drag.p + (drag.y - e.clientY) * (e.shiftKey ? 1 : 4)); });
+    const end = () => { drag = null; };
+    kn.addEventListener('pointerup', end); kn.addEventListener('pointercancel', end);
+    kn.addEventListener('wheel', e => { e.preventDefault(); setPos(pos() - Math.sign(e.deltaY) * 20); }, { passive: false });
+    kn.addEventListener('dblclick', () => setFilter(k, DEFAULTS[k]));
+    kn.addEventListener('keydown', e => {
+      const step = { ArrowUp: 10, ArrowRight: 10, ArrowDown: -10, ArrowLeft: -10, PageUp: 100, PageDown: -100 }[e.key];
+      if (step) setPos(pos() + step);
+      else if (e.key === 'Home') setPos(0);
+      else if (e.key === 'End') setPos(1000);
+      else return;
+      e.preventDefault();
+    });
+  });
+  window.addEventListener('resize', drawFilterPlot);
+}
+let plotF;
+function filterResponse(freqs) {
+  if (plotF === undefined) {
+    try {
+      const C = window.OfflineAudioContext || window.webkitOfflineAudioContext, c = new C(1, 128, 48000);
+      const h = c.createBiquadFilter(), l = c.createBiquadFilter();
+      h.type = 'highpass'; l.type = 'lowpass'; h.Q.value = l.Q.value = BUTTERWORTH_Q_DB;
+      plotF = { h, l };
+    } catch (e) { plotF = null; }
+  }
+  if (!plotF) return null;
+  plotF.h.frequency.value = S.hpf; plotF.l.frequency.value = S.lpf;
+  const n = freqs.length, a = new Float32Array(n), b = new Float32Array(n), ph = new Float32Array(n);
+  plotF.h.getFrequencyResponse(freqs, a, ph); plotF.l.getFrequencyResponse(freqs, b, ph);
+  return a.map((v, i) => v * b[i]);
+}
+const PLOT_F = Float32Array.from({ length: 140 }, (_, i) => 20 * Math.pow(1000, i / 139));
+function drawFilterPlot() {
+  const cv = $('#fplot'); if (!cv) return;
+  const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+  if (!W || !H) return;
+  if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+  const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const X = f => Math.log(f / 20) / Math.log(1000) * W, TOP = 6, BOT = -42;
+  const Y = db => 3 + (TOP - clamp(db, BOT, TOP)) / (TOP - BOT) * (H - 14);
+  c.font = '9px system-ui,sans-serif'; c.textBaseline = 'bottom';
+  [100, 1000, 10000].forEach((f, i) => {
+    c.strokeStyle = '#222a33'; c.lineWidth = 1; c.beginPath(); c.moveTo(X(f), 0); c.lineTo(X(f), H - 10); c.stroke();
+    c.fillStyle = '#6b7684'; c.fillText(['100', '1k', '10k'][i], X(f) - 6, H);
+  });
+  c.strokeStyle = '#3a4450'; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(0, Y(0)); c.lineTo(W, Y(0)); c.stroke(); c.setLineDash([]);
+  const r = filterResponse(PLOT_F);
+  if (r) {
+    const green = CSSV('--c-filter') || '#6ad08a';
+    const line = pass => { c.beginPath(); r.forEach((m, i) => { const x = X(PLOT_F[i]), y = Y(pass * 20 * Math.log10(Math.max(m, 1e-6))); i ? c.lineTo(x, y) : c.moveTo(x, y); }); };
+    line(4); c.strokeStyle = green; c.globalAlpha = 0.55; c.setLineDash([3, 3]); c.lineWidth = 1.5; c.stroke(); c.setLineDash([]);
+    line(1); c.globalAlpha = 1; c.lineWidth = 2; c.stroke();
+    c.lineTo(W, H - 10); c.lineTo(0, H - 10); c.closePath(); c.fillStyle = green; c.globalAlpha = 0.12; c.fill(); c.globalAlpha = 1;
+    const at = f => 4 * 20 * Math.log10(Math.max(filterResponse(Float32Array.of(f))[0], 1e-6));
+    cv.setAttribute('aria-label', `Filter response: passes ${fmtHz(S.hpf)} to ${fmtHz(S.lpf)}. After 4 repeats: ${minus(at(200).toFixed(1))} dB at 200 Hz, ${minus(at(5000).toFixed(1))} dB at 5 kHz.`);
+  }
+}
+function refreshKnob(k) {
+  const kn = knobs[k]; if (!kn) return;
+  const a = -KNOB_A + (logPos(S[k], 20, 20000) / 1000) * 2 * KNOB_A;
+  kn.kv.setAttribute('d', a > -KNOB_A + 0.5 ? knobArc(-KNOB_A, a, 20) : '');
+  const [x, y] = knobPt(a, 11); kn.kp.setAttribute('x2', x.toFixed(2)); kn.kp.setAttribute('y2', y.toFixed(2));
+  kn.el.setAttribute('aria-valuenow', S[k]); kn.el.setAttribute('aria-valuetext', fmtHz(S[k]));
 }
 function refreshSend() {
   document.querySelectorAll('input[name=sendpos]').forEach(r => { r.checked = (r.value === 'pre') === S.sendPre; });
@@ -983,19 +1153,17 @@ function setMsg(sel, txt) { const el = $(sel); el.textContent = txt; el.title = 
 function setFilter(which, hz) {
   if (!isFinite(hz)) return;
   const v = clamp(Math.round(hz), 20, 20000);
-  setMsg('#filtMsg', v !== Math.round(hz) ? 'Cutoff range is 20–20 000 Hz.' : '');
+  filtRangeMsg = v !== Math.round(hz) ? 'Cutoff range is 20–20 000 Hz' : '';
+  if (S[which] === v && !filtRangeMsg) { refreshFilters(); return; }
   S[which] = v; setParam(which); refreshFilters(); onAnyChange();
 }
+let filtRangeMsg = '';
 function refreshFilters() {
-  ['hpf', 'lpf'].forEach(k => {
-    $('#' + k + 'Num').value = S[k];
-    $('#' + k + 'Range').value = logPos(S[k], 20, 20000);
-    $('#' + k + 'Range').setAttribute('aria-valuetext', fmtHz(S[k]));
-  });
-  const m = [];
-  if (S.hpf >= S.lpf) m.push('High-pass is above low-pass: almost nothing gets through.');
-  if (!$('#filtMsg').textContent || m.length) setMsg('#filtMsg', m.join(' '));
-  updateFlowValues();
+  ['hpf', 'lpf'].forEach(k => { $('#' + k + 'Num').value = S[k]; refreshKnob(k); });
+  $('#o-filt').textContent = `${fmtHz(S.hpf)} – ${fmtHz(S.lpf)}`;
+  setMsg('#filtMsg', filtRangeMsg || (S.hpf >= S.lpf ? 'High-pass above low-pass: almost nothing passes' : 'each repeat is filtered again'));
+  const el = $('#filtMsg'); el.style.color = (filtRangeMsg || S.hpf >= S.lpf) ? 'var(--warn)' : '';
+  drawFilterPlot(); updateFlowValues();
 }
 
 function setBpm(v) {
@@ -1019,7 +1187,6 @@ function wireInputs() {
   });
   ['hpf', 'lpf'].forEach(k => {
     $('#' + k + 'Num').addEventListener('change', e => setFilter(k, parseFloat(e.target.value)));
-    $('#' + k + 'Range').addEventListener('input', e => setFilter(k, posLog(+e.target.value, 20, 20000)));
   });
   document.querySelectorAll('input[type=number]').forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') i.dispatchEvent(new Event('change')); }));
   $('#resetEvents').addEventListener('click', () => { P.events = 0; storage.set('dd.events', 0); updateProtectUI(); });
@@ -1044,7 +1211,7 @@ function resetAll() {
   FADERS.forEach(f => { setParam(f.id); refreshFader(f.id); });
   setParam('sendPre'); setParam('sendMute'); refreshSend();
   ['delay', 'hpf', 'lpf'].forEach(setParam);
-  setMsg('#delayMsg', ''); setMsg('#filtMsg', '');
+  setMsg('#delayMsg', ''); filtRangeMsg = '';
   setBpm(DEFAULTS.bpm); refreshFilters(); refreshDelay(); refreshCalc();
   flushLoop();
   if (playing && ctx) { beatIdx = 0; nextBeatT = Math.max(nextBeatT, ctx.currentTime + 0.05); }
@@ -1427,7 +1594,26 @@ function updateChallenges(t) {
     if (c.hold >= c.bars) { c.done = true; saveCh(); renderTasks(); }
   });
 }
-function onAnyChange() { resetBars(); CH.forEach(c => { if (!c.done) c.hold = Math.min(c.hold, 0); }); updateOverloadHint(); }
+function dbTxt(d) { return !isFinite(d) ? '−∞ dB' : minus((d > 0 ? '+' : '') + d.toFixed(1)) + ' dB'; }
+function refreshPrinciples() {
+  const D = S.delayMs, fb = S.fb / 100;
+  const set = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML = '<b>Now:</b> ' + h; };
+  let amp;
+  if (S.sendMute || S.send <= FADER_MIN || S.ret <= FADER_MIN || (!S.sendPre && S.src <= FADER_MIN)) amp = 'no repeats reach the output (check send, mute and return)';
+  else amp = (S.src <= FADER_MIN ? 'dry pulse silent, echoes only (pre-fader)' : `first repeat ${dbTxt((S.sendPre ? -S.src : 0) + S.send + S.ret)} relative to the dry pulse`) +
+    ` · each further repeat ${fb > 0 ? dbTxt(20 * Math.log10(fb)) : 'none'}`;
+  set('nowAmp', amp);
+  set('nowFreq', `repeats at ${(1000 / D).toFixed(D > 1000 ? 3 : 2)} Hz · beat rate ${(S.bpm / 60).toFixed(2)} Hz · pass band ${fmtHz(S.hpf)}–${fmtHz(S.lpf)}` +
+    (D < 50 ? ` · comb peaks every ${Math.round(1000 / Math.max(D, 2.667))} Hz` : ''));
+  const r = filterResponse(Float32Array.of(200, 5000));
+  const four = r ? `after 4 repeats the filters alone take 200 Hz to ${dbTxt(80 * Math.log10(Math.max(r[0], 1e-6)))} and 5 kHz to ${dbTxt(80 * Math.log10(Math.max(r[1], 1e-6)))}` : '';
+  set('nowTimbre', [D < 30 ? 'repeats fuse with the pulse and colour its tone' : '', four].filter(Boolean).join(' · '));
+  const beats = D / (60000 / S.bpm), T = t60();
+  const perc = D < 30 ? 'fused (under 30 ms)' : D < 100 ? 'slapback (30–100 ms)' : 'distinct echoes';
+  set('nowTime', `${fmtMs(D)} = ${beats.toFixed(3).replace(/\.?0+$/, '')} beats · ${perc} · ` +
+    (fb >= 1 ? 'never fades (unity or above)' : fb === 0 ? 'a single repeat' : `fades 60 dB in ${T.toFixed(1)} s`));
+}
+function onAnyChange() { refreshPrinciples(); resetBars(); CH.forEach(c => { if (!c.done) c.hold = Math.min(c.hold, 0); }); updateOverloadHint(); }
 
 /* ================================================================
    Main loop + init
@@ -1490,7 +1676,7 @@ function selfTest() {
 function init() {
   buildFlow(); buildStrips(); buildCalc(); loadCh(); renderTasks(); wireInputs();
   FADERS.forEach(f => refreshFader(f.id)); refreshSend(); wireTooltips(); wireFullscreen();
-  setBpm(S.bpm); refreshFilters(); refreshDelay(); refreshCalc(); updateProtectUI(); updateFlowValues();
+  setBpm(S.bpm); refreshFilters(); refreshDelay(); refreshCalc(); updateProtectUI(); updateFlowValues(); refreshPrinciples();
   $('#loopMark').style.left = `calc(${((gainToDb(PROT.PEAK) + 60) / 66 * 100).toFixed(2)}% - 1px)`;
   checkEnvironment();
   if (/[?&]selftest/.test(location.search)) $('#selftest').textContent = ' Self-test: ' + selfTest().map(x => (x.pass ? '✓ ' : '✗ ') + x.n).join(' · ');
