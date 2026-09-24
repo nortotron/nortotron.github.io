@@ -21,19 +21,22 @@ html,body{margin:0;overflow-x:clip;background:var(--bg);color:var(--text);
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:none;box-shadow:var(--focus);border-radius:6px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-.app{max-width:1280px;margin:0 auto;padding:14px 16px 28px}
+.app{max-width:1280px;margin:0 auto;padding:12px 16px 24px;background:var(--bg)}
 h1{font-size:1.45rem;margin:0;letter-spacing:.01em}
 h2{font-size:.82rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 10px;font-weight:650}
 h3{font-size:.95rem;margin:14px 0 8px}
 p{margin:.3em 0}
 .small{font-size:.83rem;color:var(--muted)}
-header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin-bottom:10px}
+header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin-bottom:8px}
+.topright{display:flex;align-items:center;gap:8px}
+#fsBtn{width:136px}
+#audioPill{width:196px}
 header.top .sub{color:var(--muted);font-size:.9rem;margin-top:2px}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line);font-size:.82rem;color:var(--muted)}
 .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--faint)}
 .pill.on .dot{background:var(--ok);box-shadow:0 0 8px var(--ok)}
 .pill.bad .dot{background:var(--danger)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
 .notices:empty{display:none}
 .notice{border-radius:10px;padding:10px 12px;margin-bottom:10px;border:1px solid;font-size:.9rem}
 .notice.warn{background:#2b2410;border-color:#6b5617;color:#fde7a6}
@@ -41,8 +44,8 @@ header.top .sub{color:var(--muted);font-size:.9rem;margin-top:2px}
 .notice a{color:inherit;font-weight:650}
 
 /* transport */
-.transport{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin-bottom:12px}
-.btn{appearance:none;border:1px solid var(--line-2);background:var(--panel-2);border-radius:9px;padding:8px 14px;cursor:pointer;font-weight:600}
+.transport{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;margin-bottom:10px;padding:10px 14px}
+.btn{appearance:none;border:1px solid var(--line-2);background:var(--panel-2);border-radius:9px;padding:7px 14px;cursor:pointer;font-weight:600}
 .btn:hover{border-color:#566273}
 .btn.primary{background:#1f6f5f;border-color:#2aa58c;min-width:92px}
 .btn.primary[aria-pressed="true"]{background:#7a2a2f;border-color:#c24a52}
@@ -54,35 +57,43 @@ header.top .sub{color:var(--muted);font-size:.9rem;margin-top:2px}
 input[type=number]{background:#0d1014;border:1px solid var(--line-2);border-radius:7px;padding:5px 7px;text-align:right}
 input[type=number]:invalid{border-color:var(--danger)}
 .beats{display:flex;gap:6px}
-.beat{width:40px;height:40px;border-radius:9px;border:1px solid var(--line-2);display:grid;place-items:center;
+.beat{width:38px;height:38px;border-radius:9px;border:1px solid var(--line-2);display:grid;place-items:center;
   font-weight:700;color:var(--faint);background:#12161b;position:relative;transition:background .06s,color .06s}
-.beat.one::after{content:"pulse";position:absolute;bottom:-15px;font-size:.62rem;font-weight:600;color:var(--c-src);letter-spacing:.05em}
+.beat.one::after{content:"pulse";position:absolute;bottom:-14px;font-size:.6rem;font-weight:600;color:var(--c-src);letter-spacing:.05em}
 .beat.active{background:#2a323d;color:var(--text)}
 .beat.one.active{background:var(--c-src);color:#062c27;box-shadow:0 0 16px var(--c-src)}
-.barpos{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem;min-width:98px}
+.barpos{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem;width:112px;white-space:nowrap}
 .meter{position:relative;height:12px;border-radius:6px;background:#0c0f13;border:1px solid var(--line);overflow:hidden}
 .meter .fill{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,#2fbf71 0%,#2fbf71 70%,#f3c43b 85%,#ff5a5a 100%);background-size:var(--mw,200px) 100%}
 .meter .mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--danger)}
-.outmeter{display:grid;grid-template-columns:auto 170px auto auto;align-items:center;gap:8px;font-size:.82rem;color:var(--muted)}
-.outmeter .val{font-variant-numeric:tabular-nums;min-width:62px;text-align:right}
+.outmeter{display:grid;grid-template-columns:auto 150px auto auto;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);margin-left:auto}
+.outmeter .val{font-variant-numeric:tabular-nums;width:74px;text-align:right;white-space:nowrap}
 .led{display:inline-block;padding:1px 6px;border-radius:5px;font-size:.7rem;font-weight:700;border:1px solid var(--line-2);color:var(--faint)}
 .led.lit{color:#1b0b0b;background:var(--warn);border-color:var(--warn)}
-.kbd{font-size:.78rem;color:var(--faint)}
 
-/* overload banner */
-.overload{display:none;align-items:flex-start;gap:12px;border:2px solid var(--danger);background:#34121a;border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;animation:throb 1.2s ease-in-out infinite}
+/* toasts: overlay messages so nothing on the page moves when they appear */
+.toasts{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));z-index:50;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toasts > *{pointer-events:auto}
+.overload{display:none;align-items:flex-start;gap:12px;border:2px solid var(--danger);background:#34121a;border-radius:var(--radius);padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.6);animation:throb 1.2s ease-in-out infinite}
 .overload.show{display:flex}
 .overload strong{font-size:1.05rem}
 .overload .icon{font-size:1.6rem;line-height:1}
 @keyframes throb{50%{box-shadow:0 0 22px rgba(255,90,90,.45)}}
+.notices{display:flex;flex-direction:column;gap:8px}
+.notices:empty{display:none}
+.notice{position:relative;border-radius:10px;padding:10px 34px 10px 12px;border:1px solid;font-size:.9rem;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.notice.warn{background:#2b2410;border-color:#6b5617;color:#fde7a6}
+.notice.error{background:#2d1416;border-color:#7a2a2f;color:#ffd0d0}
+.notice a{color:inherit;font-weight:650}
+.notice .x{position:absolute;top:6px;right:6px;appearance:none;background:none;border:0;color:inherit;font-size:1.1rem;cursor:pointer;width:24px;height:24px;border-radius:6px}
 
 /* flow diagram */
-.flowwrap{overflow-x:auto;margin-bottom:12px}
+.flowwrap{overflow-x:auto;margin-bottom:10px}
 .flowwrap .panel{min-width:760px;padding:8px 10px}
 #flow{display:block;width:100%;height:auto}
 #flow text{fill:var(--text);font-family:inherit}
 #flow .blk rect{fill:#141920;stroke:var(--bc);stroke-width:2}
-#flow .blk .t{font-size:13.5px;font-weight:700}
+#flow .blk .t{font-size:13px;font-weight:700}
 #flow .blk .v{font-size:13px;fill:var(--muted);font-variant-numeric:tabular-nums}
 #flow .blk .glow{fill:var(--bc);opacity:calc(var(--l,0) * .28)}
 #flow .blk .ledc{fill:var(--bc);opacity:calc(.15 + var(--l,0) * .85)}
@@ -91,6 +102,9 @@ input[type=number]:invalid{border-color:var(--danger)}
 #flow .wire{fill:none;stroke:var(--wc);stroke-width:3;opacity:.4}
 #flow .flow{fill:none;stroke:var(--wc);stroke-width:3.5;stroke-dasharray:5 11;opacity:var(--l,0);animation:dash .55s linear infinite}
 #flow .wire.fbw{stroke-width:4;opacity:.6}
+#flow g.off{opacity:.25}
+#flow g.off .flow{display:none}
+#flow .wl{font-size:12px;fill:var(--muted)}
 #flow .flow.fbw{stroke-width:5}
 @keyframes dash{to{stroke-dashoffset:-16}}
 #flow .sum{fill:#141920;stroke:var(--line-2);stroke-width:2}
@@ -105,25 +119,37 @@ input[type=number]:invalid{border-color:var(--danger)}
 @media (prefers-reduced-motion:reduce){#flow .flow{animation:none;stroke-dasharray:none}.overload{animation:none}}
 
 /* workspace */
-.workspace{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:12px;margin-bottom:12px}
-@media (max-width:1000px){.workspace{grid-template-columns:minmax(0,1fr)}}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:10px}
+@media (max-width:900px){.workspace{grid-template-columns:minmax(0,1fr)}}
+h2 .h2note{text-transform:none;letter-spacing:0;font-weight:500;color:var(--faint);margin-left:6px;font-size:.78rem}
 
-/* mixer strips */
-.mixer .strips{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
-.strip{flex:1 1 92px;min-width:92px;max-width:150px;background:var(--panel-2);border:1px solid var(--line);border-top:4px solid var(--sc);border-radius:10px;padding:8px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.strip.wide{flex:1.7 1 150px;max-width:210px}
-.strip .lab{display:flex;align-items:flex-start;gap:4px;min-height:40px;text-align:center;font-weight:650;font-size:.84rem;line-height:1.2}
-.strip output{font-variant-numeric:tabular-nums;font-weight:700;font-size:.95rem}
-.strip .foot{font-size:.72rem;color:var(--muted);text-align:center;min-height:2.2em}
-.fader{position:relative;width:100%;height:190px}
-.fader .scale{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none}
-.fader .tick{position:absolute;left:4px;right:4px;height:0;border-top:1px solid #3b4552}
-.fader .tick span{position:absolute;right:0;transform:translateY(-55%);font-size:.64rem;color:var(--faint);font-variant-numeric:tabular-nums}
-.fader .tick.unity{border-top:2px solid var(--danger);left:0;right:0}
+/* mixer: one row of strips + protection column */
+.mixer{margin-bottom:10px}
+.mixrow{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px}
+@media (max-width:760px){.mixrow{grid-template-columns:minmax(0,1fr)}}
+.strips{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding-bottom:2px}
+.strip{flex:1 1 0;min-width:108px;background:var(--panel-2);border:1px solid var(--line);border-top:4px solid var(--sc);border-radius:10px;padding:7px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:5px}
+.strip.wide{flex:1.6 1 0;min-width:184px}
+.strip.send{min-width:156px}
+.strip .lab{display:flex;align-items:flex-start;justify-content:center;gap:4px;height:3.3em;text-align:center;font-weight:650;font-size:.8rem;line-height:1.1;overflow:hidden}
+.strip output{font-variant-numeric:tabular-nums;font-weight:700;font-size:.92rem;height:1.3em;white-space:nowrap}
+.strip .ctl{height:30px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.15;overflow:hidden}
+.strip .ctl.decay{color:var(--c-fb)}
+.fader{position:relative;width:100%;height:170px}
+.fader .tick{position:absolute;left:0;right:0;height:0;pointer-events:none}
+.fader .tick::before{content:"";position:absolute;left:calc(50% - 21px);width:38px;border-top:1px solid #36404c}
+.fader .tick span{position:absolute;right:calc(50% + 24px);transform:translateY(-52%);font-size:.62rem;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+.fader .tick.unity::before{left:calc(50% - 26px);width:70px;border-top:2px solid var(--danger)}
 .fader .tick.unity span{color:#ffb4b4;font-weight:700}
-.fader .zone-hot{position:absolute;left:calc(50% - 7px);width:14px;background:repeating-linear-gradient(45deg,rgba(255,90,90,.45) 0 4px,transparent 4px 8px);border-radius:3px}
-.fader .slot{position:absolute;left:calc(50% - 3px);width:6px;top:8px;bottom:8px;background:#0b0e12;border-radius:3px;border:1px solid #2a323c}
-input.v{position:absolute;left:50%;top:50%;width:190px;height:36px;margin:0;transform:translate(-50%,-50%) rotate(-90deg);background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+.fader .tick.unity b{position:absolute;left:calc(50% + 37px);transform:translateY(-52%);font-size:.58rem;color:#ffb4b4;letter-spacing:.05em}
+.fader .zone-hot{position:absolute;left:calc(50% - 6px);width:12px;background:repeating-linear-gradient(45deg,rgba(255,90,90,.45) 0 4px,transparent 4px 8px);border-radius:3px;pointer-events:none}
+.fader .slot{position:absolute;left:calc(50% - 3px);width:6px;top:8px;bottom:8px;background:#0b0e12;border-radius:3px;border:1px solid #2a323c;pointer-events:none}
+/* level meter beside each fader */
+.vm{position:absolute;left:calc(50% + 22px);width:8px;top:8px;bottom:8px;border-radius:3px;background:#0b0e12;border:1px solid #232a33;overflow:hidden;pointer-events:none}
+.vm .mf{position:absolute;inset:0;background:linear-gradient(to top,#28b36b 0%,#3fd07f 62%,#e6c940 80%,#ff8a3d 90%,#ff4d4d 100%);
+  -webkit-mask:repeating-linear-gradient(to top,#000 0 3px,transparent 3px 4px);mask:repeating-linear-gradient(to top,#000 0 3px,transparent 3px 4px);clip-path:inset(100% 0 0 0)}
+.vm .mp{position:absolute;left:0;right:0;height:2px;bottom:0;background:#e8ecf1;opacity:0}
+input.v{position:absolute;left:50%;top:50%;width:170px;height:36px;margin:0;transform:translate(-50%,-50%) rotate(-90deg);background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
 input.v::-webkit-slider-runnable-track{height:36px;background:transparent}
 input.v::-moz-range-track{height:36px;background:transparent}
 input.v::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:34px;border-radius:4px;background:linear-gradient(90deg,#9aa4b0,#e9edf2 45%,#6d7682 50%,#e9edf2 55%,#9aa4b0);border:1px solid #11151a;box-shadow:0 2px 6px rgba(0,0,0,.6)}
@@ -131,7 +157,11 @@ input.v::-moz-range-thumb{width:16px;height:34px;border-radius:4px;background:li
 input.v:focus-visible{box-shadow:none}
 input.v:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px #ffd166}
 input.v:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ffd166}
-.strip .decay{font-size:.72rem;color:var(--c-fb);text-align:center;min-height:2.3em}
+.seg.mini span{min-width:0;padding:3px 6px;font-size:.74rem;border-radius:6px}
+.seg.mini input:checked + span{background:var(--c-send);border-color:var(--c-send);color:#071a3a}
+.mute{appearance:none;border:1px solid var(--line-2);background:#141920;border-radius:6px;padding:3px 0;width:52px;font-size:.74rem;font-weight:700;cursor:pointer;color:var(--muted)}
+.mute[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:#241a00}
+.strip.muted .vm,.strip.muted input.v{opacity:.45}
 
 /* horizontal sliders */
 input.h{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;cursor:pointer;margin:0}
@@ -143,29 +173,29 @@ input.h:focus-visible{box-shadow:none}
 input.h:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px #ffd166}
 input.h:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ffd166}
 
-/* protection */
-.protect{margin-top:12px;display:grid;grid-template-columns:auto 1fr;gap:10px 16px;align-items:center}
+/* protection column */
+.protect{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.protect h2{margin:0}
 .counter{display:flex;align-items:center;gap:10px}
-.counter .n{font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums;min-width:1.6ch;text-align:center;color:var(--c-lim)}
-.counter .lbl{font-size:.8rem;line-height:1.25}
-.counter .lbl b{font-size:.9rem}
-.pstatus{font-weight:700}
+.counter .n{font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums;width:2.2ch;text-align:center;color:var(--c-lim);line-height:1}
+.counter .lbl{font-size:.78rem;line-height:1.25}
+.counter .lbl b{font-size:.88rem}
+.pstatus{font-weight:700;font-size:.88rem;height:1.3em;white-space:nowrap}
 .pstatus.ok{color:var(--ok)}
 .pstatus.bad{color:var(--danger)}
-.loopmeter{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:.8rem;color:var(--muted)}
-.loopmeter .val{font-variant-numeric:tabular-nums;min-width:62px;text-align:right}
-@media (max-width:560px){.protect{grid-template-columns:1fr}}
+.loopmeter{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center;font-size:.78rem;color:var(--muted)}
+.loopmeter .lab2{grid-column:1 / -1}
+.loopmeter .val{font-variant-numeric:tabular-nums;width:74px;text-align:right;white-space:nowrap}
 
-/* fx panel */
+/* fx + calculator panels */
 .frow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
-.frow label.main{font-weight:650;min-width:92px}
+.frow label.main{font-weight:650}
 .frow .unit{color:var(--muted)}
 .frow input[type=number]{width:96px}
 .hint{font-size:.84rem;color:var(--muted)}
 .hint b{color:var(--text)}
-.fieldmsg{font-size:.8rem;color:var(--warn);min-height:1.1em}
-.calc{margin-top:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.calc h3{margin-top:0}
+#delayMusical{height:2.7em;overflow:hidden;margin:2px 0 0}
+.fieldmsg{font-size:.8rem;color:var(--warn);height:1.35em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 fieldset{border:0;padding:0;margin:0 0 8px}
 legend{font-size:.78rem;color:var(--muted);margin-bottom:4px;padding:0}
 .seg{display:flex;flex-wrap:wrap;gap:4px}
@@ -174,12 +204,13 @@ legend{font-size:.78rem;color:var(--muted);margin-bottom:4px;padding:0}
 .seg span{display:inline-block;padding:5px 10px;border-radius:7px;border:1px solid var(--line-2);background:#141920;cursor:pointer;font-size:.88rem;font-weight:600;min-width:44px;text-align:center}
 .seg input:checked + span{background:var(--c-delay);border-color:var(--c-delay);color:#160b33}
 .seg input:focus-visible + span{box-shadow:var(--focus)}
-.result{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:8px 0}
-.result output{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--c-delay)}
-.formula{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.calcrow{display:flex;flex-wrap:wrap;gap:4px 16px}
+.result{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:4px 0 6px}
+.result output{font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--c-delay);width:6.6em;white-space:nowrap}
+.formula{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums;height:2.5em;overflow:hidden}
 .check{display:flex;align-items:center;gap:8px;font-size:.9rem;cursor:pointer}
 .check input{width:18px;height:18px;accent-color:var(--c-delay)}
-details{margin-top:8px}
+details{margin-top:6px}
 summary{cursor:pointer;font-size:.86rem;color:var(--muted)}
 table.nv{border-collapse:collapse;width:100%;margin-top:6px;font-size:.84rem;font-variant-numeric:tabular-nums}
 table.nv th,table.nv td{border:1px solid var(--line);padding:3px 6px;text-align:right}
@@ -187,22 +218,22 @@ table.nv th{color:var(--muted);font-weight:600}
 table.nv td button{all:unset;cursor:pointer;display:block;width:100%;text-align:right;border-radius:4px}
 table.nv td button:focus-visible{box-shadow:var(--focus)}
 table.nv td.sel{background:#2d2450;color:#e3d9ff}
-.filters{margin-top:12px}
 .fgrid{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px;align-items:center}
 .fgrid input[type=number]{width:84px}
+.fx h3{margin:10px 0 6px}
 
 /* grid */
-.gridpanel{margin-bottom:12px}
+.gridpanel{margin-bottom:10px}
 .gridhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 14px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
-#grid{display:block;width:100%;height:190px;border-radius:8px;background:#0d1014;border:1px solid var(--line)}
-.lands{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;font-size:.8rem;align-items:center}
+#grid{display:block;width:100%;height:180px;border-radius:8px;background:#0d1014;border:1px solid var(--line)}
+.lands{display:flex;flex-wrap:nowrap;gap:5px;margin-top:8px;font-size:.8rem;align-items:center;height:24px;overflow:hidden;white-space:nowrap}
 .chip{padding:2px 8px;border-radius:999px;border:1px solid var(--line-2);background:var(--panel-2);font-variant-numeric:tabular-nums}
 .chip.on{border-color:var(--c-ret)}
 
 /* bottom */
-.bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
 @media (max-width:900px){.bottom{grid-template-columns:minmax(0,1fr)}}
 .tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
 .task{display:grid;grid-template-columns:26px 1fr;gap:4px 8px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
@@ -215,7 +246,8 @@ table.nv td.sel{background:#2d2450;color:#e3d9ff}
 .task .bar{grid-column:2;height:4px;border-radius:2px;background:#0c0f13;overflow:hidden}
 .task .bar i{display:block;height:100%;width:0;background:var(--c-ret)}
 .task.done .bar i{background:var(--ok);width:100%!important}
-.progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.86rem;color:var(--muted)}
+.progress{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 10px;margin-bottom:8px;font-size:.86rem;color:var(--muted)}
+#chProgress{white-space:nowrap}
 dl.concepts{margin:0;display:grid;gap:8px}
 dl.concepts dt{font-weight:700;font-size:.9rem}
 dl.concepts dt i{font-style:normal;display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
@@ -225,10 +257,8 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
 /* tooltips */
 .tipw{position:relative;display:inline-flex}
 .info{appearance:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--line-2);background:#141920;color:var(--muted);font-size:.7rem;font-weight:800;line-height:1;padding:0;cursor:help;flex:none}
-.tip{position:absolute;z-index:20;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:min(230px,80vw);background:#f3f5f8;color:#141920;border-radius:8px;padding:8px 10px;font-size:.8rem;font-weight:500;line-height:1.35;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;pointer-events:none;text-transform:none;letter-spacing:0}
+.tip{position:fixed;z-index:60;left:0;top:0;width:min(230px,80vw);background:#f3f5f8;color:#141920;border-radius:8px;padding:8px 10px;font-size:.8rem;font-weight:500;line-height:1.35;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;pointer-events:none;text-transform:none;letter-spacing:0}
 .tipw:hover .tip,.info:focus-visible + .tip,.tipw.open .tip{display:block}
-.tip.left{left:auto;right:-8px;transform:none}
-.tip.right{left:-8px;transform:none}
 </style>
 </head>
 <body>
@@ -239,10 +269,11 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
       <h1>Delay Designer</h1>
       <div class="sub">One pulse per bar. Build rhythms from its echoes with an aux send, a filtered delay and a feedback loop.</div>
     </div>
-    <span class="pill" id="audioPill" role="status" aria-live="polite"><span class="dot"></span><span id="audioState">Audio off: press Start</span></span>
+    <div class="topright">
+      <span class="pill" id="audioPill" role="status" aria-live="polite"><span class="dot"></span><span id="audioState">Audio off: press Start</span></span>
+      <button class="btn small" id="fsBtn" aria-pressed="false" title="Fill the screen with Delay Designer (Esc to leave)">⛶ Full screen</button>
+    </div>
   </header>
-
-  <div class="notices" id="notices" aria-live="polite"></div>
 
   <section class="panel transport" aria-label="Transport">
     <div class="group">
@@ -252,30 +283,22 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
     <div class="group bpm">
       <label for="bpmNum"><b>BPM</b></label>
       <input type="number" id="bpmNum" min="40" max="200" step="1" value="120" aria-describedby="tip-bpm">
-      <input type="range" class="h" id="bpmRange" min="40" max="200" step="1" value="120" style="width:130px;--hc:var(--c-src)" aria-label="BPM slider" aria-describedby="tip-bpm">
+      <input type="range" class="h" id="bpmRange" min="40" max="200" step="1" value="120" style="width:120px;--hc:var(--c-src)" aria-label="BPM slider" aria-describedby="tip-bpm">
       <span class="tipw"><button type="button" class="info" aria-label="About BPM">i</button><span class="tip" role="tooltip" id="tip-bpm">Tempo in beats per minute (40–200). One beat lasts 60 000 ÷ BPM milliseconds. The source plays once per 4-beat bar, on beat 1.</span></span>
     </div>
     <div class="group" aria-label="Beat indicator">
       <div class="beats" id="beats" aria-hidden="true">
         <div class="beat one">1</div><div class="beat">2</div><div class="beat">3</div><div class="beat">4</div>
       </div>
-      <div class="barpos" id="barpos">Bar – · Beat –</div>
+      <div class="barpos" id="barpos">Stopped</div>
     </div>
     <div class="outmeter" aria-label="Output meter">
       <span>Output</span>
-      <div class="meter" id="outMeter" style="--mw:170px"><div class="fill"></div></div>
+      <div class="meter" id="outMeter" style="--mw:150px"><div class="fill"></div></div>
       <span class="val" id="outVal">−∞ dBFS</span>
       <span class="led" id="limLed" title="Lights when the safety limiter is reducing the level">LIMIT</span>
     </div>
   </section>
-
-  <div class="overload" id="overload" role="alert">
-    <span class="icon" aria-hidden="true">⚠</span>
-    <div>
-      <strong>Feedback overload: reduce feedback below 100% to continue.</strong>
-      <div class="small" id="overloadHint" style="color:#ffc9c9"></div>
-    </div>
-  </div>
 
   <div class="flowwrap">
     <section class="panel" aria-label="Signal flow">
@@ -283,42 +306,57 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
     </section>
   </div>
 
-  <div class="workspace">
-    <section class="panel mixer" aria-labelledby="mixH">
-      <h2 id="mixH">Mixer &amp; aux loop</h2>
-      <div class="strips" id="strips"></div>
-      <div class="protect panel" style="background:var(--panel-2)" aria-labelledby="protH">
+  <section class="panel mixer" aria-labelledby="mixH">
+    <div class="mixrow">
+      <div>
+        <h2 id="mixH">Mixer &amp; aux loop <span class="h2note">faders set gain · meters show signal level</span></h2>
+        <div class="strips" id="strips"></div>
+      </div>
+      <div class="protect" aria-labelledby="protH">
+        <h2 id="protH">Feedback protection</h2>
+        <div class="pstatus ok" id="protStatus">Armed</div>
         <div class="counter">
           <span class="n" id="eventCount" aria-live="polite">0</span>
           <span class="lbl"><b>Feedback Events</b><br>protection-triggering incidents<br><span class="small">(not individual echoes)</span></span>
         </div>
-        <div>
-          <h2 id="protH" style="margin-bottom:6px">Feedback protection · <span class="pstatus ok" id="protStatus">Armed</span></h2>
-          <div class="loopmeter">
-            <span>Loop level</span>
-            <div class="meter" id="loopMeter" style="--mw:100%"><div class="fill"></div><div class="mark" id="loopMark" title="Protection threshold"></div></div>
-            <span class="val" id="loopVal">−∞ dBFS</span>
-          </div>
-          <p class="small" style="margin-top:6px">Monitors the signal circulating in the loop. If repeats pile up past the red line (well above what the send is feeding in) the output mutes and the loop is broken.
-            <button class="btn small" id="resetEvents" style="margin-left:4px">Reset counter</button></p>
+        <div class="loopmeter">
+          <span class="lab2">Loop level (red line = protection threshold)</span>
+          <div class="meter" id="loopMeter" style="--mw:100%"><div class="fill"></div><div class="mark" id="loopMark"></div></div>
+          <span class="val" id="loopVal">−∞ dBFS</span>
         </div>
+        <p class="small" style="margin:0">If repeats pile up far beyond what the send feeds in, the output mutes and the loop is broken.</p>
+        <div><button class="btn small" id="resetEvents">Reset counter</button></div>
       </div>
-    </section>
+    </div>
+  </section>
 
+  <div class="workspace">
     <section class="panel fx" aria-labelledby="fxH">
-      <h2 id="fxH">Delay, calculator &amp; filters</h2>
+      <h2 id="fxH">Delay &amp; filters</h2>
       <div class="frow">
         <label class="main" for="delayNum">Delay time</label>
         <input type="number" id="delayNum" min="1" max="6000" step="0.01" value="500" aria-describedby="tip-delay delayMusical">
         <span class="unit">ms</span>
         <span class="tipw"><button type="button" class="info" aria-label="About delay time">i</button><span class="tip" role="tooltip" id="tip-delay">How long after the original each repeat arrives (1–6 000 ms). Type a value and press Enter, or use the slider. Changing it by hand switches tempo sync off.</span></span>
       </div>
-      <input type="range" class="h" id="delayRange" min="0" max="1000" step="1" style="--hc:var(--c-delay);margin-top:4px" aria-label="Delay time slider (logarithmic)">
-      <div class="fieldmsg" id="delayMsg" aria-live="polite"></div>
+      <input type="range" class="h" id="delayRange" min="0" max="1000" step="1" style="--hc:var(--c-delay);margin-top:2px" aria-label="Delay time slider (logarithmic)">
       <p class="hint" id="delayMusical"></p>
+      <div class="fieldmsg" id="delayMsg" aria-live="polite"></div>
+      <h3>Filters on the delay output <span class="tipw"><button type="button" class="info" aria-label="About the filters">i</button><span class="tip" role="tooltip">The filters sit inside the loop, after the delay. Every repeat passes through them again, so their effect builds up: each echo gets thinner (high-pass) or darker (low-pass) than the last.</span></span></h3>
+      <div class="fgrid">
+        <label for="hpfNum">High-pass</label>
+        <input type="range" class="h" id="hpfRange" min="0" max="1000" step="1" style="--hc:var(--c-filter)" aria-label="High-pass cutoff slider">
+        <span><input type="number" id="hpfNum" min="20" max="20000" step="1"> Hz</span>
+        <label for="lpfNum">Low-pass</label>
+        <input type="range" class="h" id="lpfRange" min="0" max="1000" step="1" style="--hc:var(--c-filter)" aria-label="Low-pass cutoff slider">
+        <span><input type="number" id="lpfNum" min="20" max="20000" step="1"> Hz</span>
+      </div>
+      <div class="fieldmsg" id="filtMsg" aria-live="polite"></div>
+    </section>
 
-      <div class="calc" role="group" aria-labelledby="calcH">
-        <h3 id="calcH">BPM → delay calculator</h3>
+    <section class="panel" role="group" aria-labelledby="calcH">
+      <h2 id="calcH">BPM → delay calculator</h2>
+      <div class="calcrow">
         <fieldset>
           <legend>Note value</legend>
           <div class="seg" id="noteSeg"></div>
@@ -327,33 +365,21 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
           <legend>Feel</legend>
           <div class="seg" id="feelSeg"></div>
         </fieldset>
-        <div class="result">
-          <output id="calcOut" aria-live="polite">500.00 ms</output>
-          <button class="btn accent" id="applyBtn">Apply to Delay</button>
-          <label class="check"><input type="checkbox" id="syncChk" aria-describedby="tip-sync"> Tempo sync</label>
-          <span class="tipw"><button type="button" class="info" aria-label="About tempo sync">i</button><span class="tip left" role="tooltip" id="tip-sync">When on, the delay follows the calculator whenever BPM, note value or feel changes. When off, changing BPM leaves your delay time exactly as it is.</span></span>
-        </div>
-        <div class="formula" id="calcFormula"></div>
-        <details>
-          <summary>All note values at this tempo</summary>
-          <table class="nv" id="nvTable"></table>
-        </details>
       </div>
-
-      <div class="filters">
-        <h3>Filters on the delay output <span class="tipw"><button type="button" class="info" aria-label="About the filters">i</button><span class="tip" role="tooltip">The filters sit inside the loop, after the delay. Every repeat passes through them again, so their effect builds up: each echo gets thinner (high-pass) or darker (low-pass) than the last.</span></span></h3>
-        <div class="fgrid">
-          <label for="hpfNum">High-pass</label>
-          <input type="range" class="h" id="hpfRange" min="0" max="1000" step="1" style="--hc:var(--c-filter)" aria-label="High-pass cutoff slider">
-          <span><input type="number" id="hpfNum" min="20" max="20000" step="1"> Hz</span>
-          <label for="lpfNum">Low-pass</label>
-          <input type="range" class="h" id="lpfRange" min="0" max="1000" step="1" style="--hc:var(--c-filter)" aria-label="Low-pass cutoff slider">
-          <span><input type="number" id="lpfNum" min="20" max="20000" step="1"> Hz</span>
-        </div>
-        <div class="fieldmsg" id="filtMsg" aria-live="polite"></div>
+      <div class="result">
+        <output id="calcOut" aria-live="polite">500.00 ms</output>
+        <button class="btn accent" id="applyBtn">Apply to Delay</button>
+        <label class="check"><input type="checkbox" id="syncChk" aria-describedby="tip-sync"> Tempo sync</label>
+        <span class="tipw"><button type="button" class="info" aria-label="About tempo sync">i</button><span class="tip left" role="tooltip" id="tip-sync">When on, the delay follows the calculator whenever BPM, note value or feel changes. When off, changing BPM leaves your delay time exactly as it is.</span></span>
       </div>
+      <div class="formula" id="calcFormula"></div>
+      <details>
+        <summary>All note values at this tempo</summary>
+        <table class="nv" id="nvTable"></table>
+      </details>
     </section>
   </div>
+
 
   <section class="panel gridpanel" aria-labelledby="gridH">
     <div class="gridhead">
@@ -372,7 +398,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
   <div class="bottom">
     <section class="panel" aria-labelledby="chH">
       <h2 id="chH">Challenges</h2>
-      <div class="progress"><span id="chProgress">0 / 5 complete</span><span>Hold each setting while playing <button class="btn small" id="chReset">Reset challenges</button></span></div>
+      <div class="progress"><span id="chProgress">0 / 5 complete</span><span>Hold each setting while playing</span><button class="btn small" id="chReset">Reset challenges</button></div>
       <ol class="tasks" id="tasks"></ol>
     </section>
     <section class="panel" aria-labelledby="learnH">
@@ -381,7 +407,7 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
         <dt><i style="background:var(--c-delay)"></i>Delay time</dt>
         <dd>The gap between a sound and its copy. One beat = 60 000 ÷ BPM ms, so at 120 BPM a quarter note is 500 ms. Dotted = ×1.5, triplet = ×⅔.</dd>
         <dt><i style="background:var(--c-send)"></i>Send</dt>
-        <dd>Copies some of a channel to an effect without changing the channel itself. This send is <b>post-fader</b>: pull Source Level down and the send drops with it.</dd>
+        <dd>Copies some of a channel to an effect without changing the channel itself. <b>Post-fader</b> sends follow the channel fader (pull Source Level down and the echoes drop too). <b>Pre-fader</b> sends ignore it, so you can hear echoes with no dry sound.</dd>
         <dt><i style="background:var(--c-ret)"></i>Return</dt>
         <dd>How loud the effect's output (the “wet” signal) is in the mix. The dry pulse and the return are summed before the Master Output.</dd>
         <dt><i style="background:var(--c-filter)"></i>Filtering</dt>
@@ -390,6 +416,16 @@ footer{margin-top:14px;font-size:.78rem;color:var(--faint)}
         <dd>Sends the filtered delay output back into the delay input. Below 100% repeats fade away; at 100% (unity) they sustain; above 100% each repeat is louder than the last, which is where overload happens.</dd>
       </dl>
     </section>
+  </div>
+  <div class="toasts">
+    <div class="overload" id="overload" role="alert">
+      <span class="icon" aria-hidden="true">⚠</span>
+      <div>
+        <strong id="overloadMsg"></strong>
+        <div class="small" id="overloadHint" style="color:#ffc9c9"></div>
+      </div>
+    </div>
+    <div class="notices" id="notices" aria-live="polite"></div>
   </div>
   <footer>
     Keyboard: Tab moves between controls; arrow keys adjust sliders and faders (Page Up/Down for bigger steps, Home/End for the extremes); Space starts and stops when no control has focus. Double-click a fader to return it to its default.
@@ -436,7 +472,8 @@ const FEELS = [
 ];
 const DEFAULTS = {
   bpm: 120, src: -6, send: -6, fb: 35, ret: -3, master: -12,
-  delayMs: 500, hpf: 20, lpf: 20000, note: 'quarter', feel: 'straight', sync: false
+  delayMs: 500, hpf: 20, lpf: 20000, note: 'quarter', feel: 'straight', sync: false,
+  sendPre: false, sendMute: false
 };
 
 /** Quarter note = 60 000 ÷ BPM ms; other values scale by beats; dotted ×1.5, triplet ×2/3. */
@@ -492,7 +529,10 @@ function buildGraph(ctx, params) {
   g.srcIn = G(1);
   g.srcFader = G(dbToGain(p.src));
   g.mix = G(1);
+  g.preTap = G(p.sendPre ? 1 : 0);                // pre-fader send pick-off
+  g.postTap = G(p.sendPre ? 0 : 1);               // post-fader send pick-off
   g.auxSend = G(dbToGain(p.send));
+  g.sendMute = G(p.sendMute ? 0 : 1);
   g.inGate = G(1);
   g.loopIn = G(1);
   g.loopOut = G(1);
@@ -513,8 +553,9 @@ function buildGraph(ctx, params) {
   g.srcIn.connect(g.srcFader);
   g.srcFader.connect(g.mix);                       // dry
   g.srcFader.connect(g.aSrc);
-  g.srcFader.connect(g.auxSend);                   // post-fader aux send
-  g.auxSend.connect(g.inGate); g.inGate.connect(g.loopIn); g.inGate.connect(g.aSend);
+  g.srcIn.connect(g.preTap); g.preTap.connect(g.auxSend);        // pre-fader aux send
+  g.srcFader.connect(g.postTap); g.postTap.connect(g.auxSend);   // post-fader aux send
+  g.auxSend.connect(g.sendMute); g.sendMute.connect(g.inGate); g.inGate.connect(g.loopIn); g.inGate.connect(g.aSend);
   g.loopOut.connect(g.ret); g.ret.connect(g.mix); g.ret.connect(g.aRet);
   g.loopOut.connect(g.fb); g.fb.connect(g.fbBreak); g.fbBreak.connect(g.loopIn); g.fbBreak.connect(g.aFb);
   g.loopOut.connect(g.aLoop);
@@ -722,7 +763,7 @@ function trackBars(t, ms) {
   P.barAcc = 0; P.barN = 0;
   const n = PROT.GROW_BARS;
   if (P.barE.length > n + 2) P.barE.shift();
-  if (P.barE.length < n + 2 || !playing || S.send <= FADER_MIN) return false;
+  if (P.barE.length < n + 2 || !playing || S.send <= FADER_MIN || S.sendMute) return false;
   const e = P.barE.slice(1), d = [];                 // skip the first (possibly partial) bar
   for (let i = 1; i < e.length; i++) d.push(e[i] - e[i - 1]);
   if (d.filter(x => x > 0).length < n - 1) return false;
@@ -759,6 +800,8 @@ function setParam(name) {
   switch (name) {
     case 'src': fadeTo(g.srcFader.gain, dbToGain(S.src), 0.02); break;
     case 'send': fadeTo(g.auxSend.gain, dbToGain(S.send), 0.02); break;
+    case 'sendPre': fadeTo(g.preTap.gain, S.sendPre ? 1 : 0, 0.02); fadeTo(g.postTap.gain, S.sendPre ? 0 : 1, 0.02); break;
+    case 'sendMute': fadeTo(g.sendMute.gain, S.sendMute ? 0 : 1, 0.015); break;
     case 'ret': fadeTo(g.ret.gain, dbToGain(S.ret), 0.02); break;
     case 'master': fadeTo(g.master.gain, dbToGain(S.master), 0.02); break;
     case 'fb': fadeTo(g.fb.gain, S.fb / 100, 0.02); break;
@@ -773,48 +816,75 @@ function setParam(name) {
    ================================================================ */
 const FADERS = [
   { id: 'src', label: 'Source Level', min: FADER_MIN, max: 6, step: 0.5, color: '--c-src', marks: [6, 0, -6, -12, -24, -48],
-    tip: 'Level of the pulse channel. It feeds the dry output, and the aux send is taken after this fader (post-fader), so it also changes how much reaches the delay.', foot: '→ dry out + aux send' },
+    tip: 'Level of the pulse channel, feeding the dry output. With a post-fader send it also sets how much reaches the delay; a pre-fader send ignores it.', foot: '→ dry out + send', meter: 'src' },
   { id: 'send', label: 'Aux Send', min: FADER_MIN, max: 6, step: 0.5, color: '--c-send', marks: [6, 0, -6, -12, -24, -48],
-    tip: 'How much of the post-fader source is copied into the delay. Controls how loud the first repeat is. Down = no new echoes (the dry pulse is unaffected).', foot: '→ delay input' },
+    tip: 'How much of the source is copied into the delay, setting how loud the first repeat is. Post: taken after Source Level, so it follows that fader. Pre: taken before it, so echoes remain with Source Level down. Mute stops new echoes; ones already in the loop carry on.', foot: '', meter: 'send' },
   { id: 'fb', label: 'Feedback — sends repeats back into the delay', min: 0, max: 110, step: 1, color: '--c-fb', marks: [0, 25, 50, 75, 110], wide: true,
-    tip: 'An aux send from the filtered delay output back into the delay input. Below 100% repeats die away; 100% (unity) keeps them going; above 100% they grow until protection steps in.', foot: '' },
+    tip: 'An aux send from the filtered delay output back into the delay input. Below 100% repeats die away; 100% (unity) keeps them going; above 100% they grow until protection steps in.', foot: '', meter: 'fb' },
   { id: 'ret', label: 'Return Level', min: FADER_MIN, max: 6, step: 0.5, color: '--c-ret', marks: [6, 0, -6, -12, -24, -48],
-    tip: 'Level of the delay (wet) signal added back into the mix. Pulling it down silences the echoes, but they keep circulating in the loop.', foot: '→ mix' },
+    tip: 'Level of the delay (wet) signal added back into the mix. Pulling it down silences the echoes, but they keep circulating in the loop.', foot: '→ mix', meter: 'ret' },
   { id: 'master', label: 'Master Output', min: FADER_MIN, max: 0, step: 0.5, color: '--c-out', marks: [0, -6, -12, -24, -48],
-    tip: 'Overall level of dry + return. A safety limiter and a −1 dBFS ceiling follow it. Start low and raise gently.', foot: '→ limiter → speakers' }
+    tip: 'Overall level of dry + return. A safety limiter and a −1 dBFS ceiling follow it. Start low and raise gently. Its meter shows the final output after the limiter.', foot: '→ limiter → speakers', meter: 'out' }
 ];
-const THUMB = 16, FADER_H = 190;
+const THUMB = 16;
 const fracPos = frac => `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${frac})`;
 const faderEls = {};
 function buildStrips() {
   const host = $('#strips');
   FADERS.forEach(f => {
     const el = document.createElement('div');
-    el.className = 'strip' + (f.wide ? ' wide' : '');
+    el.className = 'strip' + (f.wide ? ' wide' : '') + (f.id === 'send' ? ' send' : '');
     el.style.setProperty('--sc', `var(${f.color})`);
     const tipId = 'tip-' + f.id;
     const frac = v => (v - f.min) / (f.max - f.min);
     let ticks = f.marks.map(m => `<div class="tick" style="bottom:${fracPos(frac(m))}"><span>${f.id === 'fb' ? m + '%' : minus((m > 0 ? '+' : '') + m)}</span></div>`).join('');
     if (f.id === 'fb') {
       ticks += `<div class="zone-hot" style="bottom:${fracPos(frac(100))};top:${THUMB / 2}px"></div>` +
-        `<div class="tick unity" style="bottom:${fracPos(frac(100))}"><span>UNITY 100%</span></div>`;
+        `<div class="tick unity" style="bottom:${fracPos(frac(100))}"><span>100%</span><b>UNITY</b></div>`;
     } else ticks += `<div class="tick" style="bottom:${fracPos(0)}"><span>−∞</span></div>`;
     el.innerHTML = `
       <div class="lab"><label for="f-${f.id}">${f.label}</label>
         <span class="tipw"><button type="button" class="info" aria-label="About ${f.label}">i</button><span class="tip" role="tooltip" id="${tipId}">${f.tip}</span></span></div>
-      <div class="fader"><div class="slot"></div><div class="scale">${ticks}</div>
+      <div class="fader"><div class="slot"></div>${ticks}
+        <div class="vm" id="m-${f.id}" title="Signal level meter (dBFS)"><div class="mf"></div><div class="mp"></div></div>
         <input type="range" class="v" id="f-${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" aria-describedby="${tipId}" aria-orientation="vertical"></div>
       <output id="o-${f.id}" for="f-${f.id}"></output>
-      <div class="${f.id === 'fb' ? 'decay' : 'foot'}" id="foot-${f.id}">${f.foot}</div>`;
+      <div class="ctl${f.id === 'fb' ? ' decay' : ''}" id="foot-${f.id}">${f.id === 'send' ? `
+        <div class="seg mini" role="radiogroup" aria-label="Aux send position">
+          <label title="Pre-fader: taken before Source Level"><input type="radio" name="sendpos" value="pre"><span>Pre</span></label>
+          <label title="Post-fader: taken after Source Level"><input type="radio" name="sendpos" value="post"><span>Post</span></label></div>
+        <button type="button" class="mute" id="sendMuteBtn" aria-pressed="false" title="Mute the aux send">Mute</button>` : f.foot}</div>`;
     host.appendChild(el);
     const input = el.querySelector('input');
-    faderEls[f.id] = { input, out: el.querySelector('output'), f };
+    const vm = el.querySelector('.vm');
+    faderEls[f.id] = { input, out: el.querySelector('output'), f, el, mf: vm.querySelector('.mf'), mp: vm.querySelector('.mp'), v: 0, pk: 0, pkT: 0 };
     input.addEventListener('input', () => { S[f.id] = parseFloat(input.value); setParam(f.id); refreshFader(f.id); onAnyChange(); });
     input.addEventListener('dblclick', () => { S[f.id] = DEFAULTS[f.id]; setParam(f.id); refreshFader(f.id); onAnyChange(); });
   });
-  // keep tooltips inside the panel at the edges
-  const tips = host.querySelectorAll('.tip');
-  tips[0].classList.add('right'); tips[tips.length - 1].classList.add('left');
+  document.querySelectorAll('input[name=sendpos]').forEach(r => r.addEventListener('change', () => {
+    S.sendPre = r.value === 'pre'; setParam('sendPre'); refreshSend(); onAnyChange();
+  }));
+  $('#sendMuteBtn').addEventListener('click', () => { S.sendMute = !S.sendMute; setParam('sendMute'); refreshSend(); onAnyChange(); });
+}
+function refreshSend() {
+  document.querySelectorAll('input[name=sendpos]').forEach(r => { r.checked = (r.value === 'pre') === S.sendPre; });
+  const b = $('#sendMuteBtn');
+  b.setAttribute('aria-pressed', String(S.sendMute)); b.textContent = S.sendMute ? 'Muted' : 'Mute';
+  faderEls.send.el.classList.toggle('muted', S.sendMute);
+  updateFlowValues();
+}
+/** Clean segmented meters: fast attack, smooth fall, 1.5 s peak hold. */
+function renderMeters(levels, t) {
+  FADERS.forEach(f => {
+    const e = faderEls[f.id], pk = levels[f.meter] || 0;
+    const v = clamp((gainToDb(pk) + 60) / 60, 0, 1);
+    e.v = v > e.v ? v : Math.max(v, e.v - 0.012);
+    if (e.v >= e.pk || t - e.pkT > 1.5) { e.pk = Math.max(e.v, e.pk - 0.01); if (e.v >= e.pk) { e.pk = e.v; e.pkT = t; } }
+    e.mf.style.clipPath = `inset(${((1 - e.v) * 100).toFixed(1)}% 0 0 0)`;
+    e.mp.style.bottom = `calc(${(e.pk * 100).toFixed(1)}% - 1px)`;
+    e.mp.style.opacity = e.pk > 0.02 ? (e.pk > 0.97 ? 1 : 0.7) : 0;
+    e.mp.style.background = e.pk > 0.95 ? '#ff4d4d' : '#e8ecf1';
+  });
 }
 function refreshFader(id) {
   const { input, out } = faderEls[id];
@@ -833,10 +903,10 @@ function t60() {  // seconds for repeats to fall 60 dB (feedback gain only, igno
 function decayText() {
   const gg = S.fb / 100;
   if (gg === 0) return 'One repeat only';
-  if (gg > 1) return 'Above unity: repeats grow louder';
+  if (gg > 1) return 'Above unity: repeats grow';
   if (gg === 1) return 'Unity: repeats never fade';
   const n = 3 / -Math.log10(gg);
-  return `≈ ${n < 10 ? n.toFixed(1) : Math.round(n)} repeats / ${t60().toFixed(1)} s to fade by 60 dB`;
+  return `≈ ${n < 10 ? n.toFixed(1) : Math.round(n)} repeats · ${t60().toFixed(1)} s to −60 dB`;
 }
 
 function buildCalc() {
@@ -879,9 +949,12 @@ function refreshCalc() {
 function setDelay(ms, manual) {
   if (!isFinite(ms)) return;
   const v = clamp(Math.round(ms * 100) / 100, MIN_DELAY_MS, MAX_DELAY_MS);
-  $('#delayMsg').textContent = v !== Math.round(ms * 100) / 100 ? `Delay time must be 1–6 000 ms; set to ${v} ms.` : '';
+  const msg = [];
+  if (v !== Math.round(ms * 100) / 100) msg.push(`Range is 1–6 000 ms: set to ${v} ms.`);
   S.delayMs = v;
-  if (manual && S.sync) { S.sync = false; $('#delayMsg').textContent += ' Tempo sync switched off (manual delay time).'; }
+  if (manual && S.sync) { S.sync = false; msg.push('Tempo sync off (manual delay time).'); }
+  if (v < 3) msg.push('In the loop, repeats can’t be closer than ≈2.7 ms (one 128-sample block).');
+  setMsg('#delayMsg', msg.join(' '));
   setParam('delay'); refreshDelay(); refreshCalc(); onAnyChange();
 }
 function musicalName(ms) {
@@ -900,17 +973,17 @@ function refreshDelay() {
   let txt = `= <b>${beats.toFixed(3).replace(/\.?0+$/, '')} beats</b> at ${S.bpm} BPM. `;
   txt += b.err <= 0.005 ? `That is a <b>${b.f.word}${b.n.name}</b> (${b.n.label}${b.f.id !== 'straight' ? ' ' + b.f.label.toLowerCase() : ''}).`
     : `Nearest note value: ${b.f.word}${b.n.name} = ${b.v.toFixed(2)} ms.`;
-  if (S.delayMs < 3) txt += ' <br>Note: inside a feedback loop the browser cannot go below one 128-sample block (≈2.7 ms), so recirculating repeats use that minimum.';
   $('#delayMusical').innerHTML = txt;
   $('#foot-fb').textContent = decayText();
   updateFlowValues(); refreshLands();
 }
-function announceDelay() { $('#delayMsg').textContent = `Delay set to ${fmtMs(S.delayMs)}.`; }
+function announceDelay() { setMsg('#delayMsg', `Delay set to ${fmtMs(S.delayMs)}.`); }
+function setMsg(sel, txt) { const el = $(sel); el.textContent = txt; el.title = txt; }
 
 function setFilter(which, hz) {
   if (!isFinite(hz)) return;
   const v = clamp(Math.round(hz), 20, 20000);
-  $('#filtMsg').textContent = v !== Math.round(hz) ? 'Cutoff must be 20–20 000 Hz.' : '';
+  setMsg('#filtMsg', v !== Math.round(hz) ? 'Cutoff range is 20–20 000 Hz.' : '');
   S[which] = v; setParam(which); refreshFilters(); onAnyChange();
 }
 function refreshFilters() {
@@ -920,8 +993,8 @@ function refreshFilters() {
     $('#' + k + 'Range').setAttribute('aria-valuetext', fmtHz(S[k]));
   });
   const m = [];
-  if (S.hpf >= S.lpf) m.push('High-pass is above low-pass: almost nothing gets through the loop.');
-  if (!$('#filtMsg').textContent || m.length) $('#filtMsg').textContent = m.join(' ');
+  if (S.hpf >= S.lpf) m.push('High-pass is above low-pass: almost nothing gets through.');
+  if (!$('#filtMsg').textContent || m.length) setMsg('#filtMsg', m.join(' '));
   updateFlowValues();
 }
 
@@ -969,8 +1042,9 @@ function wireInputs() {
 function resetAll() {
   Object.assign(S, DEFAULTS);
   FADERS.forEach(f => { setParam(f.id); refreshFader(f.id); });
+  setParam('sendPre'); setParam('sendMute'); refreshSend();
   ['delay', 'hpf', 'lpf'].forEach(setParam);
-  $('#delayMsg').textContent = ''; $('#filtMsg').textContent = '';
+  setMsg('#delayMsg', ''); setMsg('#filtMsg', '');
   setBpm(DEFAULTS.bpm); refreshFilters(); refreshDelay(); refreshCalc();
   flushLoop();
   if (playing && ctx) { beatIdx = 0; nextBeatT = Math.max(nextBeatT, ctx.currentTime + 0.05); }
@@ -982,7 +1056,8 @@ function resetAll() {
 const WIRES = [
   { id: 'w-src', d: 'M130,60 H158', c: '--c-src', m: 'pre' },
   { id: 'w-dry', d: 'M280,60 H894', c: '--c-src', m: 'src' },
-  { id: 'w-sendin', d: 'M320,60 V148', c: '--c-send', m: 'src' },
+  { id: 'w-sendpre', d: 'M145,60 V118 H300 V148', c: '--c-send', m: 'pre', label: ['pre-fader', 160, 111] },
+  { id: 'w-sendin', d: 'M340,60 V148', c: '--c-send', m: 'src', label: ['post-fader', 348, 111] },
   { id: 'w-sendout', d: 'M375,175 H402', c: '--c-send', m: 'send' },
   { id: 'w-dlyin', d: 'M436,175 H458', c: '--c-delay', m: 'din' },
   { id: 'w-hpf', d: 'M580,175 H603', c: '--c-delay', m: 'delay' },
@@ -1021,12 +1096,13 @@ function buildFlow() {
     <text class="fbl" x="640" y="229" text-anchor="middle">↻ FEEDBACK LOOP: filtered repeats go round again</text>`;
   WIRES.forEach(w => {
     const cls = w.fb ? ' fbw' : '';
-    h += `<g id="${w.id}" style="--wc:var(${w.c})"><path class="wire${cls}" d="${w.d}" ${w.noArrow ? '' : `marker-end="url(#ah${w.c})"`}/><path class="flow${cls}" d="${w.d}"/></g>`;
+    h += `<g id="${w.id}" style="--wc:var(${w.c})"><path class="wire${cls}" d="${w.d}" ${w.noArrow ? '' : `marker-end="url(#ah${w.c})"`}/><path class="flow${cls}" d="${w.d}"/>` +
+      (w.label ? `<text class="wl" x="${w.label[1]}" y="${w.label[2]}">${w.label[0]}</text>` : '') + `</g>`;
   });
-  h += `<circle cx="320" cy="60" r="5" style="fill:var(--c-src)"/><circle cx="860" cy="175" r="5" style="fill:var(--c-filter)"/>
+  h += `<circle cx="340" cy="60" r="5" style="fill:var(--c-src)"/><circle cx="145" cy="60" r="4" style="fill:var(--c-src)"/><circle cx="860" cy="175" r="5" style="fill:var(--c-filter)"/>
     <circle class="sum" cx="920" cy="60" r="24"/><text class="sumt" x="920" y="61">Σ</text><text class="zl" x="920" y="24" text-anchor="middle">MIX</text>
     <circle class="sum" cx="420" cy="175" r="16"/><text class="sumt" x="420" y="176" style="font-size:16px">Σ</text>
-    <text class="v" x="328" y="112" style="font-size:12px;fill:var(--muted)">post-fader</text>`;
+`;
   BLOCKS.forEach(b => {
     const cy = b.y + b.h / 2;
     h += `<g class="blk" id="b-${b.id}" data-focus="${b.focus}" style="--bc:var(${b.c})">
@@ -1049,10 +1125,16 @@ function buildFlow() {
 }
 function updateFlowValues() {
   const set = (id, t) => { const el = document.getElementById('sv-' + id); if (el) el.textContent = t; };
-  set('src', 'pulse on beat 1'); set('srclvl', fmtDb(S.src)); set('send', fmtDb(S.send));
+  set('src', 'pulse on beat 1'); set('srclvl', fmtDb(S.src));
+  set('send', S.sendMute ? 'MUTED' : fmtDb(S.send) + (S.sendPre ? ' · pre' : ' · post'));
+  const w = id => document.getElementById(id);
+  if (w('w-sendpre')) {
+    w('w-sendpre').classList.toggle('off', !S.sendPre); w('w-sendin').classList.toggle('off', S.sendPre);
+    w('w-sendout').classList.toggle('off', S.sendMute);
+  }
   set('delay', fmtMs(S.delayMs)); set('hpf', fmtHz(S.hpf)); set('lpf', fmtHz(S.lpf));
   set('ret', fmtDb(S.ret)); set('fb', S.fb + '%' + (S.fb === 100 ? ' unity' : S.fb > 100 ? ' ▲ grows' : ''));
-  set('master', fmtDb(S.master)); set('lim', '−1 dB ceiling');
+  set('master', fmtDb(S.master)); set('lim', 'max −1 dB');
 }
 
 /* ================================================================
@@ -1082,6 +1164,7 @@ function renderLevels(t) {
   const L = {};
   Object.keys(m).forEach(k => { L[k] = smooth(k, lvl01(m[k])); });
   WIRES.forEach(w => { document.getElementById(w.id).style.setProperty('--l', L[w.m].toFixed(3)); });
+  renderMeters(m, t);
   BLOCKS.forEach(b => { document.getElementById('b-' + b.id).style.setProperty('--l', L[b.m].toFixed(3)); });
   // output meter
   const outDb = gainToDb(lv.outPk = Math.max(m.out, (lv.outPk || 0) * 0.93));
@@ -1130,6 +1213,7 @@ function drawGrid(t) {
   g2.fillText('Heard', 6, (lanes.heard[0] + lanes.heard[1]) / 2);
   g2.save(); g2.beginPath(); g2.rect(62, 0, W - 62, H); g2.clip();
   // beats: logged (actual) times, extrapolated beyond both ends at the current tempo
+  if (!g) renderMeters({}, performance.now() / 1000);
   let beats = beatLog.map(b => ({ t: b.t, beat: b.beat, bar: b.bar }));
   if (!beats.length) beats = [{ t: 0, beat: 0, bar: 1 }];
   while (beats[0].t > tL - beatS) { const f = beats[0]; beats.unshift({ t: f.t - beatS, beat: (f.beat + 3) % 4, bar: f.beat === 0 ? f.bar - 1 : f.bar }); }
@@ -1157,7 +1241,8 @@ function drawGrid(t) {
   const toH = a => clamp((gainToDb(a) + 48) / 48, 0, 1);
   pulseLog.forEach(p => {
     if (p.gated || p.t < lastClearT) return;
-    let a = srcG * sendG * retG;
+    let a = (S.sendPre ? 1 : srcG) * (S.sendMute ? 0 : sendG) * retG;
+    if (!a) return;
     for (let k = 1; k <= 400; k++) {
       const rt = p.t + k * D;
       if (rt > tR || a < 0.004) break;
@@ -1240,6 +1325,8 @@ function renderBeat(t) {
 }
 function updateProtectUI() {
   const tripped = P.state === 'tripped';
+  const msg = $('#overloadMsg'), want = tripped ? 'Feedback overload: reduce feedback below 100% to continue.' : '';
+  if (msg.textContent !== want) msg.textContent = want;
   $('#overload').classList.toggle('show', tripped);
   $('#flow').classList.toggle('tripped', tripped);
   $('#eventCount').textContent = P.events;
@@ -1273,7 +1360,9 @@ const framed = (() => { try { return window.self !== window.top; } catch (e) { r
 function notice(id, level, html) {
   let el = document.getElementById('n-' + id);
   if (!el) { el = document.createElement('div'); el.id = 'n-' + id; $('#notices').appendChild(el); }
-  el.className = 'notice ' + level; el.setAttribute('role', level === 'error' ? 'alert' : 'status'); el.innerHTML = html;
+  el.className = 'notice ' + level; el.setAttribute('role', level === 'error' ? 'alert' : 'status');
+  el.innerHTML = html + '<button type="button" class="x" aria-label="Dismiss message">×</button>';
+  el.querySelector('.x').addEventListener('click', () => el.remove());
 }
 function clearNotice(id) { const el = document.getElementById('n-' + id); if (el) el.remove(); }
 const newTabLink = () => `<a href="${location.href.replace(/"/g, '&quot;')}" target="_blank" rel="noopener">Open Delay Designer in a new tab</a>`;
@@ -1301,7 +1390,8 @@ function checkEnvironment() {
 /* ================================================================
    Challenges
    ================================================================ */
-const audible = () => playing && P.state === 'ok' && S.src > FADER_MIN && S.send > FADER_MIN && S.ret > FADER_MIN && S.master > FADER_MIN;
+const sendActive = () => !S.sendMute && S.send > FADER_MIN && (S.sendPre || S.src > FADER_MIN);
+const audible = () => playing && P.state === 'ok' && sendActive() && S.ret > FADER_MIN && S.master > FADER_MIN;
 const rhythmic = () => audible() && S.fb >= 20;
 const CH = [
   { id: 'eighth', t: 'Create straight eighth-note repeats', h: 'Delay = one eighth note (half a beat). Use the calculator: 1/8 + Straight, then Apply. Feedback 20% or more so you hear several repeats.', bars: 2,
@@ -1334,7 +1424,7 @@ function updateChallenges(t) {
     const li = document.getElementById('task-' + c.id);
     li.classList.toggle('live', ok);
     li.querySelector('.bar i').style.width = (clamp(c.hold / c.bars, 0, 1) * 100) + '%';
-    if (c.hold >= c.bars) { c.done = true; saveCh(); renderTasks(); $('#chProgress').textContent += ` · Done: ${c.t}!`; }
+    if (c.hold >= c.bars) { c.done = true; saveCh(); renderTasks(); }
   });
 }
 function onAnyChange() { resetBars(); CH.forEach(c => { if (!c.done) c.hold = Math.min(c.hold, 0); }); updateOverloadHint(); }
@@ -1350,6 +1440,44 @@ function frame() {
   if (P.state === 'tripped') updateOverloadHint();
   requestAnimationFrame(frame);
 }
+/** Tooltips are position:fixed so scrolling containers never clip them. */
+function placeTip(w) {
+  const tip = w.querySelector('.tip'), btn = w.querySelector('.info');
+  if (!tip || !btn) return;
+  requestAnimationFrame(() => {
+    const b = btn.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight, vw = document.documentElement.clientWidth;
+    const left = clamp(b.left + b.width / 2 - tw / 2, 8, vw - tw - 8);
+    const top = b.top - th - 8 >= 8 ? b.top - th - 8 : b.bottom + 8;
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+  });
+}
+function wireTooltips() {
+  document.querySelectorAll('.tipw').forEach(w => {
+    w.addEventListener('mouseenter', () => placeTip(w));
+    w.addEventListener('focusin', () => placeTip(w));
+    w.addEventListener('click', () => placeTip(w));
+  });
+  const hide = () => document.querySelectorAll('.tipw.open').forEach(w => w.classList.remove('open'));
+  window.addEventListener('scroll', hide, true);
+}
+function wireFullscreen() {
+  const btn = $('#fsBtn'), root = document.documentElement;
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const enabled = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+  const sync = () => { const on = !!fsEl(); btn.textContent = on ? '⤫ Exit full screen' : '⛶ Full screen'; btn.setAttribute('aria-pressed', String(on)); };
+  const blocked = () => notice('fs', 'warn', 'Full screen is not allowed here' + (framed ? ` (the embedding page blocks it). ${newTabLink()} instead.` : '.'));
+  btn.addEventListener('click', () => {
+    if (fsEl()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+    if (!enabled) return blocked();
+    try {
+      const r = (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+      if (r && r.catch) r.catch(blocked);
+    } catch (e) { blocked(); }
+  });
+  document.addEventListener('fullscreenchange', sync); document.addEventListener('webkitfullscreenchange', sync);
+  if (!enabled) btn.title = 'Full screen is blocked by the page embedding this tool; use Open in new tab';
+  sync();
+}
 function selfTest() {
   const r = [
     ['120 BPM quarter = 500 ms', noteMs(120, 'quarter', 'straight'), 500],
@@ -1361,7 +1489,7 @@ function selfTest() {
 }
 function init() {
   buildFlow(); buildStrips(); buildCalc(); loadCh(); renderTasks(); wireInputs();
-  FADERS.forEach(f => refreshFader(f.id));
+  FADERS.forEach(f => refreshFader(f.id)); refreshSend(); wireTooltips(); wireFullscreen();
   setBpm(S.bpm); refreshFilters(); refreshDelay(); refreshCalc(); updateProtectUI(); updateFlowValues();
   $('#loopMark').style.left = `calc(${((gainToDb(PROT.PEAK) + 60) / 66 * 100).toFixed(2)}% - 1px)`;
   checkEnvironment();
