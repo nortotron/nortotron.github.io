@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amplitude Machine</title>
+<style>
+:root{
+  --bg:#f4f6f9; --panel:#ffffff; --ink:#1b2330; --muted:#5b6778; --line:#d5dbe4;
+  --accent:#2f6fd6; --accent-ink:#fff; --ok:#1d8a4a; --warn:#b86b00; --bad:#c62828;
+  --strip:#eef2f7; --meter-bg:#1a2029; --lock:#6b7686;
+  --m-green:#2fbf5b; --m-amber:#f0b429; --m-red:#e53935;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11151b; --panel:#1a2029; --ink:#e7ecf3; --muted:#9aa6b6; --line:#2e3746;
+    --accent:#5b93ee; --accent-ink:#0d1117; --ok:#4cc27a; --warn:#f0a53a; --bad:#ff6b6b;
+    --strip:#222a35; --meter-bg:#0b0e13; --lock:#8b96a6;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+h1{font-size:1.6rem;margin:0 0 4px}
+h2{font-size:1.15rem;margin:0 0 8px}
+h3{font-size:1rem;margin:12px 0 6px}
+p{margin:6px 0}
+.sub{color:var(--muted);margin:0 0 14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:inherit;border:1px solid var(--line);background:var(--strip);color:var(--ink);border-radius:8px;padding:7px 12px;cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[type=number],select{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);width:6.5em}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=range]:disabled{opacity:.5}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button[aria-selected=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 300px;gap:14px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.label{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+.big{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+.mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,Consolas,monospace}
+.hint{font-size:.88rem;color:var(--muted)}
+.lock{display:inline-flex;align-items:center;gap:4px;font-size:.78rem;color:var(--lock);border:1px dashed var(--lock);border-radius:5px;padding:0 6px}
+/* mixer */
+.mixer{display:flex;gap:14px;align-items:stretch;overflow:hidden}
+.channels-area{flex:1;min-width:0}
+.strips{display:flex;flex-wrap:wrap;gap:6px}
+.strip{width:62px;background:var(--strip);border:1px solid var(--line);border-radius:8px;padding:6px 4px;text-align:center;font-size:.72rem;position:relative}
+.strip .num{font-weight:700;font-size:.85rem}
+.fader-track{height:70px;width:8px;margin:6px auto;background:var(--line);border-radius:4px;position:relative}
+.fader-cap{position:absolute;left:50%;transform:translate(-50%,50%);width:30px;height:12px;background:var(--lock);border-radius:3px;bottom:calc(var(--pos)*100%)}
+.strip .out{margin-top:4px;color:var(--muted)}
+.strip .out::after{content:" ↓";}
+.bus{margin-top:10px;position:relative;height:34px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--accent) 0 12px,transparent 12px 16px);opacity:.9;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;color:var(--accent-ink);font-weight:700;font-size:.85rem}
+.bus span{background:var(--accent);padding:2px 8px;border-radius:4px}
+.flow-note{font-size:.82rem;color:var(--muted);margin-top:6px}
+.master{width:250px;flex:none;background:var(--strip);border:2px solid var(--accent);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:600px){.mixer{flex-direction:column}.master{width:100%}}
+.meter-wrap{display:flex;gap:6px;height:300px}
+.meter{position:relative;width:46px;background:var(--meter-bg);border-radius:6px;overflow:hidden}
+.meter .fill{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(to top,var(--m-green) 0%,var(--m-green) 70%,var(--m-amber) 78%,var(--m-red) 83.3%)}
+.meter .fill{background-size:100% 300px;background-position:bottom}
+.meter .hold{position:absolute;left:0;right:0;height:3px;background:#fff}
+.meter .zero{position:absolute;left:0;right:0;height:2px;background:#fff;opacity:.6}
+.meter .target{position:absolute;left:0;right:0;border-top:2px dashed #7fb3ff}
+.meter .overzone{position:absolute;left:0;right:0;top:0;background:repeating-linear-gradient(45deg,rgba(229,57,53,.22) 0 6px,transparent 6px 12px)}
+.scale{position:relative;width:40px;font-size:.7rem;color:var(--muted)}
+.scale div{position:absolute;right:0;transform:translateY(50%)}
+.clip{border:2px solid var(--line);border-radius:6px;padding:4px 8px;font-weight:800;text-align:center;background:transparent;color:var(--muted);width:100%}
+.clip.on{background:var(--m-red);border-color:var(--m-red);color:#fff}
+.readouts{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.85rem}
+.readouts div b{display:block;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.over{color:var(--bad)}
+.result{border-radius:10px;padding:12px;border:2px solid var(--line);margin-top:10px}
+.result.ok{border-color:var(--ok)} .result.under{border-color:var(--accent)} .result.hot{border-color:var(--warn)} .result.clip{border-color:var(--bad)}
+.result .tag{font-weight:800}
+.calc{background:var(--strip);border-radius:8px;padding:10px;font-family:ui-monospace,Consolas,monospace;font-size:.9rem;overflow-x:auto}
+table{border-collapse:collapse;font-size:.9rem}
+td,th{border:1px solid var(--line);padding:3px 4px;text-align:right;font-size:.8rem}
+table{width:100%;table-layout:fixed}
+th{text-align:left;background:var(--strip)}
+.steps{margin:0;padding-left:20px}
+.status{font-weight:600}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+details summary{cursor:pointer;font-weight:600}
+.srcbox{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--strip)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Amplitude Machine</h1>
+  <p class="sub">Amplitude summation, gain staging, headroom and clipping: a mixer you can predict.</p>
+
+  <div class="panel row" aria-label="Playback">
+    <button id="startBtn" class="primary">▶ Start audio</button>
+    <button id="stopBtn" disabled>■ Stop audio</button>
+    <label for="listen" style="margin-left:8px">Listening volume</label>
+    <input id="listen" type="range" min="0" max="100" value="15" style="width:160px" aria-describedby="listenHint">
+    <span id="listenVal" class="mono">15%</span>
+    <span id="listenHint" class="hint">Only changes what you hear. Measured levels and the challenge maths are unaffected. A safety limiter protects your ears/speakers but is <em>after</em> the meter, so overloads still show.</span>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Mode">
+    <button role="tab" id="tabChallenge" aria-selected="true" aria-controls="challengePanel">Challenge</button>
+    <button role="tab" id="tabExplore" aria-selected="false" aria-controls="explorePanel">Explore</button>
+  </div>
+
+  <div class="grid">
+    <div>
+      <!-- MIXER -->
+      <section class="panel" aria-label="Mixer">
+        <div class="row" style="justify-content:space-between;margin-bottom:8px">
+          <h2 style="margin:0">Mixer</h2>
+          <div class="row">
+            <button id="addBtn">+ Add channel</button>
+            <button id="removeBtn">− Remove channel</button>
+            <button id="resetBtn">Reset mixer</button>
+          </div>
+        </div>
+
+        <div class="srcbox" style="margin-bottom:10px">
+          <div class="row" style="justify-content:space-between">
+            <label for="source" class="label">Source level (signal entering each channel)</label>
+            <span><b id="sourceVal" class="mono">−18.0 dBFS peak</b> <span id="sourceLock" class="lock" hidden>🔒 locked</span></span>
+          </div>
+          <div class="row" style="flex-wrap:nowrap">
+            <input id="source" type="range" min="-60" max="0" step="0.5" value="-18" aria-describedby="sourceHint">
+            <input id="sourceNum" type="number" min="-60" max="0" step="0.1" value="-18" aria-label="Source level in dBFS">
+          </div>
+          <p id="sourceHint" class="hint">This is the <b>signal level</b> arriving at every channel (like the output of a recorded track or preamp). It is <b>not</b> the channel fader: faders are <b>gain</b> (a change in dB), while this is a <b>level</b> in dBFS.</p>
+        </div>
+
+        <div class="mixer">
+          <div class="channels-area">
+            <div class="strips" id="strips" aria-live="polite"></div>
+            <div class="bus" aria-hidden="true"><span>MASTER BUS →</span></div>
+            <p class="flow-note">Every channel carries the same pink-noise loop, sample-synchronised and in the same polarity, into one master bus. Channel faders are fixed at <b>0 dB (unity)</b>: they pass the signal unchanged. Unity gain ≠ 0 dBFS.</p>
+          </div>
+
+          <div class="master" aria-label="Master section">
+            <div class="row" style="justify-content:space-between"><span class="label">Master</span><span id="masterLock" class="lock">🔒 unity</span></div>
+            <label for="master" class="hint">Master fader (gain): <b id="masterVal" class="mono">0.0 dB</b></label>
+            <input id="master" type="range" min="-40" max="6" step="0.5" value="0" disabled>
+            <button id="clip" class="clip" aria-live="assertive" title="Click to reset clip indicator">CLIP: none</button>
+            <div class="meter-wrap">
+              <div class="scale" id="scale" aria-hidden="true"></div>
+              <div class="meter" id="meter" role="meter" aria-label="Master output peak" aria-valuemin="-60" aria-valuemax="24" aria-valuenow="-60">
+                <div class="overzone" id="overzone"></div>
+                <div class="fill" id="fill"></div>
+                <div class="zero" id="zeroLine"></div>
+                <div class="target" id="targetLine" title="Target"></div>
+                <div class="hold" id="hold"></div>
+              </div>
+              <div style="font-size:.72rem;color:var(--muted);align-self:flex-start">
+                <div>━ 0 dBFS</div><div style="color:#7fb3ff">┅ target</div><div>▬ peak hold</div><div>▨ over 0</div>
+              </div>
+            </div>
+            <div class="readouts">
+              <div>Peak (live)<b id="rLive">—</b></div>
+              <div>Peak hold<b id="rHold">—</b></div>
+              <div>Calculated peak<b id="rCalc">—</b></div>
+              <div>Headroom<b id="rHead">—</b></div>
+            </div>
+            <button id="holdReset">Reset peak hold &amp; clip</button>
+            <p class="hint" style="margin:0">Measured after the master fader. Values above 0 dBFS are shown, not hidden or normalised. Live peaks vary moment to moment; the 4-second loop reaches its full (calculated) peak once per cycle, which peak hold captures.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div>
+      <!-- CHALLENGE -->
+      <section class="panel" id="challengePanel" role="tabpanel" aria-labelledby="tabChallenge">
+        <h2>Prediction challenge</h2>
+        <ol class="steps">
+          <li><label for="tChannels">Target channel count</label>
+            <select id="tChannels"></select></li>
+          <li><label for="tPeak">Target maximum master peak</label>
+            <input id="tPeak" type="number" step="0.5" min="-40" max="0" value="-1"> dBFS
+            <div class="hint" id="tPeakHint">−1 dBFS leaves 1 dB of sample-peak headroom below full scale.</div></li>
+          <li><label for="pred">Your prediction: highest starting source level</label>
+            <input id="pred" type="number" step="0.1" min="-60" max="0" placeholder="e.g. −20"> dBFS peak
+            <div class="hint">Setting this also sets the source level.</div></li>
+        </ol>
+        <div class="row" style="margin-top:10px">
+          <button id="beginBtn" class="primary">Begin attempt</button>
+        </div>
+        <p id="chStatus" class="status" aria-live="polite" style="margin-top:10px">Choose a target, enter a prediction, then begin.</p>
+        <div id="result" hidden></div>
+        <div class="row" style="margin-top:10px">
+          <button id="againBtn" disabled>Try again</button>
+          <button id="revealBtn" disabled>Reveal calculation</button>
+        </div>
+        <div id="reveal" hidden style="margin-top:10px"></div>
+      </section>
+
+      <section class="panel" id="explorePanel" role="tabpanel" aria-labelledby="tabExplore" hidden>
+        <h2>Explore</h2>
+        <p>Source level and master fader are unlocked. Channel faders stay at unity.</p>
+        <ul class="steps">
+          <li>Add channels until the meter clips, then pull the master down. The clip goes away at the output, but every channel is still “hot” into the bus.</li>
+          <li>Compare: lowering the <b>source</b> by 6 dB vs. lowering the <b>master</b> by 6 dB. Same output peak, different gain structure.</li>
+          <li>Find the master setting that keeps 16 channels at exactly −1 dBFS.</li>
+        </ul>
+        <p class="hint">Rule of thumb for identical signals: each doubling of channels adds 6.02 dB.</p>
+      </section>
+
+      <section class="panel">
+        <h2>The maths</h2>
+        <div class="calc">Master peak = Source peak + 20·log10(N) + Master gain</div>
+        <p class="hint">N identical, synchronised signals add their <b>amplitudes</b>: N copies = N× amplitude.</p>
+        <table aria-label="Summation of identical channels">
+          <tr><th>Channels</th><td>1</td><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td></tr>
+          <tr><th>Added</th><td>0</td><td>+6.02</td><td>+12.04</td><td>+18.06</td><td>+24.08</td><td>+30.10</td></tr>
+        </table>
+        <details style="margin-top:10px"><summary>dB of gain vs dBFS level</summary>
+          <p><b>dBFS</b> is a <em>level</em>: how big a signal is relative to digital full scale (0 dBFS = the largest sample value). <b>dB of gain</b> is a <em>change</em>: how much a fader adds or removes. A fader at 0 dB (unity) leaves the signal as it was: a −18 dBFS signal stays at −18 dBFS. Unity does not mean 0 dBFS.</p>
+        </details>
+        <details><summary>Why this exercise uses identical signals</summary>
+          <p>Every channel here is the <b>same</b> noise, perfectly correlated, so the peaks line up and add exactly. Real mixes are different: independent noise sources or different instruments do not peak together. For equal-level <b>uncorrelated</b> sources, <b>average power</b> rises about 3 dB per doubling, but that is a statistical average, not a guaranteed peak increase. Peaks can occasionally coincide, so real-world headroom planning still needs care.</p>
+        </details>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const MIN_DB = -60, MAX_DB = 24, MAXCH = 32, TOL = 0.5;
+const dbToLin = d => Math.pow(10, d / 20);
+const linToDb = l => l > 0 ? 20 * Math.log10(l) : -Infinity;
+const fmt = (d, u = 'dBFS') => !isFinite(d) ? '−∞ ' + u : (d > 0 ? '+' : d < 0 ? '−' : '') + Math.abs(d).toFixed(1) + ' ' + u;
+
+const state = {
+  mode: 'challenge',     // challenge | explore
+  phase: 'setup',        // setup | running | done
+  channels: 1, source: -18, master: 0,
+  target: 8, targetPeak: -1, prediction: null,
+  liveDb: -Infinity, holdDb: -Infinity, holdTime: 0, clipped: false
+};
+
+// ---------- Audio ----------
+let ctx = null, srcNode = null, chGains = [], busGain, masterGain, analyser, listenGain, limiter, safety, buffer = null;
+const calcPeak = () => state.source + linToDb(state.channels) + state.master;
+
+function makePinkBuffer(ac) {
+  const sr = ac.sampleRate, len = Math.round(sr * 4), fade = Math.round(sr * 0.25);
+  const raw = new Float32Array(len + fade);
+  let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+  let seed = 12345; const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296 * 2 - 1; };
+  for (let i = 0; i < raw.length; i++) {
+    const w = rnd();
+    b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759; b2=0.96900*b2+w*0.1538520;
+    b3=0.86650*b3+w*0.3104856; b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
+    raw[i]=b0+b1+b2+b3+b4+b5+b6+w*0.5362; b6=w*0.115926;
+  }
+  // Seamless loop: equal-power crossfade the tail into the head.
+  const out = new Float32Array(len);
+  for (let i = 0; i < len; i++) out[i] = raw[i];
+  for (let i = 0; i < fade; i++) {
+    const t = i / fade;
+    out[i] = raw[len + i] * Math.cos(t * Math.PI / 2) + raw[i] * Math.sin(t * Math.PI / 2);
+  }
+  // Normalise to exactly 0 dBFS sample peak, so "source level" = true sample peak.
+  let pk = 0; for (let i = 0; i < len; i++) pk = Math.max(pk, Math.abs(out[i]));
+  for (let i = 0; i < len; i++) out[i] /= pk;
+  const buf = ac.createBuffer(1, len, sr); buf.copyToChannel(out, 0);
+  return buf;
+}
+
+function buildGraph() {
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  buffer = makePinkBuffer(ctx);
+  busGain = ctx.createGain();
+  masterGain = ctx.createGain();
+  analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
+  listenGain = ctx.createGain();
+  // Protection chain (after measurement): normalise loudness for listening, then limit.
+  safety = ctx.createGain();
+  limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -12; limiter.knee.value = 0; limiter.ratio.value = 20;
+  limiter.attack.value = 0.001; limiter.release.value = 0.1;
+  const clamp = ctx.createWaveShaper(); const c = new Float32Array(1025);
+  for (let i = 0; i < c.length; i++) { const x = i / 512 - 1; c[i] = Math.max(-0.5, Math.min(0.5, x)); }
+  clamp.curve = c;
+  busGain.connect(masterGain); masterGain.connect(analyser);
+  masterGain.connect(safety); safety.connect(listenGain); listenGain.connect(limiter); limiter.connect(clamp); clamp.connect(ctx.destination);
+}
+
+function startAudio() {
+  if (!ctx) buildGraph();
+  ctx.resume();
+  stopSource();
+  srcNode = ctx.createBufferSource(); srcNode.buffer = buffer; srcNode.loop = true;
+  // One source fanned out to every channel: guaranteed identical, sample-aligned, same polarity.
+  chGains = [];
+  for (let i = 0; i < MAXCH; i++) { const g = ctx.createGain(); g.gain.value = 0; srcNode.connect(g); g.connect(busGain); chGains.push(g); }
+  applyAudio(true);
+  srcNode.start();
+  $('startBtn').disabled = true; $('stopBtn').disabled = false;
+}
+function stopSource() { if (srcNode) { try { srcNode.stop(); } catch(e){} srcNode.disconnect(); chGains.forEach(g => g.disconnect()); srcNode = null; chGains = []; } }
+function stopAudio() { stopSource(); $('startBtn').disabled = false; $('stopBtn').disabled = true; state.liveDb = -Infinity; }
+
+function applyAudio(instant) {
+  if (!ctx) return;
+  const t = ctx.currentTime, tc = instant ? 0.001 : 0.02;
+  const s = dbToLin(state.source);
+  chGains.forEach((g, i) => g.gain.setTargetAtTime(i < state.channels ? s : 0, t, tc)); // channel fader = unity; this is the source level
+  masterGain.gain.setTargetAtTime(dbToLin(state.master), t, tc);
+  // Audible level rises with the mix up to −6 dBFS, then is held there (listening path only; measurement untouched).
+  const mixPk = dbToLin(calcPeak());
+  safety.gain.setTargetAtTime(Math.min(1, dbToLin(-6) / Math.max(mixPk, 1e-4)), t, tc);
+  const v = +$('listen').value / 100;
+  listenGain.gain.setTargetAtTime(v * v * 0.5, t, tc);
+}
+
+// ---------- Meter ----------
+const METER_H = () => $('meter').clientHeight;
+const dbToFrac = d => (Math.max(MIN_DB, Math.min(MAX_DB, d)) - MIN_DB) / (MAX_DB - MIN_DB);
+function buildScale() {
+  const sc = $('scale'); sc.innerHTML = '';
+  [24,18,12,6,0,-6,-12,-18,-24,-30,-40,-50,-60].forEach(d => {
+    const el = document.createElement('div'); el.style.bottom = (dbToFrac(d) * 100) + '%';
+    el.textContent = (d > 0 ? '+' : '') + d; if (d === 0) el.style.fontWeight = '700'; sc.appendChild(el);
+  });
+  $('zeroLine').style.bottom = (dbToFrac(0) * 100) + '%';
+  $('overzone').style.height = ((1 - dbToFrac(0)) * 100) + '%';
+  $('fill').style.backgroundSize = '100% ' + METER_H() + 'px';
+}
+
+const tbuf = new Float32Array(2048);
+function tick(now) {
+  let level;
+  if (srcNode) {
+    analyser.getFloatTimeDomainData(tbuf);
+    let pk = 0; for (let i = 0; i < tbuf.length; i++) { const a = Math.abs(tbuf[i]); if (a > pk) pk = a; }
+    level = linToDb(pk);
+    state.liveDb = level;
+  } else {
+    level = calcPeak(); state.liveDb = -Infinity;
+  }
+  const disp = srcNode ? level : calcPeak();
+  if (disp > state.holdDb || now - state.holdTime > 4500) { state.holdDb = disp; state.holdTime = now; }
+  if (disp > 0) state.clipped = true;
+  renderMeter(disp);
+  requestAnimationFrame(tick);
+}
+function renderMeter(d) {
+  $('fill').style.height = (dbToFrac(d) * 100) + '%';
+  $('hold').style.bottom = (dbToFrac(state.holdDb) * 100) + '%';
+  $('meter').setAttribute('aria-valuenow', isFinite(d) ? d.toFixed(1) : MIN_DB);
+  $('meter').setAttribute('aria-valuetext', fmt(d));
+  $('rLive').textContent = srcNode ? fmt(state.liveDb) : 'audio off';
+  $('rLive').className = state.liveDb > 0 ? 'over' : '';
+  $('rHold').textContent = fmt(state.holdDb); $('rHold').className = state.holdDb > 0 ? 'over' : '';
+  const cp = calcPeak();
+  $('rCalc').textContent = fmt(cp); $('rCalc').className = cp > 0 ? 'over' : '';
+  const hr = -cp;
+  $('rHead').textContent = hr >= 0 ? hr.toFixed(1) + ' dB' : 'OVER by ' + (-hr).toFixed(1) + ' dB';
+  $('rHead').className = hr < 0 ? 'over' : '';
+  const clip = $('clip');
+  clip.classList.toggle('on', state.clipped);
+  const txt = state.clipped ? '⚠ CLIP: over 0 dBFS' : 'CLIP: none';
+  if (clip.textContent !== txt) clip.textContent = txt;
+  $('targetLine').style.bottom = (dbToFrac(state.targetPeak) * 100) + '%';
+  $('targetLine').hidden = state.mode !== 'challenge';
+}
+function resetHold() { state.holdDb = -Infinity; state.holdTime = 0; state.clipped = false; }
+
+// ---------- UI rendering ----------
+function renderStrips() {
+  const s = $('strips'); s.innerHTML = '';
+  for (let i = 0; i < state.channels; i++) {
+    const d = document.createElement('div'); d.className = 'strip';
+    d.innerHTML = `<div class="num">Ch ${i+1}</div><div class="mono">${fmt(state.source,'')}</div>
+      <div class="fader-track" aria-hidden="true"><div class="fader-cap" style="--pos:0.75"></div></div>
+      <div><b>0 dB</b></div><div class="lock" title="Channel fader fixed at unity gain">🔒 unity</div><div class="out">bus</div>`;
+    d.setAttribute('aria-label', `Channel ${i+1}: input ${fmt(state.source)}, fader locked at 0 dB unity gain, routed to master bus`);
+    s.appendChild(d);
+  }
+}
+
+function render() {
+  const inChallenge = state.mode === 'challenge';
+  const running = inChallenge && state.phase === 'running';
+  const done = inChallenge && state.phase === 'done';
+  const srcLocked = inChallenge && state.phase !== 'setup';
+  $('source').disabled = $('sourceNum').disabled = srcLocked;
+  $('sourceLock').hidden = !srcLocked;
+  $('source').value = state.source; if (document.activeElement !== $('sourceNum')) $('sourceNum').value = state.source;
+  $('sourceVal').textContent = fmt(state.source) + ' peak';
+  $('master').disabled = inChallenge; $('master').value = state.master;
+  $('masterLock').hidden = !inChallenge;
+  $('masterVal').textContent = fmt(state.master, 'dB');
+  $('addBtn').disabled = state.channels >= MAXCH || (inChallenge && (state.phase !== 'running'));
+  $('removeBtn').disabled = state.channels <= 1 || inChallenge && state.phase !== 'setup';
+  $('resetBtn').disabled = running;
+  $('addBtn').textContent = running ? `+ Add channel (${state.channels}/${state.target})` : '+ Add channel';
+  ['tChannels','tPeak','pred','beginBtn'].forEach(id => $(id).disabled = inChallenge && state.phase !== 'setup');
+  $('againBtn').disabled = !done; $('revealBtn').disabled = !done;
+  renderStrips(); applyAudio();
+}
+
+// ---------- Challenge ----------
+function begin() {
+  const p = parseFloat($('pred').value);
+  if (!isFinite(p) || p > 0 || p < -60) { $('chStatus').textContent = 'Enter a prediction between −60 and 0 dBFS first.'; $('pred').focus(); return; }
+  state.prediction = Math.round(p * 10) / 10;
+  state.source = state.prediction; state.master = 0; state.channels = 1; state.phase = 'running';
+  resetHold();
+  $('result').hidden = true; $('reveal').hidden = true;
+  $('chStatus').textContent = `Attempt running: source locked at ${fmt(state.source)}. Add channels one at a time to ${state.target}. Watch the master meter.`;
+  render();
+  if (state.target === 1) finish();
+}
+function onAdd() {
+  if (state.channels >= MAXCH) return;
+  state.channels++;
+  if (state.mode === 'challenge' && state.phase === 'running') {
+    $('chStatus').textContent = `${state.channels} of ${state.target} channels. Master peak now ${fmt(calcPeak())}.`;
+    if (state.channels >= state.target) finish();
+  }
+  render();
+}
+function finish() {
+  state.phase = 'done';
+  const pk = calcPeak(), diff = pk - state.targetPeak;
+  let cls, tag, msg;
+  if (Math.abs(diff) <= TOL) { cls='ok'; tag='✔ On target'; msg=`Master peak ${fmt(pk)} is within ±${TOL} dB of your ${fmt(state.targetPeak)} target.`; }
+  else if (diff < 0) { cls='under'; tag='▽ Below target: unused headroom'; msg=`Master peak ${fmt(pk)} is ${(-diff).toFixed(1)} dB below the target. Safe, but you could have started ${(-diff).toFixed(1)} dB hotter.`; }
+  else if (pk <= 0) { cls='hot'; tag='△ Over target, not clipping'; msg=`Master peak ${fmt(pk)} exceeds the target by ${diff.toFixed(1)} dB, eating into your headroom, but it stays at or below 0 dBFS.`; }
+  else { cls='clip'; tag='✖ Clipping'; msg=`Master peak ${fmt(pk)} is ${pk.toFixed(1)} dB over full scale. In a fixed-point file or converter this would clip.`; }
+  const r = $('result'); r.className = 'result ' + cls; r.hidden = false;
+  r.innerHTML = `<div class="tag">${tag}</div><p>${msg}</p><p class="hint">Tolerance: ±${TOL} dB of the target.</p>`;
+  $('chStatus').textContent = 'Attempt complete. ' + tag.replace(/^\S+\s/, '') + '.';
+  render(); $('result').setAttribute('tabindex','-1'); r.focus();
+}
+function reveal() {
+  const n = state.target, add = linToDb(n), ans = state.targetPeak - add;
+  const el = $('reveal'); el.hidden = false;
+  el.innerHTML = `<h3>Worked calculation</h3>
+  <div class="calc">Maximum source peak = Target master peak − 20·log10(N)<br>
+  = ${fmt(state.targetPeak)} − 20·log10(${n})<br>
+  = ${fmt(state.targetPeak)} − ${add.toFixed(2)} dB<br>
+  = <b>${fmt(ans).replace(' dBFS','')} dBFS</b></div>
+  <p>Your prediction was <b>${fmt(state.prediction)}</b>, ${Math.abs(state.prediction - ans) < 0.05 ? 'exactly right' : ((state.prediction - ans) > 0 ? (state.prediction-ans).toFixed(1)+' dB too high' : (ans-state.prediction).toFixed(1)+' dB lower than necessary')}.</p>
+  <p class="hint">Check: ${fmt(ans)} + ${add.toFixed(2)} dB (${n} identical channels) + 0 dB master = ${fmt(state.targetPeak)}. Note the mixing of units: dBFS (level) + dB (gain) = dBFS (level).</p>`;
+  el.setAttribute('tabindex','-1'); el.focus();
+}
+function tryAgain() {
+  state.phase = 'setup'; state.channels = 1; state.master = 0; resetHold();
+  $('result').hidden = true; $('reveal').hidden = true;
+  $('chStatus').textContent = 'Adjust your prediction (or the target) and begin again.';
+  render(); $('pred').focus();
+}
+
+// ---------- Events ----------
+function setSource(v) { v = Math.max(-60, Math.min(0, v)); if (!isFinite(v)) return; state.source = Math.round(v*10)/10; render(); }
+$('source').addEventListener('input', e => setSource(+e.target.value));
+$('sourceNum').addEventListener('change', e => setSource(+e.target.value));
+$('master').addEventListener('input', e => { state.master = +e.target.value; render(); });
+$('addBtn').addEventListener('click', onAdd);
+$('removeBtn').addEventListener('click', () => { if (state.channels > 1) { state.channels--; render(); } });
+$('resetBtn').addEventListener('click', () => {
+  state.channels = 1; state.master = 0; if (state.mode === 'explore' || state.phase === 'setup') state.source = -18;
+  if (state.mode === 'challenge') { state.phase = 'setup'; $('result').hidden = true; $('reveal').hidden = true; $('chStatus').textContent = 'Choose a target, enter a prediction, then begin.'; }
+  resetHold(); render();
+});
+$('holdReset').addEventListener('click', resetHold);
+$('clip').addEventListener('click', resetHold);
+$('startBtn').addEventListener('click', startAudio);
+$('stopBtn').addEventListener('click', stopAudio);
+$('listen').addEventListener('input', e => { $('listenVal').textContent = e.target.value + '%'; applyAudio(); });
+for (let i = 1; i <= MAXCH; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; $('tChannels').appendChild(o); }
+$('tChannels').value = state.target;
+$('tChannels').addEventListener('change', e => state.target = +e.target.value);
+$('tPeak').addEventListener('change', e => {
+  let v = Math.max(-40, Math.min(0, +e.target.value || 0)); e.target.value = v; state.targetPeak = v;
+  $('tPeakHint').textContent = v === 0 ? '0 dBFS leaves no headroom at all.' : `${fmt(v)} leaves ${(-v).toFixed(1)} dB of sample-peak headroom below full scale.`;
+});
+$('pred').addEventListener('change', e => { const p = parseFloat(e.target.value); if (isFinite(p) && state.phase === 'setup') setSource(p); });
+$('beginBtn').addEventListener('click', begin);
+$('againBtn').addEventListener('click', tryAgain);
+$('revealBtn').addEventListener('click', reveal);
+
+function setMode(m) {
+  state.mode = m;
+  $('tabChallenge').setAttribute('aria-selected', m === 'challenge'); $('tabExplore').setAttribute('aria-selected', m === 'explore');
+  $('challengePanel').hidden = m !== 'challenge'; $('explorePanel').hidden = m !== 'explore';
+  if (m === 'challenge') { state.phase = 'setup'; state.master = 0; state.channels = 1; $('result').hidden = true; $('reveal').hidden = true;
+    $('chStatus').textContent = 'Choose a target, enter a prediction, then begin.'; }
+  resetHold(); render();
+}
+$('tabChallenge').addEventListener('click', () => setMode('challenge'));
+$('tabExplore').addEventListener('click', () => setMode('explore'));
+document.querySelector('.tabs').addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const next = state.mode === 'challenge' ? 'explore' : 'challenge'; setMode(next); $(next === 'explore' ? 'tabExplore' : 'tabChallenge').focus(); }
+});
+window.addEventListener('resize', buildScale);
+
+buildScale(); render(); requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
